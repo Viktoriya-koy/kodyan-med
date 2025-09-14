@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KodyanMED - Gestión de pacientes</title>
+  <!-- Font Awesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Navbar lateral */
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      transition: var(--transicion);
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    /* Contenido principal */
+    .main-content {
+      flex: 1;
+      padding: 30px;
+      overflow-y: auto;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    /* Tarjetas */
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      transition: var(--transicion);
+      border-left: 4px solid var(--violeta-acento);
+    }
+
+    .card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+    }
+
+    /* Formularios */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid var(--violeta-secundario);
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      transition: var(--transicion);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--violeta-acento);
+      box-shadow: 0 0 0 3px rgba(179, 157, 219, 0.3);
+    }
+
+    /* Botones */
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transicion);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body {
+        flex-direction: column;
+      }
+
+      .navbar {
+        width: 100%;
+        padding: 15px;
+      }
+
+      .navbar-menu {
+        display: flex;
+        overflow-x: auto;
+      }
+
+      .navbar-item {
+        padding: 10px 15px;
+      }
+    }
+  </style>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Barra lateral -->
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <h1>KodyanMED</h1>
+    </div>
+    <ul class="navbar-menu">
+      <li class="navbar-item"><a href="#"><i class="fas fa-home"></i> Inicio</a></li>
+      <li class="navbar-item"><a href="#"><i class="fas fa-calendar-check"></i> Agenda</a></li>
+      <li class="navbar-item"><a href="#"><i class="fas fa-user-injured"></i> Pacientes</a></li>
+      <li class="navbar-item"><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
+    </ul>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content">
+    <div class="header">
+      <h2>Bienvenida, Violeta</h2>
+      <p>Gestioná tus turnos y pacientes de forma simple</p>
+    </div>
+
+    <div class="grid">
+      <!-- Tarjeta de turnos -->
+      <div class="card">
+        <h3><i class="fas fa-plus-circle"></i> Nuevo turno</h3>
+        <form id="form-turno">
+          <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" required>
+          </div>
+          <div class="form-group">
+            <label>Hora</label>
+            <input type="time" required>
+          </div>
+          <div class="form-group">
+            <label>DNI del paciente</label>
+            <input type="text" placeholder="Buscar por DNI">
+          </div>
+          <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar turno</button>
+        </form>
+      </div>
+
+      <!-- Tarjeta de pacientes -->
+      <div class="card">
+        <h3><i class="fas fa-search"></i> Buscar paciente</h3>
+        <div class="form-group">
+          <input type="text" placeholder="Nombre o DNI">
+        </div>
+        <button class="btn"><i class="fas fa-search"></i> Buscar</button>
+      </div>
+    </div>
+  </main>
+ <script type="module" src="js/supabase.js"></script>
+<script type="module" src="js/database.js"></script>
+<script type="module" src="js/app.js"></script>
+  </body>
+</html>

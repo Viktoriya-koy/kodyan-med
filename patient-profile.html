@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ficha del Paciente - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/style.css">
+
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <h1><i class="fas fa-user-injured"></i> Ficha del Paciente</h1>
+      <a href="index.html" class="btn"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
+    </header>
+
+    <!-- Datos Básicos -->
+    <div class="card">
+      <h2>Datos Personales</h2>
+      <div class="grid">
+        <div><strong>Nombre:</strong> <span id="paciente-nombre"></span></div>
+        <div><strong>DNI:</strong> <span id="paciente-dni"></span></div>
+        <div><strong>Teléfono:</strong> <span id="paciente-telefono"></span></div>
+        <div><strong>Email:</strong> <span id="paciente-email"></span></div>
+        <div><strong>Obra Social:</strong> <span id="paciente-obra-social"></span></div>
+        <div><strong>Historial Médico:</strong> <span id="paciente-historial"></span></div>
+      </div>
+      <button class="btn mt-20"><i class="fas fa-edit"></i> Editar Datos</button>
+    </div>
+
+    <!-- Turnos -->
+    <div class="card">
+      <h2>Turnos</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Hora</th>
+            <th>Estado</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-turnos">
+          <!-- Los turnos se cargan con JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Procedimientos -->
+    <div class="card">
+      <h2>Procedimientos Realizados</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Fecha</th>
+            <th>Procedimiento</th>
+            <th>Detalles</th>
+            <th>Imagen</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-procedimientos">
+          <!-- Los procedimientos se cargan con JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Formulario para agregar procedimiento -->
+    <div class="card">
+      <h2>Agregar Procedimiento</h2>
+      <form id="form-procedimiento">
+        <div class="form-group">
+          <label>Fecha</label>
+          <input type="date" id="fecha-procedimiento" required>
+        </div>
+        <div class="form-group">
+          <label>Procedimiento</label>
+          <input type="text" id="tipo-procedimiento" required>
+        </div>
+        <div class="form-group">
+          <label>Detalles</label>
+          <textarea id="detalles-procedimiento"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Subir imagen (radiografía/foto)</label>
+          <input type="file" id="imagen-procedimiento">
+        </div>
+        <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar Procedimiento</button>
+      </form>
+    </div>
+  </div>
+<script type="module" src="js/supabase.js"></script>
+<script type="module" src="js/database.js"></script>
+<script type="module" src="js/app.js"></script>
+</body>
+</html>

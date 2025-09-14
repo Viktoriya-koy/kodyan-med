@@ -1,0 +1,340 @@
+/* style.css - KodyanMED - Sistema de gestión médica */
+:root {
+  /* Paleta oficial */
+  --violeta-primario: #D1C4E9;
+  --violeta-secundario: #EDE7F6;
+  --violeta-acento: #B39DDB;
+  --blanco: #FFFFFF;
+  --texto: #333333;
+  --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transicion: all 0.3s ease;
+  --border-radius: 12px;
+}
+
+/* Reset básico */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+  background-color: #FAFAFA;
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+/* Header principal */
+header {
+  background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+  padding: 25px;
+  border-radius: var(--border-radius);
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: var(--sombra-suave);
+  color: var(--blanco);
+}
+
+header h1 {
+  font-size: 2.2rem;
+  margin-bottom: 10px;
+}
+
+.subtitulo {
+  opacity: 0.9;
+  font-size: 1.1rem;
+}
+
+/* Grid principal */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 25px;
+  margin-bottom: 30px;
+}
+
+/* Tarjetas */
+.card {
+  background: var(--blanco);
+  padding: 25px;
+  border-radius: var(--border-radius);
+  box-shadow: var(--sombra-suave);
+  transition: var(--transicion);
+  border-left: 4px solid var(--violeta-acento);
+}
+
+.card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+}
+
+.card h2 {
+  color: var(--violeta-acento);
+  margin-bottom: 20px;
+  font-size: 1.4rem;
+  border-bottom: 2px solid var(--violeta-secundario);
+  padding-bottom: 10px;
+}
+
+.card h3 {
+  color: var(--violeta-acento);
+  margin-bottom: 15px;
+  font-size: 1.2rem;
+}
+
+/* Formularios */
+.form-group {
+  margin-bottom: 20px;
+}
+
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--texto);
+}
+
+input[type="text"],
+input[type="date"],
+input[type="time"],
+input[type="email"],
+input[type="tel"],
+input[type="password"],
+select,
+textarea {
+  width: 100%;
+  padding: 12px 15px;
+  border: 2px solid var(--violeta-secundario);
+  border-radius: 8px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 1rem;
+  transition: var(--transicion);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--violeta-acento);
+  box-shadow: 0 0 0 3px rgba(179, 157, 219, 0.3);
+}
+
+/* Botones */
+.btn {
+  background: var(--violeta-primario);
+  color: var(--texto);
+  border: none;
+  padding: 12px 25px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: var(--transicion);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  font-size: 1rem;
+}
+
+.btn:hover {
+  background: var(--violeta-acento);
+  color: var(--blanco);
+  transform: translateY(-2px);
+  box-shadow: var(--sombra-suave);
+}
+
+.btn-block {
+  width: 100%;
+  justify-content: center;
+}
+
+/* Tablas */
+.tabla-container {
+  overflow-x: auto;
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--blanco);
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: var(--sombra-suave);
+}
+
+th, td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid var(--violeta-secundario);
+}
+
+th {
+  background: var(--violeta-primario);
+  color: var(--texto);
+  font-weight: 600;
+}
+
+tr:hover {
+  background: var(--violeta-secundario);
+}
+
+/* Utilidades */
+.text-center { text-align: center; }
+.mt-20 { margin-top: 20px; }
+.mb-20 { margin-bottom: 20px; }
+.hidden { display: none; }
+
+/* Navbar lateral (para página principal) */
+.navbar {
+  width: 250px;
+  background: var(--violeta-primario);
+  padding: 25px 0;
+  box-shadow: var(--sombra-suave);
+}
+
+.navbar-brand {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.navbar-brand h1 {
+  font-size: 1.5rem;
+  color: var(--texto);
+}
+
+.navbar-menu {
+  list-style: none;
+}
+
+.navbar-item {
+  padding: 15px 25px;
+  transition: var(--transicion);
+}
+
+.navbar-item:hover {
+  background: var(--violeta-acento);
+}
+
+.navbar-item a {
+  color: var(--texto);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.navbar-item i {
+  font-size: 1.2rem;
+}
+
+/* Main content (para página principal) */
+.main-content {
+  flex: 1;
+  padding: 30px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container {
+    padding: 15px;
+  }
+  
+  header {
+    padding: 20px;
+  }
+  
+  h1 {
+    font-size: 1.8rem;
+  }
+  
+  .card {
+    padding: 20px;
+  }
+  
+  .grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .navbar {
+    width: 100%;
+    padding: 15px;
+  }
+  
+  .navbar-menu {
+    display: flex;
+    overflow-x: auto;
+  }
+  
+  .navbar-item {
+    padding: 10px 15px;
+  }
+}
+
+/* Estilos específicos para patient-profile.html */
+.paciente-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.paciente-info {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.paciente-info div {
+  background: var(--violeta-secundario);
+  padding: 15px;
+  border-radius: 8px;
+}
+
+/* Galería de imágenes */
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.galeria img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 2px solid var(--violeta-primario);
+}
+/* Estilos adicionales */
+.estado-badge {
+  padding: 4px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.estado-badge {
+  background-color: var(--violeta-secundario);
+  color: var(--violeta-acento);
+}
+
+.hidden {
+  display: none;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.card {
+  margin-bottom: 20px;
+}
