@@ -26,7 +26,15 @@ async function guardarPaciente(pacienteData) {
     }
     return data;
 }
+ const { data: existe } = await supabase
+        .from('pacientes')
+        .select('dni')
+        .eq('dni', pacienteData.dni)
+        .single();
 
+    if (existe) {
+        throw new Error('El paciente ya existe en el sistema');
+    }
 // ===== FUNCIONES PARA TURNOS =====
 async function guardarTurno(turnoData) {
  console.log('Datos a guardar:', turnoData);
