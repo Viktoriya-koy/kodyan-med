@@ -108,11 +108,22 @@ async function ejecutarBusqueda() {
         return;
     }
 
-    const resultados = await window.buscarPacientes(termino); // ← Ahora sí llama a la función correcta
-    console.log('Resultados:', resultados);
+    // LLAMADA DIRECTA A SUPABASE (eliminando window.buscarPacientes)
+    const { data, error } = await supabase
+        .from('pacientes')
+        .select('*')
+        .or(`dni.ilike.%${termino}%,nombre.ilike.%${termino}%`);
     
-    if (resultados.length > 0) {
-        alert(`Encontrados ${resultados.length} pacientes. Pronto podrás verlos aquí.`);
+    if (error) {
+        console.error('Error buscando:', error);
+        alert('Error en la búsqueda: ' + error.message);
+        return;
+    }
+
+    console.log('Resultados:', data);
+    
+    if (data.length > 0) {
+        alert(`Encontrados ${data.length} pacientes. Pronto podrás verlos aquí.`);
     } else {
         alert('No se encontraron pacientes con ese criterio.');
     }
