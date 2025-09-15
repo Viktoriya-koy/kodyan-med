@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agenda - KodyanMED</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --violeta-primario: #D1C4E9;
+            --violeta-secundario: #EDE7F6;
+            --violeta-acento: #B39DDB;
+            --blanco: #FFFFFF;
+            --texto: #333333;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #FAFAFA;
+            color: var(--texto);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+            color: var(--blanco);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+        }
+        
+        .filtros {
+            background: var(--blanco);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: var(--blanco);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        th, td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid var(--violeta-secundario);
+        }
+        
+        th {
+            background: var(--violeta-primario);
+            color: var(--texto);
+        }
+        
+        .btn {
+            background: var(--violeta-primario);
+            color: var(--texto);
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        .btn:hover {
+            background: var(--violeta-acento);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-calendar-alt"></i> Agenda de Turnos</h1>
+            <p>Gestioná tus turnos de forma organizada</p>
+        </div>
+        
+        <div class="filtros">
+            <button class="btn" onclick="cargarAgenda('hoy')">
+                <i class="fas fa-sun"></i> Hoy
+            </button>
+            <button class="btn" onclick="cargarAgenda('semana')">
+                <i class="fas fa-calendar-week"></i> Esta semana
+            </button>
+            <button class="btn" onclick="cargarAgenda('mes')">
+                <i class="fas fa-calendar"></i> Este mes
+            </button>
+            <input type="date" id="fecha-custom" class="btn">
+            <button class="btn" onclick="cargarAgenda('custom')">
+                <i class="fas fa-search"></i> Buscar
+            </button>
+        </div>
+        
+        <div id="agenda-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Fecha</th>
+                        <th>Hora</th>
+                        <th>Paciente</th>
+                        <th>DNI</th>
+                        <th>Teléfono</th>
+                        <th>Estado</th>
+                    </tr>
+                </thead>
+                <tbody id="tabla-turnos">
+                    <!-- Los turnos se cargarán aquí -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="js/supabase.js"></script>
+    <script src="js/database.js"></script>
+    <script>
+    async function cargarAgenda(rango) {
+        let fechaInicio, fechaFin;
+        const hoy = new Date();
+        
+        switch(rango) {
+            case 'hoy':
+                fechaInicio = hoy.toISOString().split('T')[0];
+                fechaFin = fechaInicio;
+                break;
+            case 'semana':
+                const inicioSemana = new Date(hoy);
+                inicioSemana.setDate(hoy.getDate() - hoy.getDay());
+                fechaInicio = inicioSemana.toISOString().split('T')[0];
+                
+                const finSemana = new Date(hoy);
+                finSemana.setDate(hoy.getDate() + (6 - hoy.getDay()));
+                fechaFin = finSemana.toISOString().split('T')[0];
+                break;
+            case 'mes':
+                fechaInicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
+                fechaFin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).toISOString().split('T')[0];
+                break;
+            case 'custom':
+                fechaInicio = document.getElementById('fecha-custom').value;
+                fechaFin = fechaInicio;
+                break;
+        }
+        
+        const { data: turnos, error } = await supabase
+            .from('turnos')
+            .select(`
+                *,
+                pacientes (nombre_completo, dni, telefono)
+            `)
+            .eq('profesional_id', 1)
+            .gte('fecha', fechaInicio)
+            .lte('fecha', fechaFin)
+            .order('fecha', { ascending: true })
+            .order('hora', { ascending: true });
+        
+        if (error) {
+            console.error('Error cargando agenda:', error);
+            return;
+        }
+        
+        // Mostrar turnos en tabla
+        const tabla = document.getElementById('tabla-turnos');
+        tabla.innerHTML = '';
+        
+        turnos.forEach(turno => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td>${turno.fecha}</td>
+                <td>${turno.hora}</td>
+                <td>${turno.pacientes.nombre_completo}</td>
+                <td>${turno.pacientes.dni}</td>
+                <td>${turno.pacientes.telefono || 'N/A'}</td>
+                <td>${turno.estado}</td>
+            `;
+            tabla.appendChild(fila);
+        });
+    }
+    
+    // Cargar agenda del día al iniciar
+    document.addEventListener('DOMContentLoaded', function() {
+        cargarAgenda('hoy');
+    });
+    </script>
+</body>
+</html>
