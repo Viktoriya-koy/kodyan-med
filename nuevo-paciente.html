@@ -73,14 +73,14 @@ document.getElementById('form-nuevo-paciente').addEventListener('submit', async 
     
     try {
         const pacienteData = {
-            dni: document.getElementById('dni').value,
-            nombre: document.getElementById('nombre').value,
-            fecha_nacimiento: document.getElementById('fecha-nacimiento').value || null,
-            telefono: document.getElementById('telefono').value || null,
-            email: document.getElementById('email').value || null,
-            obra_social: document.getElementById('obra-social').value || null,
-            historial_medico: document.getElementById('historial').value || null
-        };
+    dni: document.getElementById('dni').value,
+    full_name: document.getElementById('nombre').value, // ← Cambiado
+    birth_date: document.getElementById('fecha-nacimiento').value || null, // ← Cambiado
+    phone: document.getElementById('telefono').value || null, // ← Cambiado
+    email: document.getElementById('email').value || null,
+    health_insurance: document.getElementById('obra-social').value || null, // ← Cambiado
+    medical_history: document.getElementById('historial').value || null // ← Cambiado
+};
         
         // Guardar en localStorage para procesar en home.html
         localStorage.setItem('nuevoPaciente', JSON.stringify(pacienteData));
