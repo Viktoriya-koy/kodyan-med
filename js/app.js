@@ -111,7 +111,7 @@ async function ejecutarBusqueda() {
     const { data, error } = await supabase
         .from('pacientes')
         .select('*')
-        .or(`dni.ilike.%${termino}%,nombre.ilike.%${termino}%`);
+       .or(`dni.ilike.%${termino}%,nombre_completo.ilike.%${termino}%`);
     
     if (error) {
         console.error('Error buscando:', error);
