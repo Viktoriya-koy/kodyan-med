@@ -82,8 +82,9 @@ document.getElementById('form-nuevo-paciente').addEventListener('submit', async 
             historial_medico: document.getElementById('historial').value || null
         };
         
-        const pacienteGuardado = await guardarNuevoPaciente(pacienteData);
-        alert('¡Paciente guardado con éxito!');
+        // Guardar en localStorage para procesar en home.html
+        localStorage.setItem('nuevoPaciente', JSON.stringify(pacienteData));
+        alert('¡Paciente guardado con éxito! Redirigiendo...');
         window.location.href = 'home.html';
         
     } catch (error) {
