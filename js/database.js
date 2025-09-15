@@ -1,5 +1,4 @@
-// database.js - Versión sin import/export (para GitHub Pages)
-
+// database.js - Versión definitiva para GitHub Pages
 // ===== FUNCIONES PARA PACIENTES =====
 async function obtenerPaciente(dni) {
     const { data, error } = await supabase
