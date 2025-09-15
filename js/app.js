@@ -1,5 +1,4 @@
-// app.js - Versión definitiva sin duplicados
-
+// app.js - Versión definitiva
 // ===== EVENTOS PARA BOTONES - SE EJECUTA EN TODAS LAS PÁGINAS =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ DOM cargado, registrando eventos...");
@@ -18,15 +17,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===== PARA HOME.HTML =====
     if (window.location.pathname.includes('home.html')) {
         console.log("🏠 Configurando home.html...");
-        
-        // Procesar nuevo paciente desde localStorage
-        const nuevoPacienteStr = localStorage.getItem('nuevoPaciente');
-        if (nuevoPacienteStr) {
-            const nuevoPaciente = JSON.parse(nuevoPacienteStr);
-            console.log('Procesando nuevo paciente:', nuevoPaciente);
-            alert('Paciente listo para guardar: ' + nuevoPaciente.nombre);
-            localStorage.removeItem('nuevoPaciente');
-        }
 
         // Botón "Agendar Paciente"
         const btnAgendar = document.getElementById('btn-agendar-paciente');
@@ -59,12 +49,12 @@ document.addEventListener('DOMContentLoaded', function() {
         if (formTurno) {
             formTurno.addEventListener('submit', async function(e) {
                 e.preventDefault();
-               const turnoData = {
-    fecha: document.getElementById('fecha-turno').value,
-    hora: document.getElementById('hora-turno').value,
-    dni_paciente: document.getElementById('dni-paciente').value,  // ← COMA aquí
-    profesional_id: 1  // ← SIN COMA aquí
-};
+                const turnoData = {
+                    fecha: document.getElementById('fecha-turno').value,
+                    hora: document.getElementById('hora-turno').value,
+                    dni_paciente: document.getElementById('dni-paciente').value,
+                    profesional_id: 1
+                };
                 
                 const result = await guardarTurno(turnoData);
                 if (result) {
@@ -87,7 +77,7 @@ document.addEventListener('DOMContentLoaded', function() {
             if (dni) {
                 const paciente = await obtenerPaciente(dni);
                 if (paciente) {
-                    document.getElementById('paciente-nombre').textContent = paciente.nombre;
+                    document.getElementById('paciente-nombre').textContent = paciente.nombre_completo;
                     document.getElementById('paciente-dni').textContent = paciente.dni;
                     // ... completar los demás campos
                 }
@@ -98,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// ===== FUNCIÓN DE BÚSQUEDA (ÚNICA VERSIÓN) =====
+// ===== FUNCIÓN DE BÚSQUEDA =====
 async function ejecutarBusqueda() {
     const termino = document.getElementById('input-buscar-paciente').value;
     console.log('Buscando:', termino);
@@ -108,11 +98,10 @@ async function ejecutarBusqueda() {
         return;
     }
 
-    // CONSULTA DIRECTA A SUPABASE
     const { data, error } = await supabase
         .from('pacientes')
         .select('*')
-       .or(`dni.ilike.%${termino}%,nombre_completo.ilike.%${termino}%`);
+        .or(`dni.ilike.%${termino}%,nombre_completo.ilike.%${termino}%`);
     
     if (error) {
         console.error('Error buscando:', error);
@@ -122,8 +111,31 @@ async function ejecutarBusqueda() {
 
     console.log('Resultados:', data);
     
+    // ===== MOSTRAR RESULTADOS EN PANTALLA =====
     if (data.length > 0) {
-        alert(`Encontrados ${data.length} pacientes. Pronto podrás verlos aquí.`);
+        let html = '<div class="resultados-busqueda" style="margin-top: 20px; padding: 15px; background: #f8f9fa; border-radius: 8px;">';
+        html += '<h4>📋 Resultados de búsqueda:</h4>';
+        
+        data.forEach(paciente => {
+            html += `
+                <div class="paciente-item" style="padding: 10px; margin: 10px 0; background: white; border-radius: 5px; cursor: pointer; border: 1px solid #ddd;" 
+                     onclick="window.location.href='patient-profile.html?dni=${paciente.dni}'">
+                    <strong>👤 ${paciente.nombre_completo}</strong><br>
+                    <small>📄 DNI: ${paciente.dni}</small>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        
+        // Insertar después del botón de búsqueda
+        const buscarCard = document.querySelector('.card:has(#btn-buscar-paciente)');
+        if (buscarCard) {
+            const oldResults = buscarCard.querySelector('.resultados-busqueda');
+            if (oldResults) oldResults.remove();
+            buscarCard.insertAdjacentHTML('beforeend', html);
+        }
+        
     } else {
         alert('No se encontraron pacientes con ese criterio.');
     }
