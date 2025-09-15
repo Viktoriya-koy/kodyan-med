@@ -67,3 +67,19 @@ async function buscarPacientes(termino) {
     return data;
 }
 }
+// ===== GUARDAR NUEVO PACIENTE =====
+async function guardarNuevoPaciente(pacienteData) {
+    console.log('Guardando paciente:', pacienteData);
+    
+    const { data, error } = await supabase
+        .from('pacientes')
+        .insert([pacienteData])
+        .select();
+    
+    if (error) {
+        console.error('Error guardando paciente:', error);
+        throw new Error(error.message);
+    }
+    
+    return data[0];
+}
