@@ -71,7 +71,7 @@ async function buscarPacientes(termino) {
 // ===== GUARDAR NUEVO PACIENTE =====
 async function guardarNuevoPaciente(pacienteData) {
     console.log('Guardando paciente:', pacienteData);
-    
+     delete pacienteData.id;
     const { data, error } = await supabase
         .from('pacientes')
         .insert([pacienteData])
