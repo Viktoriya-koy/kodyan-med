@@ -87,4 +87,4 @@ async function guardarNuevoPaciente(pacienteData) {
 window.guardarNuevoPaciente = guardarNuevoPaciente;
 window.obtenerPaciente = obtenerPaciente;
 window.guardarTurno = guardarTurno;
-window.buscarPacientes = buscarPacientes;
+
