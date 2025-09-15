@@ -3,7 +3,17 @@
 // ===== EVENTOS PARA BOTONES - SE EJECUTA EN TODAS LAS PÁGINAS =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ DOM cargado, registrando eventos...");
-
+    
+    // ===== DEBUG: VERIFICAR QUE LOS ELEMENTOS EXISTAN =====
+    console.log("🔍 Buscando elementos...");
+    console.log("btn-agendar-paciente:", document.getElementById('btn-agendar-paciente'));
+    console.log("btn-inicio:", document.getElementById('btn-inicio'));
+    console.log("btn-buscar-paciente:", document.getElementById('btn-buscar-paciente'));
+    console.log("input-buscar-paciente:", document.getElementById('input-buscar-paciente'));
+    console.log("form-turno:", document.getElementById('form-turno'));
+    console.log("fecha-turno:", document.getElementById('fecha-turno'));
+    console.log("hora-turno:", document.getElementById('hora-turno'));
+    console.log("dni-paciente:", document.getElementById('dni-paciente'));
     // ===== PARA HOME.HTML =====
     if (window.location.pathname.includes('home.html')) {
         console.log("🏠 Configurando home.html...");
