@@ -89,3 +89,4 @@ window.guardarNuevoPaciente = guardarNuevoPaciente;
 window.obtenerPaciente = obtenerPaciente;
 window.guardarTurno = guardarTurno;
 
+
