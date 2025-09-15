@@ -63,6 +63,7 @@ document.addEventListener('DOMContentLoaded', function() {
     fecha: document.getElementById('fecha-turno').value,
     hora: document.getElementById('hora-turno').value,
     dni_paciente: document.getElementById('dni-paciente').value // ← CORREGIDO
+    profesional_id: 1 // ID de Violeta en la tabla profesionales
 };
                 
                 const result = await guardarTurno(turnoData);
