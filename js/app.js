@@ -2,27 +2,6 @@
 
 // ===== PARA HOME.HTML =====
 if (window.location.pathname.includes('home.html')) {
-  console.log("🏠 Ejecutando código para home.html");
-  
-  // Solo ejecutar si el elemento existe
-  const formTurno = document.getElementById('form-turno');
-  if (formTurno) {
-    formTurno.addEventListener('submit', async function(e) {
-      e.preventDefault();
-      const turnoData = {
-        fecha: document.getElementById('fecha-turno').value,
-        hora: document.getElementById('hora-turno').value,
-        dni: document.getElementById('dni-paciente').value
-      };
-      
-      const result = await guardarTurno(turnoData);
-      if (result) {
-        alert('Turno guardado!');
-        formTurno.reset();
-      }
-    });
-  }
-}
 // ===== EVENTOS PARA BOTONES =====
 document.addEventListener('DOMContentLoaded', function() {
     // Botón "Agendar Paciente"
@@ -74,6 +53,28 @@ async function buscarPacientes() {
         alert('No se encontraron pacientes con ese criterio.');
     }
 }
+  console.log("🏠 Ejecutando código para home.html");
+  
+  // Solo ejecutar si el elemento existe
+  const formTurno = document.getElementById('form-turno');
+  if (formTurno) {
+    formTurno.addEventListener('submit', async function(e) {
+      e.preventDefault();
+      const turnoData = {
+        fecha: document.getElementById('fecha-turno').value,
+        hora: document.getElementById('hora-turno').value,
+        dni: document.getElementById('dni-paciente').value
+      };
+      
+      const result = await guardarTurno(turnoData);
+      if (result) {
+        alert('Turno guardado!');
+        formTurno.reset();
+      }
+    });
+  }
+}
+
 // ===== PARA PATIENT-PROFILE.HTML =====
 if (window.location.pathname.includes('patient-profile.html')) {
   console.log("📋 Ejecutando código para patient-profile.html");
