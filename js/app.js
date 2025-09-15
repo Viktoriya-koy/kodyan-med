@@ -59,11 +59,11 @@ document.addEventListener('DOMContentLoaded', function() {
         if (formTurno) {
             formTurno.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                const turnoData = {
+               const turnoData = {
     fecha: document.getElementById('fecha-turno').value,
     hora: document.getElementById('hora-turno').value,
-    dni_paciente: document.getElementById('dni-paciente').value // ← CORREGIDO
-    profesional_id: 1 // ID de Violeta en la tabla profesionales
+    dni_paciente: document.getElementById('dni-paciente').value,  // ← COMA aquí
+    profesional_id: 1  // ← SIN COMA aquí
 };
                 
                 const result = await guardarTurno(turnoData);
