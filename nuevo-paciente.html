@@ -61,5 +61,39 @@
     <script src="js/supabase.js"></script>
     <script type="module" src="js/database.js"></script>
     <script src="js/app.js"></script>
+<script>
+// Manejar el envío del formulario
+document.getElementById('form-nuevo-paciente').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const btn = this.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+    btn.disabled = true;
+    
+    try {
+        const pacienteData = {
+            dni: document.getElementById('dni').value,
+            nombre: document.getElementById('nombre').value,
+            fecha_nacimiento: document.getElementById('fecha-nacimiento').value || null,
+            telefono: document.getElementById('telefono').value || null,
+            email: document.getElementById('email').value || null,
+            obra_social: document.getElementById('obra-social').value || null,
+            historial_medico: document.getElementById('historial').value || null
+        };
+        
+        const pacienteGuardado = await guardarNuevoPaciente(pacienteData);
+        alert('¡Paciente guardado con éxito!');
+        window.location.href = 'home.html';
+        
+    } catch (error) {
+        console.error('Error:', error);
+        alert('Error: ' + error.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+});
+</script>
 </body>
 </html>
