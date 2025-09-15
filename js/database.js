@@ -29,6 +29,7 @@ async function guardarPaciente(pacienteData) {
 
 // ===== FUNCIONES PARA TURNOS =====
 async function guardarTurno(turnoData) {
+ console.log('Datos a guardar:', turnoData);
     const { data, error } = await supabase
         .from('turnos')
         .insert([turnoData])
