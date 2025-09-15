@@ -53,4 +53,17 @@ async function guardarProcedimiento(procData) {
         return null;
     }
     return data;
+// ===== BÚSQUEDA DE PACIENTES =====
+async function buscarPacientes(termino) {
+    const { data, error } = await supabase
+        .from('pacientes')
+        .select('*')
+        .or(`dni.ilike.%${termino}%,nombre.ilike.%${termino}%`);
+    
+    if (error) {
+        console.error('Error buscando pacientes:', error);
+        return [];
+    }
+    return data;
+}
 }
