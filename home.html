@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KodyanMED - Gestión de tes</title>
+  <title>KodyanMED - Gestión de pacientes</title>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
@@ -194,8 +194,8 @@
       }
     }
   </style>
-    <link rel="stylesheet" href="css/style.css">
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <!-- Barra lateral -->
@@ -204,7 +204,7 @@
       <h1>KodyanMED</h1>
     </div>
     <ul class="navbar-menu">
-      <li class="navbar-item"><a href="#"><i class="fas fa-home"></i> Inicio</a></li>
+      <li class="navbar-item"><a href="home.html" id="btn-inicio"><i class="fas fa-home"></i> Inicio</a></li>
       <li class="navbar-item"><a href="#"><i class="fas fa-calendar-check"></i> Agenda</a></li>
       <li class="navbar-item"><a href="#"><i class="fas fa-user-injured"></i> Pacientes</a></li>
       <li class="navbar-item"><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
@@ -215,7 +215,7 @@
   <main class="main-content">
     <div class="header">
       <h2>Bienvenida, Violeta</h2>
-      <p>Gestioná tus turnos y tes de forma simple</p>
+      <p>Gestioná tus turnos y pacientes de forma simple</p>
     </div>
 
     <div class="grid">
@@ -225,59 +225,44 @@
         <form id="form-turno">
           <div class="form-group">
             <label>Fecha</label>
-            <input type="date" required>
+            <input type="date" id="fecha-turno" required>
           </div>
           <div class="form-group">
             <label>Hora</label>
-            <input type="time" required>
+            <input type="time" id="hora-turno" required>
           </div>
           <div class="form-group">
-            <label>DNI del te</label>
-            <input type="text" placeholder="Buscar por DNI">
+            <label>DNI del paciente</label>
+            <input type="text" id="dni-paciente" placeholder="Buscar por DNI">
           </div>
           <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar turno</button>
         </form>
       </div>
-<!-- FORMULARIO DE TURNOS -->
-<form id="form-turno">
-  <div class="form-group">
-    <label>Fecha</label>
-    <input type="date" id="fecha-turno" required> <!-- Agregar ID -->
-  </div>
-  <div class="form-group">
-    <label>Hora</label>
-    <input type="time" id="hora-turno" required> <!-- Agregar ID -->
-  </div>
-  <div class="form-group">
-    <label>DNI del paciente</label>
-    <input type="text" id="dni-paciente" placeholder="Buscar por DNI"> <!-- Agregar ID -->
-  </div>
-  <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar turno</button>
-</form>
 
-<!-- TARJETA DE BÚSQUEDA -->
-<div class="card">
-  <h3><i class="fas fa-search"></i> Buscar paciente</h3>
-  <div class="form-group">
-    <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI"> <!-- Agregar ID -->
-  </div>
-  <button class="btn" id="btn-buscar-paciente"> <!-- Agregar ID -->
-    <i class="fas fa-search"></i> Buscar
-  </button>
-</div>
+      <!-- Tarjeta de Nuevo Paciente -->  
+      <div class="card">
+        <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
+        <p>Agregar un nuevo paciente al sistema</p>
+        <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'">
+          <i class="fas fa-plus-circle"></i> Agendar Paciente
+        </button>
+      </div>
 
-<!-- TARJETA DE NUEVO PACIENTE -->
-<div class="card">
-  <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
-  <p>Agregar un nuevo paciente al sistema</p>
-  <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'">
-    <i class="fas fa-plus-circle"></i> Agendar Paciente
-  </button>
-</div>
-    
+      <!-- Tarjeta de Búsqueda -->
+      <div class="card">
+        <h3><i class="fas fa-search"></i> Buscar paciente</h3>
+        <div class="form-group">
+          <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI">
+        </div>
+        <button class="btn" id="btn-buscar-paciente">
+          <i class="fas fa-search"></i> Buscar
+        </button>
+      </div>
+    </div>
   </main>
-<script src="js/supabase.js"></script>
-<script type="module" src="js/database.js"></script>  <!-- Solo este es módulo -->
-<script src="js/app.js"></script>
+
+  <script src="js/supabase.js"></script>
+  <script type="module" src="js/database.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
