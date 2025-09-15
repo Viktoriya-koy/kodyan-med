@@ -60,10 +60,10 @@ document.addEventListener('DOMContentLoaded', function() {
             formTurno.addEventListener('submit', async function(e) {
                 e.preventDefault();
                 const turnoData = {
-                    fecha: document.getElementById('fecha-turno').value,
-                    hora: document.getElementById('hora-turno').value,
-                    dni: document.getElementById('dni-paciente').value
-                };
+    fecha: document.getElementById('fecha-turno').value,
+    hora: document.getElementById('hora-turno').value,
+    dni_paciente: document.getElementById('dni-paciente').value // ← CORREGIDO
+};
                 
                 const result = await guardarTurno(turnoData);
                 if (result) {
