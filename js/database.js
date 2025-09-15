@@ -26,7 +26,13 @@ async function guardarPaciente(pacienteData) {
     }
     return data;
 }
- const { data: existe } = await supabase
+
+// ===== FUNCIÓN NUEVA PACIENTE CON VERIFICACIÓN =====
+async function guardarNuevoPaciente(pacienteData) {
+    console.log('Guardando paciente:', pacienteData);
+    
+    // VERIFICAR SI YA EXISTE (ESTE CÓDIGO DEBE ESTAR DENTRO DE LA FUNCIÓN)
+    const { data: existe } = await supabase
         .from('pacientes')
         .select('dni')
         .eq('dni', pacienteData.dni)
@@ -35,9 +41,26 @@ async function guardarPaciente(pacienteData) {
     if (existe) {
         throw new Error('El paciente ya existe en el sistema');
     }
+    // FIN DE VERIFICACIÓN
+
+    delete pacienteData.id;
+    
+    const { data, error } = await supabase
+        .from('pacientes')
+        .insert([pacienteData])
+        .select();
+    
+    if (error) {
+        console.error('Error guardando paciente:', error);
+        throw new Error(error.message);
+    }
+    
+    return data[0];
+}
+
 // ===== FUNCIONES PARA TURNOS =====
 async function guardarTurno(turnoData) {
- console.log('Datos a guardar:', turnoData);
+    console.log('Datos a guardar:', turnoData);
     const { data, error } = await supabase
         .from('turnos')
         .insert([turnoData])
