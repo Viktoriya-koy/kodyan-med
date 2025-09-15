@@ -155,9 +155,10 @@
         const { data: turnos, error } = await supabase
             .from('turnos')
             .select(`
-                *,
-                pacientes (nombre_completo, dni, telefono)
-            `)
+  *,
+  pacientes:dni_paciente (nombre_completo, dni, telefono)
+`)
+       
             .eq('profesional_id', 1)
             .gte('fecha', fechaInicio)
             .lte('fecha', fechaFin)
