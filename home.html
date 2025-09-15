@@ -204,12 +204,11 @@
       <h1>KodyanMED</h1>
     </div>
     <ul class="navbar-menu">
-      <li class="navbar-item"><a href="home.html" id="btn-inicio"><i class="fas fa-home"></i> Inicio</a></li>
-      <li class="navbar-item"><a href="#"><i class="fas fa-calendar-check"></i> Agenda</a></li>
-      <li class="navbar-item"><a href="#"><i class="fas fa-user-injured"></i> Pacientes</a></li>
-      <li class="navbar-item"><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
-    </ul>
-  </nav>
+  <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+  <li class="navbar-item"><a href="home.html#agenda"><i class="fas fa-calendar-check"></i> Agenda</a></li>
+  <li class="navbar-item"><a href="home.html#pacientes"><i class="fas fa-user-injured"></i> Pacientes</a></li>
+  <li class="navbar-item"><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
+</ul>
 
   <!-- Contenido principal -->
   <main class="main-content">
@@ -220,7 +219,7 @@
 
     <div class="grid">
       <!-- Tarjeta de turnos -->
-      <div class="card">
+      <div class="card" id="agenda">
         <h3><i class="fas fa-plus-circle"></i> Nuevo turno</h3>
         <form id="form-turno">
           <div class="form-group">
@@ -249,7 +248,7 @@
       </div>
 
       <!-- Tarjeta de Búsqueda -->
-      <div class="card">
+      <div class="card" id="pacientes">
         <h3><i class="fas fa-search"></i> Buscar paciente</h3>
         <div class="form-group">
           <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI">
