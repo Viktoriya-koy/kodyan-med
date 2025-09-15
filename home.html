@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>KodyanMED - Gestión de pacientes</title>
+  <title>KodyanMED - Gestión de tes</title>
   <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <!-- Google Fonts -->
@@ -215,7 +215,7 @@
   <main class="main-content">
     <div class="header">
       <h2>Bienvenida, Violeta</h2>
-      <p>Gestioná tus turnos y pacientes de forma simple</p>
+      <p>Gestioná tus turnos y tes de forma simple</p>
     </div>
 
     <div class="grid">
@@ -232,16 +232,23 @@
             <input type="time" required>
           </div>
           <div class="form-group">
-            <label>DNI del paciente</label>
+            <label>DNI del te</label>
             <input type="text" placeholder="Buscar por DNI">
           </div>
           <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar turno</button>
         </form>
       </div>
-
-      <!-- Tarjeta de pacientes -->
+ <!-- Tarjeta de Nuevo Paciente -->  
       <div class="card">
-        <h3><i class="fas fa-search"></i> Buscar paciente</h3>
+        <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
+        <p>Agregar un nuevo paciente al sistema</p>
+        <button class="btn" onclick="window.location.href='nuevo-paciente.html'">
+          <i class="fas fa-plus-circle"></i> Agendar Paciente
+        </button>
+      </div>
+      <!-- Tarjeta de tes -->
+      <div class="card">
+        <h3><i class="fas fa-search"></i> Buscar te</h3>
         <div class="form-group">
           <input type="text" placeholder="Nombre o DNI">
         </div>
