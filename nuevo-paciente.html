@@ -59,12 +59,11 @@
     </div>
 
     <script src="js/supabase.js"></script>
-    <script type="module" src="js/database.js"></script>
+    <script src="js/database.js"></script>
     <script src="js/app.js"></script>
-<script type="module">
-    // Importar la función de guardado
-    import { guardarNuevoPaciente } from './js/database.js';
     
+    <script>
+    // Usar la función GLOBAL en vez de import
     document.getElementById('form-nuevo-paciente').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -84,8 +83,8 @@
                 historial_medico: document.getElementById('historial').value || null
             };
             
-            // ¡GUARDAR DIRECTAMENTE EN SUPABASE!
-            const resultado = await guardarNuevoPaciente(pacienteData);
+            // ¡USAR LA FUNCIÓN GLOBAL!
+            const resultado = await window.guardarNuevoPaciente(pacienteData);
             
             if (resultado) {
                 alert('¡Paciente guardado con éxito!');
@@ -102,6 +101,6 @@
             btn.disabled = false;
         }
     });
-</script>
+    </script>
 </body>
 </html>
