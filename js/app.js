@@ -36,13 +36,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Botón "Buscar"
-        const btnBuscar = document.getElementById('btn-buscar-paciente');
-        if (btnBuscar) {
-            btnBuscar.addEventListener('click', function() {
-                console.log('Buscando pacientes...');
-                buscarPacientes();
-            });
-        }
+const btnBuscar = document.getElementById('btn-buscar-paciente');
+if (btnBuscar) {
+    btnBuscar.addEventListener('click', function() {
+        console.log('Buscando pacientes...');
+        ejecutarBusqueda(); // ← Cambiado por el nuevo nombre
+    });
+}
 
         // Formulario de turnos (ya existente)
         const formTurno = document.getElementById('form-turno');
@@ -88,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ===== FUNCIÓN DE BÚSQUEDA =====
-async function buscarPacientes() {
+async function ejecutarBusqueda() {
     const termino = document.getElementById('input-buscar-paciente').value;
     console.log('Buscando:', termino);
     
@@ -97,7 +97,7 @@ async function buscarPacientes() {
         return;
     }
 
-    const resultados = await buscarPacientes(termino);
+    const resultados = await window.buscarPacientes(termino); // ← Ahora sí llama a la función correcta
     console.log('Resultados:', resultados);
     
     if (resultados.length > 0) {
