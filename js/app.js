@@ -17,7 +17,18 @@ document.addEventListener('DOMContentLoaded', function() {
     // ===== PARA HOME.HTML =====
     if (window.location.pathname.includes('home.html')) {
         console.log("🏠 Configurando home.html...");
-
+      // Procesar nuevo paciente desde localStorage
+    const nuevoPacienteStr = localStorage.getItem('nuevoPaciente');
+    if (nuevoPacienteStr) {
+        const nuevoPaciente = JSON.parse(nuevoPacienteStr);
+        console.log('Procesando nuevo paciente:', nuevoPaciente);
+        
+        // Aquí llamarías a guardarNuevoPaciente si estuviera disponible
+        alert('Paciente listo para guardar: ' + nuevoPaciente.nombre);
+        
+        // Limpiar localStorage
+        localStorage.removeItem('nuevoPaciente');
+    }
         // Botón "Agendar Paciente"
         const btnAgendar = document.getElementById('btn-agendar-paciente');
         if (btnAgendar) {
