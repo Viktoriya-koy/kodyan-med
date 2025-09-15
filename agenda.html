@@ -13,6 +13,7 @@
             --violeta-acento: #B39DDB;
             --blanco: #FFFFFF;
             --texto: #333333;
+            --gris: #f5f5f5;
         }
         
         body {
@@ -20,10 +21,11 @@
             background-color: #FAFAFA;
             color: var(--texto);
             padding: 20px;
+            margin: 0;
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
         }
         
@@ -32,15 +34,64 @@
             color: var(--blanco);
             padding: 20px;
             border-radius: 12px;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .modo-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            background: var(--blanco);
+            padding: 10px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .modo-btn {
+            background: none;
+            border: none;
+            padding: 10px 20px;
+            margin: 0 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        
+        .modo-btn.active {
+            background: var(--violeta-primario);
+            color: var(--texto);
         }
         
         .filtros {
             background: var(--blanco);
-            padding: 20px;
+            padding: 15px;
             border-radius: 12px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+        }
+        
+        .btn {
+            background: var(--violeta-primario);
+            color: var(--texto);
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        
+        .btn:hover {
+            background: var(--violeta-acento);
+        }
+        
+        input[type="date"] {
+            padding: 8px;
+            border: 1px solid var(--violeta-secundario);
+            border-radius: 6px;
+            margin: 0 5px;
         }
         
         table {
@@ -50,10 +101,11 @@
             border-radius: 12px;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+            margin-bottom: 20px;
         }
         
         th, td {
-            padding: 15px;
+            padding: 12px;
             text-align: left;
             border-bottom: 1px solid var(--violeta-secundario);
         }
@@ -61,137 +113,317 @@
         th {
             background: var(--violeta-primario);
             color: var(--texto);
+            font-weight: 500;
         }
         
-        .btn {
+        .calendario {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            background: var(--blanco);
+            padding: 15px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        }
+        
+        .dia-calendario {
+            background: var(--gris);
+            padding: 10px;
+            border-radius: 6px;
+            min-height: 80px;
+            position: relative;
+        }
+        
+        .dia-calendario.con-turnos {
+            background: var(--violeta-secundario);
+            border: 2px solid var(--violeta-acento);
+        }
+        
+        .numero-dia {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+        
+        .turno-calendario {
             background: var(--violeta-primario);
-            color: var(--texto);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 8px;
+            padding: 3px 6px;
+            border-radius: 3px;
+            font-size: 11px;
+            margin-bottom: 2px;
             cursor: pointer;
-            margin: 5px;
         }
         
-        .btn:hover {
-            background: var(--violeta-acento);
+        .oculto {
+            display: none;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: var(--violeta-acento);
         }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1><i class="fas fa-calendar-alt"></i> Agenda de Turnos</h1>
+            <h1><i class="fas fa-calendar-alt"></i> Agenda Médica</h1>
             <p>Gestioná tus turnos de forma organizada</p>
         </div>
         
-        <div class="filtros">
-            <button class="btn" onclick="cargarAgenda('hoy')">
-                <i class="fas fa-sun"></i> Hoy
+        <div class="modo-selector">
+            <button class="modo-btn active" id="btn-lista" onclick="cambiarModo('lista')">
+                <i class="fas fa-list"></i> Vista Lista
             </button>
-            <button class="btn" onclick="cargarAgenda('semana')">
-                <i class="fas fa-calendar-week"></i> Esta semana
-            </button>
-            <button class="btn" onclick="cargarAgenda('mes')">
-                <i class="fas fa-calendar"></i> Este mes
-            </button>
-            <input type="date" id="fecha-custom" class="btn">
-            <button class="btn" onclick="cargarAgenda('custom')">
-                <i class="fas fa-search"></i> Buscar
+            <button class="modo-btn" id="btn-calendario" onclick="cambiarModo('calendario')">
+                <i class="fas fa-calendar"></i> Vista Calendario
             </button>
         </div>
         
-        <div id="agenda-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Hora</th>
-                        <th>Paciente</th>
-                        <th>DNI</th>
-                        <th>Teléfono</th>
-                        <th>Estado</th>
-                    </tr>
-                </thead>
-                <tbody id="tabla-turnos">
-                    <!-- Los turnos se cargarán aquí -->
-                </tbody>
-            </table>
+        <!-- VISTA LISTA -->
+        <div id="vista-lista">
+            <div class="filtros">
+                <button class="btn" onclick="cargarAgenda('hoy')">
+                    <i class="fas fa-sun"></i> Hoy
+                </button>
+                <button class="btn" onclick="cargarAgenda('semana')">
+                    <i class="fas fa-calendar-week"></i> Esta semana
+                </button>
+                <button class="btn" onclick="cargarAgenda('mes')">
+                    <i class="fas fa-calendar"></i> Este mes
+                </button>
+                <input type="date" id="fecha-custom">
+                <button class="btn" onclick="cargarAgenda('custom')">
+                    <i class="fas fa-search"></i> Buscar
+                </button>
+            </div>
+            
+            <div id="agenda-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Paciente</th>
+                            <th>DNI</th>
+                            <th>Teléfono</th>
+                            <th>Estado</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-turnos">
+                        <tr><td colspan="6" class="loading">Cargando turnos...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <!-- VISTA CALENDARIO -->
+        <div id="vista-calendario" class="oculto">
+            <div class="filtros">
+                <button class="btn" onclick="cambiarMes(-1)">
+                    <i class="fas fa-chevron-left"></i> Mes anterior
+                </button>
+                <span id="mes-actual" style="font-weight: bold; margin: 0 15px;">Cargando...</span>
+                <button class="btn" onclick="cambiarMes(1)">
+                    Mes siguiente <i class="fas fa-chevron-right"></i>
+                </button>
+            </div>
+            
+            <div class="calendario" id="calendario-grid">
+                <div class="dia-calendario"><strong>Lun</strong></div>
+                <div class="dia-calendario"><strong>Mar</strong></div>
+                <div class="dia-calendario"><strong>Mié</strong></div>
+                <div class="dia-calendario"><strong>Jue</strong></div>
+                <div class="dia-calendario"><strong>Vie</strong></div>
+                <div class="dia-calendario"><strong>Sáb</strong></div>
+                <div class="dia-calendario"><strong>Dom</strong></div>
+                <div id="dias-calendario" style="display: contents;"></div>
+            </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script src="js/supabase.js"></script>
-    <script src="js/database.js"></script>
     <script>
-    async function cargarAgenda(rango) {
-        let fechaInicio, fechaFin;
-        const hoy = new Date();
+        // Configuración Supabase
+        const supabaseUrl = 'https://qpylzzjxbldtemrgqlja.supabase.co';
+        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
+        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
         
-        switch(rango) {
-            case 'hoy':
-                fechaInicio = hoy.toISOString().split('T')[0];
-                fechaFin = fechaInicio;
-                break;
-            case 'semana':
-                const inicioSemana = new Date(hoy);
-                inicioSemana.setDate(hoy.getDate() - hoy.getDay());
-                fechaInicio = inicioSemana.toISOString().split('T')[0];
-                
-                const finSemana = new Date(hoy);
-                finSemana.setDate(hoy.getDate() + (6 - hoy.getDay()));
-                fechaFin = finSemana.toISOString().split('T')[0];
-                break;
-            case 'mes':
-                fechaInicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
-                fechaFin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).toISOString().split('T')[0];
-                break;
-            case 'custom':
-                fechaInicio = document.getElementById('fecha-custom').value;
-                fechaFin = fechaInicio;
-                break;
-        }
-        
-        const { data: turnos, error } = await supabase
-            .from('turnos')
-            .select(`
-  *,
-  pacientes:dni_paciente (nombre_completo, dni, telefono)
-`)
-       
-            .eq('profesional_id', 1)
-            .gte('fecha', fechaInicio)
-            .lte('fecha', fechaFin)
-            .order('fecha', { ascending: true })
-            .order('hora', { ascending: true });
-        
-        if (error) {
-            console.error('Error cargando agenda:', error);
-            return;
-        }
-        
-        // Mostrar turnos en tabla
-        const tabla = document.getElementById('tabla-turnos');
-        tabla.innerHTML = '';
-        
-        turnos.forEach(turno => {
-            const fila = document.createElement('tr');
-            fila.innerHTML = `
-                <td>${turno.fecha}</td>
-                <td>${turno.hora}</td>
-                <td>${turno.pacientes.nombre_completo}</td>
-                <td>${turno.pacientes.dni}</td>
-                <td>${turno.pacientes.telefono || 'N/A'}</td>
-                <td>${turno.estado}</td>
-            `;
-            tabla.appendChild(fila);
+        let mesActual = new Date();
+        let todosLosTurnos = [];
+
+        // Cargar agenda al iniciar
+        document.addEventListener('DOMContentLoaded', function() {
+            cargarAgenda('hoy');
+            generarCalendario(mesActual);
         });
-    }
-    
-    // Cargar agenda del día al iniciar
-    document.addEventListener('DOMContentLoaded', function() {
-        cargarAgenda('hoy');
-    });
+
+        // Cambiar entre vista lista y calendario
+        function cambiarModo(modo) {
+            document.getElementById('vista-lista').classList.toggle('oculto', modo !== 'lista');
+            document.getElementById('vista-calendario').classList.toggle('oculto', modo !== 'calendario');
+            document.getElementById('btn-lista').classList.toggle('active', modo === 'lista');
+            document.getElementById('btn-calendario').classList.toggle('active', modo === 'calendario');
+            
+            if (modo === 'calendario') {
+                cargarTurnosMesCompleto();
+            }
+        }
+
+        // Cargar agenda en vista lista
+        async function cargarAgenda(rango) {
+            let fechaInicio, fechaFin;
+            const hoy = new Date();
+            
+            document.getElementById('tabla-turnos').innerHTML = '<tr><td colspan="6" class="loading">Cargando turnos...</td></tr>';
+            
+            switch(rango) {
+                case 'hoy':
+                    fechaInicio = hoy.toISOString().split('T')[0];
+                    fechaFin = fechaInicio;
+                    break;
+                case 'semana':
+                    const inicioSemana = new Date(hoy);
+                    inicioSemana.setDate(hoy.getDate() - hoy.getDay());
+                    fechaInicio = inicioSemana.toISOString().split('T')[0];
+                    
+                    const finSemana = new Date(hoy);
+                    finSemana.setDate(hoy.getDate() + (6 - hoy.getDay()));
+                    fechaFin = finSemana.toISOString().split('T')[0];
+                    break;
+                case 'mes':
+                    fechaInicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1).toISOString().split('T')[0];
+                    fechaFin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).toISOString().split('T')[0];
+                    break;
+                case 'custom':
+                    const fechaCustom = document.getElementById('fecha-custom').value;
+                    if (!fechaCustom) {
+                        alert('Seleccioná una fecha primero');
+                        return;
+                    }
+                    fechaInicio = fechaCustom;
+                    fechaFin = fechaCustom;
+                    break;
+                default:
+                    fechaInicio = hoy.toISOString().split('T')[0];
+                    fechaFin = fechaInicio;
+            }
+            
+            const { data: turnos, error } = await supabase
+                .from('turnos')
+                .select(`
+                    *,
+                    pacientes:dni_paciente (nombre_completo, dni, telefono)
+                `)
+                .eq('profesional_id', 1)
+                .gte('fecha', fechaInicio)
+                .lte('fecha', fechaFin)
+                .order('fecha', { ascending: true })
+                .order('hora', { ascending: true });
+            
+            if (error) {
+                console.error('Error cargando agenda:', error);
+                document.getElementById('tabla-turnos').innerHTML = '<tr><td colspan="6">Error al cargar turnos</td></tr>';
+                return;
+            }
+            
+            mostrarTurnosEnTabla(turnos);
+        }
+
+        // Mostrar turnos en tabla
+        function mostrarTurnosEnTabla(turnos) {
+            const tabla = document.getElementById('tabla-turnos');
+            
+            if (turnos.length === 0) {
+                tabla.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 20px;">No hay turnos en este período</td></tr>';
+                return;
+            }
+            
+            tabla.innerHTML = '';
+            turnos.forEach(turno => {
+                const fila = document.createElement('tr');
+                fila.innerHTML = `
+                    <td>${turno.fecha}</td>
+                    <td>${turno.hora}</td>
+                    <td>${turno.pacientes?.nombre_completo || 'N/A'}</td>
+                    <td>${turno.pacientes?.dni || 'N/A'}</td>
+                    <td>${turno.pacientes?.telefono || 'N/A'}</td>
+                    <td>${turno.estado || 'programado'}</td>
+                `;
+                tabla.appendChild(fila);
+            });
+        }
+
+        // Cargar todos los turnos del mes para el calendario
+        async function cargarTurnosMesCompleto() {
+            const inicioMes = new Date(mesActual.getFullYear(), mesActual.getMonth(), 1);
+            const finMes = new Date(mesActual.getFullYear(), mesActual.getMonth() + 1, 0);
+            
+            const { data: turnos, error } = await supabase
+                .from('turnos')
+                .select(`
+                    *,
+                    pacientes:dni_paciente (nombre_completo)
+                `)
+                .eq('profesional_id', 1)
+                .gte('fecha', inicioMes.toISOString().split('T')[0])
+                .lte('fecha', finMes.toISOString().split('T')[0])
+                .order('fecha', { ascending: true })
+                .order('hora', { ascending: true });
+            
+            if (!error) {
+                todosLosTurnos = turnos || [];
+                generarCalendario(mesActual);
+            }
+        }
+
+        // Generar calendario mensual
+        function generarCalendario(fecha) {
+            const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
+                          'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+            
+            document.getElementById('mes-actual').textContent = 
+                `${meses[fecha.getMonth()]} ${fecha.getFullYear()}`;
+            
+            const primerDia = new Date(fecha.getFullYear(), fecha.getMonth(), 1);
+            const ultimoDia = new Date(fecha.getFullYear(), fecha.getMonth() + 1, 0);
+            const diasEnMes = ultimoDia.getDate();
+            const primerDiaSemana = primerDia.getDay();
+            
+            let diasHTML = '';
+            
+            // Días vacíos al inicio
+            for (let i = 0; i < primerDiaSemana; i++) {
+                diasHTML += '<div class="dia-calendario"></div>';
+            }
+            
+            // Días del mes
+            for (let dia = 1; dia <= diasEnMes; dia++) {
+                const fechaStr = `${fecha.getFullYear()}-${String(fecha.getMonth() + 1).padStart(2, '0')}-${String(dia).padStart(2, '0')}`;
+                const turnosDia = todosLosTurnos.filter(t => t.fecha === fechaStr);
+                const tieneTurnos = turnosDia.length > 0;
+                
+                diasHTML += `
+                    <div class="dia-calendario ${tieneTurnos ? 'con-turnos' : ''}">
+                        <div class="numero-dia">${dia}</div>
+                        ${turnosDia.slice(0, 3).map(turno => `
+                            <div class="turno-calendario" title="${turno.pacientes?.nombre_completo || 'Paciente'} - ${turno.hora}">
+                                ${turno.hora} - ${(turno.pacientes?.nombre_completo || 'Paciente').split(' ')[0]}
+                            </div>
+                        `).join('')}
+                        ${turnosDia.length > 3 ? `<div class="turno-calendario">+${turnosDia.length - 3} más</div>` : ''}
+                    </div>
+                `;
+            }
+            
+            document.getElementById('dias-calendario').innerHTML = diasHTML;
+        }
+
+        // Cambiar mes en el calendario
+        function cambiarMes(direccion) {
+            mesActual.setMonth(mesActual.getMonth() + direccion);
+            cargarTurnosMesCompleto();
+        }
     </script>
 </body>
 </html>
