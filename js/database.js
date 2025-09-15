@@ -83,3 +83,8 @@ async function guardarNuevoPaciente(pacienteData) {
     
     return data[0];
 }
+// ===== EXPORTAR FUNCIONES PARA USO GLOBAL =====
+window.guardarNuevoPaciente = guardarNuevoPaciente;
+window.obtenerPaciente = obtenerPaciente;
+window.guardarTurno = guardarTurno;
+window.buscarPacientes = buscarPacientes;
