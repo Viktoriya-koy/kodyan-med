@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuevo Paciente - KodyanMED</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-user-plus"></i> Nuevo Paciente</h1>
+        
+        <form id="form-nuevo-paciente">
+            <div class="form-group">
+                <label for="dni">DNI *</label>
+                <input type="text" id="dni" name="dni" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="nombre">Nombre Completo *</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="fecha-nacimiento">Fecha de Nacimiento</label>
+                <input type="date" id="fecha-nacimiento" name="fecha-nacimiento">
+            </div>
+            
+            <div class="form-group">
+                <label for="telefono">Teléfono</label>
+                <input type="tel" id="telefono" name="telefono">
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email">
+            </div>
+            
+            <div class="form-group">
+                <label for="obra-social">Obra Social</label>
+                <input type="text" id="obra-social" name="obra-social">
+            </div>
+            
+            <div class="form-group">
+                <label for="historial">Historial Médico</label>
+                <textarea id="historial" name="historial" rows="4"></textarea>
+            </div>
+            
+            <button type="submit" class="btn btn-block">
+                <i class="fas fa-save"></i> Guardar Paciente
+            </button>
+        </form>
+        
+        <a href="home.html" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Volver al Inicio
+        </a>
+    </div>
+
+    <script src="js/supabase.js"></script>
+    <script type="module" src="js/database.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
