@@ -1,4 +1,4 @@
-// app.js - Código corregido para botones
+// app.js - Versión definitiva sin duplicados
 
 // ===== EVENTOS PARA BOTONES - SE EJECUTA EN TODAS LAS PÁGINAS =====
 document.addEventListener('DOMContentLoaded', function() {
@@ -14,21 +14,20 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("fecha-turno:", document.getElementById('fecha-turno'));
     console.log("hora-turno:", document.getElementById('hora-turno'));
     console.log("dni-paciente:", document.getElementById('dni-paciente'));
+    
     // ===== PARA HOME.HTML =====
     if (window.location.pathname.includes('home.html')) {
         console.log("🏠 Configurando home.html...");
-      // Procesar nuevo paciente desde localStorage
-    const nuevoPacienteStr = localStorage.getItem('nuevoPaciente');
-    if (nuevoPacienteStr) {
-        const nuevoPaciente = JSON.parse(nuevoPacienteStr);
-        console.log('Procesando nuevo paciente:', nuevoPaciente);
         
-        // Aquí llamarías a guardarNuevoPaciente si estuviera disponible
-        alert('Paciente listo para guardar: ' + nuevoPaciente.nombre);
-        
-        // Limpiar localStorage
-        localStorage.removeItem('nuevoPaciente');
-    }
+        // Procesar nuevo paciente desde localStorage
+        const nuevoPacienteStr = localStorage.getItem('nuevoPaciente');
+        if (nuevoPacienteStr) {
+            const nuevoPaciente = JSON.parse(nuevoPacienteStr);
+            console.log('Procesando nuevo paciente:', nuevoPaciente);
+            alert('Paciente listo para guardar: ' + nuevoPaciente.nombre);
+            localStorage.removeItem('nuevoPaciente');
+        }
+
         // Botón "Agendar Paciente"
         const btnAgendar = document.getElementById('btn-agendar-paciente');
         if (btnAgendar) {
@@ -47,15 +46,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
 
         // Botón "Buscar"
-const btnBuscar = document.getElementById('btn-buscar-paciente');
-if (btnBuscar) {
-    btnBuscar.addEventListener('click', function() {
-        console.log('Buscando pacientes...');
-        ejecutarBusqueda(); // ← Cambiado por el nuevo nombre
-    });
-}
+        const btnBuscar = document.getElementById('btn-buscar-paciente');
+        if (btnBuscar) {
+            btnBuscar.addEventListener('click', function() {
+                console.log('Buscando pacientes...');
+                ejecutarBusqueda();
+            });
+        }
 
-        // Formulario de turnos (ya existente)
+        // Formulario de turnos
         const formTurno = document.getElementById('form-turno');
         if (formTurno) {
             formTurno.addEventListener('submit', async function(e) {
@@ -98,7 +97,7 @@ if (btnBuscar) {
     }
 });
 
-// ===== FUNCIÓN DE BÚSQUEDA =====
+// ===== FUNCIÓN DE BÚSQUEDA (ÚNICA VERSIÓN) =====
 async function ejecutarBusqueda() {
     const termino = document.getElementById('input-buscar-paciente').value;
     console.log('Buscando:', termino);
@@ -108,7 +107,7 @@ async function ejecutarBusqueda() {
         return;
     }
 
-    // LLAMADA DIRECTA A SUPABASE (eliminando window.buscarPacientes)
+    // CONSULTA DIRECTA A SUPABASE
     const { data, error } = await supabase
         .from('pacientes')
         .select('*')
