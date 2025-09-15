@@ -338,3 +338,30 @@ tr:hover {
 .card {
   margin-bottom: 20px;
 }
+/* ===== ESTILOS PARA SISTEMA DE ALERTAS ===== */
+.estado-info {
+    background: #e3f2fd;
+    color: #1976d2;
+    border: 1px solid #bbdefb;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.estado-exito {
+    background: #e8f5e8;
+    color: #2e7d32;
+    border: 1px solid #c8e6c9;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
+
+.estado-error {
+    background: #ffebee;
+    color: #c62828;
+    border: 1px solid #ffcdd2;
+    padding: 10px;
+    border-radius: 5px;
+    margin: 5px 0;
+}
