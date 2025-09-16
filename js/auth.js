@@ -59,9 +59,6 @@ document.addEventListener('DOMContentLoaded', function() {
     submitBtn.disabled = false;
 }
         });
-    }
-});
-
 // ✅ Verificar sesión activa al cargar la página
 async function verificarSesionActiva() {
     const { data } = await supabase.auth.getSession();
