@@ -23,88 +23,95 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ingresando...';
             submitBtn.disabled = true;
             
-           try {
-    const { data, error } = await supabase.auth.signInWithPassword({
-        email: email,
-        password: password
-    });
+            try {
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
 
-    if (error) throw new Error(error.message);
+                if (error) throw new Error(error.message);
 
-    if (data.user) {
-        mostrarExito('¡Login exitoso! Redirigiendo...');
+                if (data.user) {
+                    mostrarExito('¡Login exitoso! Redirigiendo...');
+                    
+                    // Vincular usuario con tabla profesionales
+                    const { error: upsertError } = await supabase
+                        .from('profesionales')
+                        .upsert({
+                            email: data.user.email,
+                            auth_id: data.user.id,
+                            nombre: data.user.email.split('@')[0]
+                        }, { onConflict: 'email' });
+
+                    if (upsertError) {
+                        console.error('Error al vincular profesional:', upsertError);
+                    }
+
+                    setTimeout(() => {
+                        window.location.href = 'home.html';
+                    }, 1000);
+                }
+            } catch (error) {
+                console.error('Error en login:', error);
+                mostrarError('Error: ' + error.message);
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }); // ← ¡CIERRA el addEventListener!
+    } // ← ¡CIERRA el if (loginForm)!
+
+    // ✅ Verificar sesión activa al cargar la página
+    async function verificarSesionActiva() {
+        const { data } = await supabase.auth.getSession();
         
-        // Vincular usuario con tabla profesionales
-        const { error: upsertError } = await supabase
-            .from('profesionales')
-            .upsert({
-                email: data.user.email,
-                auth_id: data.user.id,
-                nombre: data.user.email.split('@')[0]
-            }, { onConflict: 'email' });
-
-        if (upsertError) {
-            console.error('Error al vincular profesional:', upsertError);
-        }
-
-        setTimeout(() => {
+        // Si hay sesión activa y está en login.html, redirigir a home
+        if (data.session && window.location.pathname.includes('login.html')) {
             window.location.href = 'home.html';
-        }, 1000);
-    }
-} catch (error) {
-    console.error('Error en login:', error);
-    mostrarError('Error: ' + error.message);
-} finally {
-    submitBtn.innerHTML = originalText;
-    submitBtn.disabled = false;
-}
-        });
-// ✅ Verificar sesión activa al cargar la página
-async function verificarSesionActiva() {
-    const { data } = await supabase.auth.getSession();
-    
-    // Si hay sesión activa y está en login.html, redirigir a home
-    if (data.session && window.location.pathname.includes('login.html')) {
-        window.location.href = 'home.html';
-    }
-    
-    // Si no hay sesión y está en una página protegida, redirigir a login
-    if (!data.session && !window.location.pathname.includes('login.html')) {
-        window.location.href = 'login.html';
-    }
-}
+        }
+        
+        // Si no hay sesión y está en una página protegida, redirigir a login
+        if (!data.session && !window.location.pathname.includes('login.html')) {
+            window.location.href = 'login.html';
+        }
+    } // ← ¡CIERRA verificarSesionActiva!
 
-// ✅ Cerrar sesión
-async function logout() {
-    const { error } = await supabase.auth.signOut();
-    if (!error) {
-        window.location.href = 'login.html';
-    }
-}
+    // ✅ Cerrar sesión
+    async function logout() {
+        const { error } = await supabase.auth.signOut();
+        if (!error) {
+            window.location.href = 'login.html';
+        }
+    } // ← ¡CIERRA logout!
 
-// Las funciones de mensajes se mantienen
-function mostrarError(mensaje) {
-    const messageDiv = document.getElementById('login-message');
-    if (messageDiv) {
-        messageDiv.innerHTML = `
-            <div style="padding: 10px; background: #ffebee; color: #c62828; 
-                        border-radius: 5px; margin: 10px 0; border: 1px solid #ffcdd2;">
-                <i class="fas fa-exclamation-circle"></i> ${mensaje}
-            </div>
-        `;
-        messageDiv.classList.remove('hidden');
-        setTimeout(() => { messageDiv.classList.add('hidden'); }, 5000);
-    } else { alert(mensaje); }
-}
+    // Las funciones de mensajes se mantienen
+    function mostrarError(mensaje) {
+        const messageDiv = document.getElementById('login-message');
+        if (messageDiv) {
+            messageDiv.innerHTML = `
+                <div style="padding: 10px; background: #ffebee; color: #c62828; 
+                            border-radius: 5px; margin: 10px 0; border: 1px solid #ffcdd2;">
+                    <i class="fas fa-exclamation-circle"></i> ${mensaje}
+                </div>
+            `;
+            messageDiv.classList.remove('hidden');
+            setTimeout(() => { messageDiv.classList.add('hidden'); }, 5000);
+        } else { 
+            alert(mensaje); 
+        }
+    } // ← ¡CIERRA mostrarError!
 
-function mostrarExito(mensaje) {
-    const messageDiv = document.getElementById('login-message');
-    if (messageDiv) {
-        messageDiv.innerHTML = `
-            <div style="padding: 10px; background: #e8f5e8; color: #2e7d32; 
-                        border-radius: 5px; margin: 10px 0; border: 1px solid #c8e6c9;">
-                <i class="fas fa-check-circle"></i> ${mensaje}
-            </div>
-        `;
-        messageDiv.classList.remove('hidden');
-    }
+    function mostrarExito(mensaje) {
+        const messageDiv = document.getElementById('login-message');
+        if (messageDiv) {
+            messageDiv.innerHTML = `
+                <div style="padding: 10px; background: #e8f5e8; color: #2e7d32; 
+                            border-radius: 5px; margin: 10px 0; border: 1px solid #c8e6c9;">
+                    <i class="fas fa-check-circle"></i> ${mensaje}
+                </div>
+            `;
+            messageDiv.classList.remove('hidden');
+        }
+    } // ← ¡CIERRA mostrarExito!
+
+}); // ← ¡CIERRA el DOMContentLoaded! 🎉
