@@ -449,16 +449,18 @@
         });
 
         // Cambiar entre vista lista y calendario
-        function cambiarModo(modo) {
-            document.getElementById('vista-lista').classList.toggle('oculto', modo !== 'lista');
-            document.getElementById('vista-calendario').classList.toggle('oculto', modo !== 'calendario');
-            document.getElementById('btn-lista').classList.toggle('active', modo === 'lista');
-            document.getElementById('btn-calendario').classList.toggle('active', modo === 'calendario');
-            
-            if (modo === 'calendario') {
-                cargarTurnosMesCompleto();
-            }
-        }
+       function cambiarModo(modo) {
+    document.getElementById('vista-lista').classList.toggle('oculto', modo !== 'lista');
+    document.getElementById('vista-calendario').classList.toggle('oculto', modo !== 'calendario');
+    document.getElementById('btn-lista').classList.toggle('active', modo === 'lista');
+    document.getElementById('btn-calendario').classList.toggle('active', modo === 'calendario');
+    
+    if (modo === 'calendario') {
+        cargarTurnosMesCompleto().catch(error => {
+            console.error('Error cambiando a modo calendario:', error);
+        });
+    }
+}
 
         // Cargar agenda en vista lista
         async function cargarAgenda(rango) {
@@ -554,28 +556,37 @@ const { data: turnos, error } = await supabase
         }
 
         // Cargar todos los turnos del mes para el calendario
-        async function cargarTurnosMesCompleto() {
-            const inicioMes = new Date(mesActual.getFullYear(), mesActual.getMonth(), 1);
-            const finMes = new Date(mesActual.getFullYear(), mesActual.getMonth() + 1, 0);
-            
-            const { data: turnos, error } = await supabase
-                .from('turnos')
-                .select(`
-                    *,
-                    pacientes:dni_paciente (nombre_completo)
-                `)
-            .eq('profesional_id', session.user.id) 
-                .gte('fecha', inicioMes.toISOString().split('T')[0])
-                .lte('fecha', finMes.toISOString().split('T')[0])
-                .order('fecha', { ascending: true })
-                .order('hora', { ascending: true });
-            
-            if (!error) {
-                todosLosTurnos = turnos || [];
-                generarCalendario(mesActual);
-            }
-        }
+      async function cargarTurnosMesCompleto() {
+    // Obtener sesión primero
+    const { data: { session } } = await supabase.auth.getSession();
+    
+    if (!session) {
+        console.error('No hay sesión activa para cargar el calendario');
+        return;
+    }
 
+    const inicioMes = new Date(mesActual.getFullYear(), mesActual.getMonth(), 1);
+    const finMes = new Date(mesActual.getFullYear(), mesActual.getMonth() + 1, 0);
+    
+    const { data: turnos, error } = await supabase
+        .from('turnos')
+        .select(`
+            *,
+            pacientes:dni_paciente (nombre_completo)
+        `)
+        .eq('profesional_id', session.user.id)  // ← Usar el ID real
+        .gte('fecha', inicioMes.toISOString().split('T')[0])
+        .lte('fecha', finMes.toISOString().split('T')[0])
+        .order('fecha', { ascending: true })
+        .order('hora', { ascending: true });
+    
+    if (!error) {
+        todosLosTurnos = turnos || [];
+        generarCalendario(mesActual);
+    } else {
+        console.error('Error cargando turnos del mes:', error);
+    }
+}
         // Generar calendario mensual
         function generarCalendario(fecha) {
             const meses = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 
