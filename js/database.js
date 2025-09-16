@@ -1,4 +1,4 @@
-// database.js - Versión definitiva para GitHub Pages
+// database.js - Versión DEFINITIVA y CORRECTA
 // ===== FUNCIONES PARA PACIENTES =====
 async function obtenerPaciente(dni) {
     const { data, error } = await supabase
@@ -31,7 +31,7 @@ async function guardarPaciente(pacienteData) {
 async function guardarNuevoPaciente(pacienteData) {
     console.log('Guardando paciente:', pacienteData);
     
-    // VERIFICAR SI YA EXISTE (ESTE CÓDIGO DEBE ESTAR DENTRO DE LA FUNCIÓN)
+    // VERIFICAR SI YA EXISTE
     const { data: existe } = await supabase
         .from('pacientes')
         .select('dni')
@@ -41,7 +41,6 @@ async function guardarNuevoPaciente(pacienteData) {
     if (existe) {
         throw new Error('El paciente ya existe en el sistema');
     }
-    // FIN DE VERIFICACIÓN
 
     delete pacienteData.id;
     
@@ -85,12 +84,14 @@ async function guardarProcedimiento(procData) {
         return null;
     }
     return data;
+}
+
 // ===== BÚSQUEDA DE PACIENTES =====
 async function buscarPacientes(termino) {
     const { data, error } = await supabase
         .from('pacientes')
         .select('*')
-        .or(`dni.ilike.%${termino}%,nombre.ilike.%${termino}%`);
+        .or(`dni.ilike.%${termino}%,nombre_completo.ilike.%${termino}%`);
     
     if (error) {
         console.error('Error buscando pacientes:', error);
@@ -98,26 +99,10 @@ async function buscarPacientes(termino) {
     }
     return data;
 }
-}
-// ===== GUARDAR NUEVO PACIENTE =====
-async function guardarNuevoPaciente(pacienteData) {
-    console.log('Guardando paciente:', pacienteData);
-     delete pacienteData.id;
-    const { data, error } = await supabase
-        .from('pacientes')
-        .insert([pacienteData])
-        .select();
-    
-    if (error) {
-        console.error('Error guardando paciente:', error);
-        throw new Error(error.message);
-    }
-    
-    return data[0];
-}
-// ===== EXPORTAR FUNCIONES PARA USO GLOBAL =====
+
+// ===== EXPORTAR TODAS LAS FUNCIONES PARA USO GLOBAL =====
 window.guardarNuevoPaciente = guardarNuevoPaciente;
 window.obtenerPaciente = obtenerPaciente;
 window.guardarTurno = guardarTurno;
-
-
+window.guardarProcedimiento = guardarProcedimiento;
+window.buscarPacientes = buscarPacientes;
