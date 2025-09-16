@@ -164,3 +164,27 @@ function probarResumen() {
         window.sistemaAlertas.enviarResumenMedico();
     }
 }
+// Funcionalidad para el modal de alertas
+document.addEventListener('DOMContentLoaded', function() {
+    const modal = document.getElementById('modal-alertas');
+    const btn = document.getElementById('btn-alertas-sidebar');
+    const span = document.querySelector('.close-modal');
+
+    // Abrir modal al hacer clic en "Alertas"
+    btn.onclick = function(event) {
+        event.preventDefault(); // Evita que el link recargue la página
+        modal.style.display = 'block';
+    }
+
+    // Cerrar modal al hacer clic en la X
+    span.onclick = function() {
+        modal.style.display = 'none';
+    }
+
+    // Cerrar modal al hacer clic fuera de él
+    window.onclick = function(event) {
+        if (event.target == modal) {
+            modal.style.display = 'none';
+        }
+    }
+});
