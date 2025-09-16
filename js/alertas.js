@@ -169,7 +169,10 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('modal-alertas');
     const btn = document.getElementById('btn-alertas-sidebar');
     const span = document.querySelector('.close-modal');
-
+ if (!modal || !btn || !span) {
+        console.log('⏭️ Modal de alertas no encontrado en esta página');
+        return; // Salir si no existe el modal
+    }
     // Abrir modal al hacer clic en "Alertas"
     btn.onclick = function(event) {
         event.preventDefault(); // Evita que el link recargue la página
