@@ -23,48 +23,38 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Ingresando...';
             submitBtn.disabled = true;
             
-            try {
-                console.log('🔐 Intentando login con Supabase Auth:', { email });
-                
-                // ✅ FORMA CORRECTA: Usar Supabase Auth
-                const { data, error } = await supabase.auth.signInWithPassword({
-                    email: email,
-                    password: password
-                });
-                
-                console.log('📦 Respuesta de Supabase Auth:', data, error);
-                
-                if (error) {
-                    throw new Error(error.message);
-                }
-                
-                if (data.user) {
-                    // Login exitoso - Supabase maneja la sesión automáticamente
-                    mostrarExito('¡Login exitoso! Redirigiendo...');
-                     // Vincular usuario de Auth con tu tabla 'profesionales'
-    const { error: upsertError } = await supabase
-    .from('profesionales')
-    .upsert({
-        email: data.user.email,
-        auth_id: data.user.id,
-        nombre: data.user.email.split('@')[0]
-    }, {
-        onConflict: 'email'
+           try {
+    const { data, error } = await supabase.auth.signInWithPassword({
+        email: email,
+        password: password
     });
 
-if (upsertError) {
-    console.error('Error al vincular profesional:', upsertError);
-}
+    if (error) throw new Error(error.message);
 
-setTimeout(() => {
-    window.location.href = 'home.html';
-}, 1000);
+    if (data.user) {
+        mostrarExito('¡Login exitoso! Redirigiendo...');
+        
+        // Vincular usuario con tabla profesionales
+        const { error: upsertError } = await supabase
+            .from('profesionales')
+            .upsert({
+                email: data.user.email,
+                auth_id: data.user.id,
+                nombre: data.user.email.split('@')[0]
+            }, { onConflict: 'email' });
 
+        if (upsertError) {
+            console.error('Error al vincular profesional:', upsertError);
+        }
+
+        setTimeout(() => {
+            window.location.href = 'home.html';
+        }, 1000);
+    }
 } catch (error) {
     console.error('Error en login:', error);
     mostrarError('Error: ' + error.message);
 } finally {
-    // Restaurar botón
     submitBtn.innerHTML = originalText;
     submitBtn.disabled = false;
 }
