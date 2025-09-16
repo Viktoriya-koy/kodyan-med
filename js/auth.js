@@ -108,4 +108,3 @@ function mostrarExito(mensaje) {
         `;
         messageDiv.classList.remove('hidden');
     }
-}
