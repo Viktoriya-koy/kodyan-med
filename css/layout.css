@@ -24,13 +24,11 @@ body {
   line-height: 1.6;
 }
 
-/* Estructura principal */
 .app-container {
   display: flex;
   min-height: 100vh;
 }
 
-/* Barra lateral (Desktop) */
 .sidebar {
   width: var(--sidebar-width);
   background: var(--violeta-primario);
@@ -80,7 +78,6 @@ body {
   font-size: 1.2rem;
 }
 
-/* Contenido principal */
 .main-content {
   flex: 1;
   margin-left: var(--sidebar-width);
@@ -89,7 +86,6 @@ body {
   transition: var(--transicion);
 }
 
-/* Responsive: Móviles */
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
