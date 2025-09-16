@@ -41,7 +41,19 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (data.user) {
                     // Login exitoso - Supabase maneja la sesión automáticamente
                     mostrarExito('¡Login exitoso! Redirigiendo...');
-                    
+                     // Vincular usuario de Auth con tu tabla 'profesionales'
+    const { error: upsertError } = await supabase
+        .from('profesionales')
+        .upsert({
+            email: data.user.email,  // Usamos data.user (no necesita llamar a getUser() again)
+            auth_id: data.user.id,
+            nombre: data.user.email.split('@')[0] // Ejemplo: extrae "vramonellrio" del email
+        }, {
+            onConflict: 'email'  // Si ya existe el email, actualiza el auth_id
+        });
+
+    if (upsertError) {
+        console.error('Error al vincular profesional:', upsertError);
                     setTimeout(() => {
                         window.location.href = 'home.html';
                     }, 1000);
