@@ -1,21 +1,24 @@
 // js/paciente.js
 document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Script de paciente cargado');
+    
     // Obtener DNI de la URL
     const urlParams = new URLSearchParams(window.location.search);
     const dniPaciente = urlParams.get('dni');
 
     if (dniPaciente) {
+        console.log('Buscando paciente con DNI:', dniPaciente);
         cargarDatosPaciente(dniPaciente);
         configurarFormularioEdicion();
     } else {
-        console.error('No se especificó DNI del paciente en la URL');
-        alert('Error: No se especificó paciente');
+        console.error('❌ No se especificó DNI del paciente en la URL');
+        alert('Error: No se especificó paciente. Volvé a la lista de pacientes.');
     }
 });
 
 // Cargar datos del paciente
 async function cargarDatosPaciente(dni) {
-    console.log('Cargando datos para DNI:', dni);
+    console.log('📥 Cargando datos para DNI:', dni);
     
     const { data: paciente, error } = await supabase
         .from('pacientes')
@@ -24,8 +27,13 @@ async function cargarDatosPaciente(dni) {
         .single();
 
     if (error) {
-        console.error('Error cargando paciente:', error);
-        alert('Error al cargar datos del paciente');
+        console.error('❌ Error cargando paciente:', error);
+        alert('Error al cargar datos del paciente: ' + error.message);
+        return;
+    }
+
+    if (!paciente) {
+        alert('⚠️ No se encontró paciente con DNI: ' + dni);
         return;
     }
 
@@ -36,11 +44,18 @@ async function cargarDatosPaciente(dni) {
     document.getElementById('paciente-email').value = paciente.email || '';
     document.getElementById('paciente-obra-social').value = paciente.obra_social || '';
     document.getElementById('paciente-historial').value = paciente.historial_medico || '';
+    
+    console.log('✅ Datos del paciente cargados');
 }
 
 // Configurar formulario de edición
 function configurarFormularioEdicion() {
     const form = document.getElementById('form-editar-paciente');
+    
+    if (!form) {
+        console.error('❌ No se encontró el formulario de edición');
+        return;
+    }
     
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -55,24 +70,30 @@ function configurarFormularioEdicion() {
             telefono: document.getElementById('paciente-telefono').value,
             email: document.getElementById('paciente-email').value,
             obra_social: document.getElementById('paciente-obra-social').value,
-            historial_medico: document.getElementById('paciente-historial').value
+            historial_medico: document.getElementById('paciente-historial').value,
+            updated_at: new Date().toISOString()
         };
 
         const dni = document.getElementById('paciente-dni').value;
 
+        console.log('💾 Guardando cambios para DNI:', dni, datosActualizados);
+        
         const { error } = await supabase
             .from('pacientes')
             .update(datosActualizados)
             .eq('dni', dni);
 
         if (error) {
-            console.error('Error actualizando paciente:', error);
+            console.error('❌ Error actualizando paciente:', error);
             alert('Error al guardar cambios: ' + error.message);
         } else {
+            console.log('✅ Paciente actualizado correctamente');
             alert('✅ Datos actualizados correctamente');
         }
         
         btn.innerHTML = originalText;
         btn.disabled = false;
     });
+    
+    console.log('✅ Formulario de edición configurado');
 }
