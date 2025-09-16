@@ -436,16 +436,11 @@
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-    <script>
-        // Configuración Supabase
-        const supabaseUrl = 'https://qpylzzjxbldtemrgqlja.supabase.co';
-        const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...';
-        const supabase = window.supabase.createClient(supabaseUrl, supabaseKey);
-        
-        let mesActual = new Date();
-        let todosLosTurnos = [];
-
+   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="js/supabase.js"></script>
+<script>
+    let mesActual = new Date();
+    let todosLosTurnos = [];
         // Cargar agenda al iniciar
         document.addEventListener('DOMContentLoaded', function() {
             cargarAgenda('hoy');
