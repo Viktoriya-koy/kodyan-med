@@ -1,5 +1,8 @@
-// auth.js - Versión para Supabase
+// auth.js - Versión CORRECTA para Supabase Auth
 document.addEventListener('DOMContentLoaded', function() {
+    // Verificar si ya hay sesión activa
+    verificarSesionActiva();
+    
     const loginForm = document.getElementById('login-form');
     
     if (loginForm) {
@@ -21,37 +24,32 @@ document.addEventListener('DOMContentLoaded', function() {
             submitBtn.disabled = true;
             
             try {
-                console.log('🔐 Intentando login con Supabase:', { email, password });
+                console.log('🔐 Intentando login con Supabase Auth:', { email });
                 
-                // CONSULTA DIRECTA A SUPABASE - ESTO ES LO NUEVO
-                const { data, error } = await supabase
-                    .from('profesionales')
-                    .select('*')
-                    .eq('email', email)
-                    .eq('password', password)
-                    .single();
+                // ✅ FORMA CORRECTA: Usar Supabase Auth
+                const { data, error } = await supabase.auth.signInWithPassword({
+                    email: email,
+                    password: password
+                });
                 
-                console.log('📦 Respuesta de Supabase:', data, error);
+                console.log('📦 Respuesta de Supabase Auth:', data, error);
                 
                 if (error) {
                     throw new Error(error.message);
                 }
                 
-                if (data) {
-                    // Login exitoso
-                    localStorage.setItem('user', JSON.stringify(data));
+                if (data.user) {
+                    // Login exitoso - Supabase maneja la sesión automáticamente
                     mostrarExito('¡Login exitoso! Redirigiendo...');
                     
                     setTimeout(() => {
                         window.location.href = 'home.html';
                     }, 1000);
-                } else {
-                    mostrarError('Usuario o contraseña incorrectos');
                 }
                 
             } catch (error) {
                 console.error('Error en login:', error);
-                mostrarError('Error de conexión: ' + error.message);
+                mostrarError('Error: ' + error.message);
             } finally {
                 // Restaurar botón
                 submitBtn.innerHTML = originalText;
@@ -61,7 +59,30 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 });
 
-// Las funciones mostrarError y mostrarExito se mantienen igual
+// ✅ Verificar sesión activa al cargar la página
+async function verificarSesionActiva() {
+    const { data } = await supabase.auth.getSession();
+    
+    // Si hay sesión activa y está en login.html, redirigir a home
+    if (data.session && window.location.pathname.includes('login.html')) {
+        window.location.href = 'home.html';
+    }
+    
+    // Si no hay sesión y está en una página protegida, redirigir a login
+    if (!data.session && !window.location.pathname.includes('login.html')) {
+        window.location.href = 'login.html';
+    }
+}
+
+// ✅ Cerrar sesión
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+
+// Las funciones de mensajes se mantienen
 function mostrarError(mensaje) {
     const messageDiv = document.getElementById('login-message');
     if (messageDiv) {
