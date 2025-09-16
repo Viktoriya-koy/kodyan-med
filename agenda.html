@@ -27,6 +27,7 @@
         .container {
             max-width: 1200px;
             margin: 0 auto;
+            margin-left: 250px; padding: 20px;
         }
         
         .header {
@@ -165,6 +166,26 @@
     </style>
 </head>
 <body>
+<!-- Botón de Volver (lo ponemos arriba a la izquierda) -->
+<div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+    <button class="btn" onclick="window.location.href='home.html'" 
+            style="background: var(--violeta-acento); color: white; padding: 10px 15px; border-radius: 50%;">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+</div>
+
+<!-- Barra Lateral (la misma que usas en home.html) -->
+<nav class="navbar" style="position: fixed; left: 0; top: 0; height: 100vh; z-index: 900;">
+    <div class="navbar-brand">
+        <h1>KodyanMED</h1>
+    </div>
+    <ul class="navbar-menu">
+        <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+        <li class="navbar-item"><a href="agenda.html" style="background: rgba(255,255,255,0.3);"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
+        <li class="navbar-item"><a href="#pacientes"><i class="fas fa-user-injured"></i> Pacientes</a></li>
+        <li class="navbar-item"><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
+    </ul>
+</nav>
     <div class="container">
         <div class="header">
             <h1><i class="fas fa-calendar-alt"></i> Agenda Médica</h1>
