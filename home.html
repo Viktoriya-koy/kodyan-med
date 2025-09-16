@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>KodyanMED - Gestión de pacientes</title>
-  <!-- Font Awesome Icons -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <style>
     :root {
@@ -30,7 +28,6 @@
       font-family: 'Poppins', sans-serif;
       background-color: #FAFAFA;
       color: var(--texto);
-      display: flex;
       min-height: 100vh;
     }
 
@@ -81,7 +78,6 @@
 
     /* Contenido principal */
     .main-content {
-      flex: 1;
       padding: 30px;
       overflow-y: auto;
     }
@@ -182,15 +178,13 @@
       .navbar {
         width: 100%;
         padding: 15px;
+        position: relative !important;
+        height: auto !important;
       }
 
-      .navbar-menu {
-        display: flex;
-        overflow-x: auto;
-      }
-
-      .navbar-item {
-        padding: 10px 15px;
+      .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
       }
     }
   </style>
@@ -199,76 +193,76 @@
 </head>
 <body>
 <!-- Barra lateral -->
-<nav class="navbar">
+<nav class="navbar" style="position: fixed; left: 0; top: 0; height: 100vh; z-index: 1000;">
   <div class="navbar-brand">
     <h1>KodyanMED</h1>
   </div>
-<ul class="navbar-menu">
+  <ul class="navbar-menu">
     <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
     <li class="navbar-item"><a href="agenda.html"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
     <li class="navbar-item"><a href="#pacientes" onclick="alert('¡Función en desarrollo! 🚧')"><i class="fas fa-user-injured"></i> Pacientes</a></li>
-    <!-- ¡NO TE OLVIDES DE LA CAMPANITA! --> 
     <li class="navbar-item">
         <a href="#" id="btn-probar-alertas">
             <i class="fas fa-bell"></i> Alertas 🔔
         </a>
     </li>
     <li class="navbar-item"><a href="#configuracion" onclick="alert('¡Función en desarrollo! 🚧')"><i class="fas fa-cog"></i> Configuración</a></li>
-</ul>
-  <!-- Contenido principal -->
-<main class="main-content" style="margin-left: 250px; padding: 30px;">
-    <div class="header">
-      <h2>Bienvenida, Violeta</h2>
-      <p>Gestioná tus turnos y pacientes de forma simple</p>
-    </div>
+  </ul>
+</nav>
 
-    <div class="grid">
-      <!-- Tarjeta de turnos -->
-      <div class="card" id="agenda">
-        <h3><i class="fas fa-plus-circle"></i> Nuevo turno</h3>
-        <form id="form-turno">
-          <div class="form-group">
-            <label>Fecha</label>
-            <input type="date" id="fecha-turno" required>
-          </div>
-          <div class="form-group">
-            <label>Hora</label>
-            <input type="time" id="hora-turno" required>
-          </div>
-          <div class="form-group">
-            <label>DNI del paciente</label>
-            <input type="text" id="dni-paciente" placeholder="Buscar por DNI">
-          </div>
-          <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar turno</button>
-        </form>
-      </div>
+<!-- Contenido principal -->
+<main class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 30px;">
+  <div class="header">
+    <h2>Bienvenida, Violeta</h2>
+    <p>Gestioná tus turnos y pacientes de forma simple</p>
+  </div>
 
-      <!-- Tarjeta de Nuevo Paciente -->  
-      <div class="card">
-        <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
-        <p>Agregar un nuevo paciente al sistema</p>
-        <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'">
-          <i class="fas fa-plus-circle"></i> Agendar Paciente
-        </button>
-      </div>
-
-      <!-- Tarjeta de Búsqueda -->
-      <div class="card" id="pacientes">
-        <h3><i class="fas fa-search"></i> Buscar paciente</h3>
+  <div class="grid">
+    <!-- Tarjeta de turnos -->
+    <div class="card" id="agenda">
+      <h3><i class="fas fa-plus-circle"></i> Nuevo turno</h3>
+      <form id="form-turno">
         <div class="form-group">
-          <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI">
+          <label>Fecha</label>
+          <input type="date" id="fecha-turno" required>
         </div>
-        <button class="btn" id="btn-buscar-paciente">
-          <i class="fas fa-search"></i> Buscar
-        </button>
-      </div>
+        <div class="form-group">
+          <label>Hora</label>
+          <input type="time" id="hora-turno" required>
+        </div>
+        <div class="form-group">
+          <label>DNI del paciente</label>
+          <input type="text" id="dni-paciente" placeholder="Buscar por DNI">
+        </div>
+        <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar turno</button>
+      </form>
     </div>
-  </main>
 
+    <!-- Tarjeta de Nuevo Paciente -->  
+    <div class="card">
+      <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
+      <p>Agregar un nuevo paciente al sistema</p>
+      <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'">
+        <i class="fas fa-plus-circle"></i> Agendar Paciente
+      </button>
+    </div>
 
- <script src="js/supabase.js"></script>
+    <!-- Tarjeta de Búsqueda -->
+    <div class="card" id="pacientes">
+      <h3><i class="fas fa-search"></i> Buscar paciente</h3>
+      <div class="form-group">
+        <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI">
+      </div>
+      <button class="btn" id="btn-buscar-paciente">
+        <i class="fas fa-search"></i> Buscar
+      </button>
+    </div>
+  </div>
+</main>
+
+<script src="js/supabase.js"></script>
 <script src="js/database.js"></script>  
-<script src="js/alertas.js"></script> <!-- El código nuevo VA AQUÍ DENTRO -->     
+<script src="js/alertas.js"></script>     
 <script src="js/app.js"></script>
 </body>
 </html>
