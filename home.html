@@ -207,28 +207,17 @@
     <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
     <li class="navbar-item"><a href="agenda.html"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
     <li class="navbar-item"><a href="#pacientes"><i class="fas fa-user-injured"></i> Pacientes</a></li>
- <li class="navbar-item">
-        <a href="#" id="btn-alertas-sidebar">
-            <i class="fas fa-bell"></i> Alertas 
-            <span class="alert-badge" id="contador-alertas" style="display: none;">0</span>
+    <li class="navbar-item">
+        <a href="#" id="btn-probar-alertas">
+            <i class="fas fa-bell"></i> Probar Alertas
         </a>
     </li>
     <li class="navbar-item"><a href="#"><i class="fas fa-cog"></i> Configuración</a></li>
   </ul>
- <div class="alertas-sidebar">
-    <h4><i class="fas fa-bell"></i> Alertas</h4>
-    <button class="btn" onclick="probarRecordatorios()">
-        <i class="fas fa-envelope"></i> Probar Recordatorios
-    </button>
-    <button class="btn" onclick="probarResumen()">
-        <i class="fas fa-clipboard-list"></i> Probar Resumen
-    </button>
-    <div id="estado-alertas"></div>
-  </div>
 </nav>
 
   <!-- Contenido principal -->
-  <main class="main-content">
+<main class="main-content" style="margin-left: 250px; padding: 30px;">
     <div class="header">
       <h2>Bienvenida, Violeta</h2>
       <p>Gestioná tus turnos y pacientes de forma simple</p>
@@ -277,25 +266,7 @@
     </div>
   </main>
 
-<!-- Modal de Alertas (está oculto por defecto) -->
-<div id="modal-alertas" class="modal">
-    <div class="modal-content">
-        <span class="close-modal">&times;</span>
-        <h3><i class="fas fa-bell"></i> Sistema de Alertas</h3>
-        <p>Gestión de recordatorios y notificaciones</p>
-        
-        <div class="modal-actions">
-            <button class="btn" onclick="probarRecordatorios()">
-                <i class="fas fa-envelope"></i> Probar Recordatorios
-            </button>
-            <button class="btn" onclick="probarResumen()">
-                <i class="fas fa-clipboard-list"></i> Probar Resumen Diario
-            </button>
-        </div>
-        
-        <div id="estado-alertas" style="margin-top: 15px;"></div>
-    </div>
-</div>
+
  <script src="js/supabase.js"></script>
 <script src="js/database.js"></script>  
 <script src="js/alertas.js"></script> <!-- El código nuevo VA AQUÍ DENTRO -->     
