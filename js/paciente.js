@@ -37,17 +37,63 @@ async function cargarDatosPaciente(dni) {
         return;
     }
 
-    // Llenar formulario
-    document.getElementById('paciente-nombre').value = paciente.nombre_completo || '';
-    document.getElementById('paciente-dni').value = paciente.dni || '';
-    document.getElementById('paciente-telefono').value = paciente.telefono || '';
-    document.getElementById('paciente-email').value = paciente.email || '';
-    document.getElementById('paciente-obra-social').value = paciente.obra_social || '';
-    document.getElementById('paciente-historial').value = paciente.historial_medico || '';
+   // Llenar formulario PERO hacer los campos readonly inicialmente
+document.getElementById('paciente-nombre').value = paciente.nombre_completo || '';
+document.getElementById('paciente-dni').value = paciente.dni || '';
+document.getElementById('paciente-telefono').value = paciente.telefono || '';
+document.getElementById('paciente-email').value = paciente.email || '';
+document.getElementById('paciente-obra-social').value = paciente.obra_social || '';
+document.getElementById('paciente-historial').value = paciente.historial_medico || '';
+
+// Hacer todos los campos readonly inicialmente (excepto DNI)
+const campos = ['nombre', 'telefono', 'email', 'obra-social', 'historial'];
+campos.forEach(campo => {
+    const element = document.getElementById('paciente-' + campo);
+    if (element) {
+        element.readOnly = true;
+    }
+});
+
+// Agregar botón de editar
+agregarBotonEditar();
     
     console.log('✅ Datos del paciente cargados');
 }
-
+function agregarBotonEditar() {
+    const form = document.getElementById('form-editar-paciente');
+    
+    // Crear botón de editar
+    const btnEditar = document.createElement('button');
+    btnEditar.type = 'button';
+    btnEditar.className = 'btn';
+    btnEditar.innerHTML = '<i class="fas fa-edit"></i> Habilitar Edición';
+    btnEditar.style.marginTop = '15px';
+    
+    btnEditar.onclick = function() {
+        // Campos a habilitar/deshabilitar
+        const campos = ['nombre', 'telefono', 'email', 'obra-social', 'historial'];
+        const estaEditando = btnEditar.innerHTML.includes('Habilitar');
+        
+        campos.forEach(campo => {
+            const element = document.getElementById('paciente-' + campo);
+            if (element) {
+                element.readOnly = !estaEditando;
+            }
+        });
+        
+        // Cambiar texto del botón
+        if (estaEditando) {
+            btnEditar.innerHTML = '<i class="fas fa-lock"></i> Bloquear Edición';
+            btnEditar.style.background = '#ff4757';
+        } else {
+            btnEditar.innerHTML = '<i class="fas fa-edit"></i> Habilitar Edición';
+            btnEditar.style.background = '';
+        }
+    };
+    
+    // Agregar botón al formulario
+    form.appendChild(btnEditar);
+}
 // Configurar formulario de edición
 function configurarFormularioEdicion() {
     const form = document.getElementById('form-editar-paciente');
@@ -72,7 +118,7 @@ function configurarFormularioEdicion() {
             obra_social: document.getElementById('paciente-obra-social').value,
             historial_medico: document.getElementById('paciente-historial').value,
             updated_at: new Date().toISOString()
-        };
+
 
         const dni = document.getElementById('paciente-dni').value;
 
@@ -89,6 +135,22 @@ function configurarFormularioEdicion() {
         } else {
             console.log('✅ Paciente actualizado correctamente');
             alert('✅ Datos actualizados correctamente');
+  // 👇 NUEVO CÓDIGO: Volver a modo lectura después de guardar
+        const campos = ['nombre', 'telefono', 'email', 'obra-social', 'historial'];
+        campos.forEach(campo => {
+            const element = document.getElementById('paciente-' + campo);
+            if (element) {
+                element.readOnly = true;
+            }
+        });
+        
+        // Resetear botón de edición
+        const btnEditar = document.querySelector('#form-editar-paciente button[type="button"]');
+        if (btnEditar) {
+            btnEditar.innerHTML = '<i class="fas fa-edit"></i> Habilitar Edición';
+            btnEditar.style.background = '';
+        }
+    }
         }
         
         btn.innerHTML = originalText;
