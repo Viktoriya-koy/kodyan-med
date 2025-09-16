@@ -2,7 +2,10 @@
 // ===== EVENTOS PARA BOTONES - SE EJECUTA EN TODAS LAS PÁGINAS =====
 document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ DOM cargado, registrando eventos...");
-    
+     if (window.location.pathname.includes('patient-profile.html')) {
+        console.log('🩺 Detectada página de perfil de paciente - omitiendo configuración general');
+        return; // ← No ejecutar el resto del código
+    }
     // ===== DEBUG: VERIFICAR QUE LOS ELEMENTOS EXISTAN =====
     console.log("🔍 Buscando elementos...");
     console.log("btn-agendar-paciente:", document.getElementById('btn-agendar-paciente'));
