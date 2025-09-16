@@ -503,17 +503,26 @@
                     fechaFin = fechaInicio;
             }
             
-            const { data: turnos, error } = await supabase
-                .from('turnos')
-                .select(`
-                    *,
-                    pacientes:dni_paciente (nombre_completo, dni, telefono)
-                `)
-                .eq('profesional_id', 1)
-                .gte('fecha', fechaInicio)
-                .lte('fecha', fechaFin)
-                .order('fecha', { ascending: true })
-                .order('hora', { ascending: true });
+          // Primero obtener la sesión activa
+const { data: { session } } = await supabase.auth.getSession();
+
+if (!session) {
+    console.error('No hay sesión activa');
+    return;
+}
+
+// Usar el usuario autenticado en la consulta
+const { data: turnos, error } = await supabase
+  .from('turnos')
+  .select(`
+    *,
+    pacientes:dni_paciente (nombre_completo, dni, telefono)
+  `)
+  .eq('profesional_id', session.user.id)  // ← Usar el ID del usuario logueado
+  .gte('fecha', fechaInicio)
+  .lte('fecha', fechaFin)
+  .order('fecha', { ascending: true })
+  .order('hora', { ascending: true });
             
             if (error) {
                 console.error('Error cargando agenda:', error);
