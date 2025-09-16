@@ -1,0 +1,106 @@
+/* css/layout.css */
+:root {
+  --sidebar-width: 250px;
+  --violeta-primario: #D1C4E9;
+  --violeta-secundario: #EDE7F6;
+  --violeta-acento: #B39DDB;
+  --blanco: #FFFFFF;
+  --texto: #333333;
+  --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --transicion: all 0.3s ease;
+  --border-radius: 12px;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #FAFAFA;
+  color: var(--texto);
+  line-height: 1.6;
+}
+
+/* Estructura principal */
+.app-container {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Barra lateral (Desktop) */
+.sidebar {
+  width: var(--sidebar-width);
+  background: var(--violeta-primario);
+  padding: 25px 0;
+  height: 100vh;
+  position: fixed;
+  left: 0;
+  top: 0;
+  z-index: 1000;
+  box-shadow: var(--sombra-suave);
+}
+
+.sidebar-brand {
+  text-align: center;
+  margin-bottom: 30px;
+  padding: 0 20px;
+}
+
+.sidebar-brand h1 {
+  font-size: 1.5rem;
+  color: var(--texto);
+  font-weight: 600;
+}
+
+.sidebar-menu {
+  list-style: none;
+}
+
+.sidebar-item {
+  padding: 15px 25px;
+  transition: var(--transicion);
+}
+
+.sidebar-item:hover {
+  background: var(--violeta-acento);
+}
+
+.sidebar-item a {
+  color: var(--texto);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sidebar-item i {
+  font-size: 1.2rem;
+}
+
+/* Contenido principal */
+.main-content {
+  flex: 1;
+  margin-left: var(--sidebar-width);
+  width: calc(100% - var(--sidebar-width));
+  padding: 30px;
+  transition: var(--transicion);
+}
+
+/* Responsive: Móviles */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 15px;
+  }
+
+  .main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 15px;
+  }
+}
