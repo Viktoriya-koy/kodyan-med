@@ -563,7 +563,7 @@ const { data: turnos, error } = await supabase
                     *,
                     pacientes:dni_paciente (nombre_completo)
                 `)
-                .eq('profesional_id', 1)
+            .eq('profesional_id', session.user.id) 
                 .gte('fecha', inicioMes.toISOString().split('T')[0])
                 .lte('fecha', finMes.toISOString().split('T')[0])
                 .order('fecha', { ascending: true })
