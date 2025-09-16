@@ -188,3 +188,22 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 });
+// Función para probar TODO el sistema de alertas
+function probarSistemaAlertas() {
+    // Ejecuta ambas pruebas
+    probarRecordatorios();
+    probarResumen();
+    // Muestra un mensaje de confirmación
+    alert("✅ Sistema de alertas probado. Revisa la consola y tu email.");
+}
+
+// Asigna la función al botón de la sidebar
+document.addEventListener('DOMContentLoaded', function() {
+    const btnAlertas = document.getElementById('btn-probar-alertas');
+    if (btnAlertas) {
+        btnAlertas.addEventListener('click', function(event) {
+            event.preventDefault(); // Evita que el link recargue
+            probarSistemaAlertas();
+        });
+    }
+});
