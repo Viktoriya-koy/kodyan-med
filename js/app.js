@@ -273,3 +273,4 @@ async function cargarProximosTurnos() {
 
 // ===== CONSOLA GENERAL =====
 console.log("✅ app.js cargado correctamente en:", window.location.pathname);
+} 
