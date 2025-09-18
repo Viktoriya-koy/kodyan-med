@@ -139,16 +139,15 @@
 
     <!-- Pestañas -->
     <div class="tabs">
-      <button class="tab-btn active" onclick="cambiarPestaña(1)">
+      <button class="tab-btn active" data-tab="1">
         <i class="fas fa-user"></i> Datos
       </button>
-      <button class="tab-btn" onclick="cambiarPestaña(2)">
-        <i class="fas fa-tooth"></i> Odontograma
+     <button class="tab-btn active" data-tab="2">
       </button>
-      <button class="tab-btn" onclick="cambiarPestaña(3)">
+     <button class="tab-btn active" data-tab="3">
         <i class="fas fa-procedures"></i> Procedimientos
       </button>
-      <button class="tab-btn" onclick="cambiarPestaña(4)">
+      <button class="tab-btn active" data-tab="4">
         <i class="fas fa-pills"></i> Medicamentos
       </button>
     </div>
@@ -492,7 +491,10 @@
 let dienteActual = null;
 
 // Odontograma interactivo MEJORADO
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function()  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      const numero = this.getAttribute('data-tab');
+      cambiarPestaña(numero);{
   const dientes = document.querySelectorAll('.diente');
   
   dientes.forEach(diente => {
