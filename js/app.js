@@ -217,11 +217,65 @@ async function cargarAgendaHoy() {
         console.error('Error en cargarAgendaHoy:', error);
     }
 }
+// ===== PRÓXIMOS TURNOS (mañana en adelante) =====
+async function cargarProximosTurnos() {
+    try {
+        const manana = new Date();
+        manana.setDate(manana.getDate() + 1);
+        const fechaManana = manana.toISOString().split('T')[0];
+        
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) return;
 
-// Ejecutar al cargar la página en home.html
-if (window.location.pathname.includes('home.html')) {
-    cargarAgendaHoy();
+        const { data: turnos, error } = await supabase
+            .from('turnos')
+            .select(`
+                *,
+                pacientes:dni_paciente (nombre_completo)
+            `)
+            .eq('profesional_id', session.user.id)
+            .gte('fecha', fechaManana)
+            .order('fecha', { ascending: true })
+            .order('hora', { ascending: true })
+            .limit(5); // Solo 5 próximos turnos
+
+        if (error) {
+            console.error('Error cargando próximos turnos:', error);
+            return;
+        }
+
+        const container = document.getElementById('proximos-turnos');
+        if (!container) return;
+
+        if (turnos.length === 0) {
+            container.innerHTML = '<p>🎉 No hay próximos turnos</p>';
+            return;
+        }
+
+        let html = '';
+        turnos.forEach(turno => {
+            const fechaFormateada = new Date(turno.fecha).toLocaleDateString('es-AR');
+            html += `
+                <div style="padding: 8px; margin: 4px 0; background: var(--violeta-secundario); 
+                            border-radius: 6px; font-size: 14px;">
+                    <strong>📅 ${fechaFormateada}</strong> 
+                    <strong>⏰ ${turno.hora}</strong>
+                    <br>
+                    <span>👤 ${turno.pacientes?.nombre_completo || 'N/A'}</span>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error en cargarProximosTurnos:', error);
+    }
 }
 
+// Actualizar la función que se ejecuta al cargar:
+if (window.location.pathname.includes('home.html')) {
+    cargarAgendaHoy();
+    cargarProximosTurnos(); // ← Agregar esta línea
+}
 // ===== CONSOLA GENERAL =====
 console.log("✅ app.js cargado correctamente en:", window.location.pathname);
