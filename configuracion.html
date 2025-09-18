@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Configuración - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <!-- Botón de Volver -->
+  <div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+    <button class="btn" onclick="window.location.href='home.html'" 
+            style="background: var(--violeta-acento); color: white; padding: 10px 15px; border-radius: 50%;">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+  </div>
+
+  <!-- Barra lateral -->
+  <nav class="navbar" style="position: fixed; left: 0; top: 0; height: 100vh; z-index: 1000;">
+    <div class="navbar-brand">
+      <h1>KodyanMED</h1>
+    </div>
+    <ul class="navbar-menu">
+      <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+      <li class="navbar-item"><a href="agenda.html"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
+      <li class="navbar-item"><a href="pacientes.html"><i class="fas fa-user-injured"></i> Pacientes</a></li>
+      <li class="navbar-item"><a href="#alertas"><i class="fas fa-bell"></i> Alertas 🔔</a></li>
+      <li class="navbar-item"><a href="configuracion.html" style="background: var(--violeta-acento);"><i class="fas fa-cog"></i> Configuración</a></li>
+      <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+    </ul>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 30px;">
+    <div class="header">
+      <h2><i class="fas fa-cog"></i> Configuración del Sistema</h2>
+      <p>Personalizá KodyanMED a tu medida</p>
+    </div>
+
+    <div class="grid" style="grid-template-columns: repeat(2, 1fr); gap: 20px;">
+      <!-- Tarjeta 1: Perfil Profesional -->
+      <div class="card">
+        <h3><i class="fas fa-user-md"></i> Mi Perfil</h3>
+        <div class="form-group">
+          <label>Nombre Completo</label>
+          <input type="text" id="nombre-profesional" placeholder="Dra. Violeta" class="compact-input">
+        </div>
+        <div class="form-group">
+          <label>Especialidad</label>
+          <input type="text" id="especialidad" placeholder="Odontología" class="compact-input">
+        </div>
+        <div class="form-group">
+          <label>Teléfono</label>
+          <input type="tel" id="telefono-profesional" placeholder="2664-123456" class="compact-input">
+        </div>
+        <button class="btn" onclick="guardarPerfil()">
+          <i class="fas fa-save"></i> Guardar Perfil
+        </button>
+      </div>
+
+      <!-- Tarjeta 2: Alertas y Notificaciones -->
+      <div class="card">
+        <h3><i class="fas fa-bell"></i> Alertas</h3>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="alertas-email" checked> 
+            Enviar recordatorios por email
+          </label>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="alertas-sms"> 
+            Enviar recordatorios por SMS
+          </label>
+        </div>
+        <div class="form-group">
+          <label>Horario de alertas</label>
+          <select id="hora-alertas" class="compact-input">
+            <option value="09:00">09:00 AM</option>
+            <option value="12:00">12:00 PM</option>
+            <option value="18:00">06:00 PM</option>
+          </select>
+        </div>
+        <button class="btn" onclick="guardarAlertas()">
+          <i class="fas fa-save"></i> Guardar Preferencias
+        </button>
+      </div>
+
+      <!-- Tarjeta 3: Personalización -->
+      <div class="card">
+        <h3><i class="fas fa-palette"></i> Apariencia</h3>
+        <div class="form-group">
+          <label>Tema de color</label>
+          <select id="tema-color" class="compact-input">
+            <option value="violeta">Violeta (default)</option>
+            <option value="azul">Azul Profesional</option>
+            <option value="verde">Verde Relajante</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>
+            <input type="checkbox" id="modo-oscuro"> 
+            Modo oscuro
+          </label>
+        </div>
+        <button class="btn" onclick="guardarApariencia()">
+          <i class="fas fa-save"></i> Aplicar Cambios
+        </button>
+      </div>
+
+      <!-- Tarjeta 4: Backup y Datos -->
+      <div class="card">
+        <h3><i class="fas fa-database"></i> Datos y Backup</h3>
+        <button class="btn" style="margin-bottom: 10px;" onclick="exportarDatos()">
+          <i class="fas fa-download"></i> Exportar Datos
+        </button>
+        <button class="btn" style="margin-bottom: 10px;" onclick="importarDatos()">
+          <i class="fas fa-upload"></i> Importar Datos
+        </button>
+        <button class="btn" style="background: #ff4757; color: white;" onclick="limpiarDatos()">
+          <i class="fas fa-trash"></i> Limpiar Datos de Demo
+        </button>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  
+  <script>
+  // Funciones de configuración
+  function guardarPerfil() {
+    alert('✅ Perfil guardado (función en desarrollo)');
+  }
+
+  function guardarAlertas() {
+    alert('✅ Preferencias de alertas guardadas');
+  }
+
+  function guardarApariencia() {
+    alert('✅ Cambios de apariencia aplicados');
+  }
+
+  function exportarDatos() {
+    alert('📦 Exportando datos...');
+  }
+
+  function importarDatos() {
+    alert('📤 Importando datos...');
+  }
+
+  function limpiarDatos() {
+    if (confirm('⚠️ ¿Estás segura de que querés limpiar todos los datos de demo?')) {
+      alert('🧹 Datos de demo eliminados');
+    }
+  }
+  </script>
+</body>
+</html>
