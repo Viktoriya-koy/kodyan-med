@@ -270,7 +270,7 @@ async function cargarProximosTurnos() {
         console.error('Error en cargarProximosTurnos:', error);
     }
 }
-}; 
+}); 
 
 // ===== FUNCIONES DE EMERGENCIA =====
 function guardarTurnoEmergencia(turnoData) {
