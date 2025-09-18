@@ -225,87 +225,91 @@
     <p>Gestioná tus turnos y pacientes de forma simple</p>
   </div>
 
-  <div class="grid">
-    <!-- FILA 1: VISIÓN GENERAL -->
+  <!-- FILA 1: 3 TARJETAS -->
+  <div class="grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
     <!-- Agenda de Hoy -->
-    <div class="card">
+    <div class="card" style="min-height: 200px;">
       <h3><i class="fas fa-calendar-day"></i> Agenda de Hoy</h3>
-      <div id="agenda-hoy">
+      <div id="agenda-hoy" style="max-height: 120px; overflow-y: auto;">
         <p class="loading">Cargando turnos de hoy...</p>
       </div>
     </div>
 
-    <!-- Próximos Turnos (mañana en adelante) -->
-    <div class="card">
+    <!-- Próximos Turnos -->
+    <div class="card" style="min-height: 200px;">
       <h3><i class="fas fa-clock"></i> Próximos Turnos</h3>
-      <div id="proximos-turnos">
+      <div id="proximos-turnos" style="max-height: 120px; overflow-y: auto;">
         <p class="loading">Cargando próximos turnos...</p>
       </div>
     </div>
 
     <!-- Estadísticas -->
-    <div class="card">
+    <div class="card" style="min-height: 200px;">
       <h3><i class="fas fa-chart-pie"></i> Hoy</h3>
       <div id="estadisticas-hoy">
-        <div style="display: flex; justify-content: space-around; text-align: center;">
+        <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 15px;">
           <div>
-            <h4 style="color: var(--violeta-acento);">0</h4>
+            <h4 style="color: var(--violeta-acento); font-size: 1.5rem; margin: 5px 0;">0</h4>
             <small>Total</small>
           </div>
           <div>
-            <h4 style="color: var(--violeta-acento);">0</h4>
+            <h4 style="color: var(--violeta-acento); font-size: 1.5rem; margin: 5px 0;">0</h4>
             <small>Confirmados</small>
           </div>
           <div>
-            <h4 style="color: var(--violeta-acento);">0</h4>
+            <h4 style="color: var(--violeta-acento); font-size: 1.5rem; margin: 5px 0;">0</h4>
             <small>Pendientes</small>
           </div>
         </div>
       </div>
     </div>
+  </div>
 
-    <!-- FILA 2: ACCIONES -->
+  <!-- FILA 2: 3 TARJETAS -->
+  <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
     <!-- Nuevo Turno -->
-    <div class="card" id="agenda">
+    <div class="card" id="agenda" style="min-height: 200px;">
       <h3><i class="fas fa-plus-circle"></i> Nuevo turno</h3>
       <form id="form-turno">
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 10px;">
           <label>Fecha</label>
-          <input type="date" id="fecha-turno" required>
+          <input type="date" id="fecha-turno" required style="padding: 8px;">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 10px;">
           <label>Hora</label>
-          <input type="time" id="hora-turno" required>
+          <input type="time" id="hora-turno" required style="padding: 8px;">
         </div>
-        <div class="form-group">
+        <div class="form-group" style="margin-bottom: 10px;">
           <label>DNI del paciente</label>
-          <input type="text" id="dni-paciente" placeholder="Buscar por DNI">
+          <input type="text" id="dni-paciente" placeholder="Buscar por DNI" style="padding: 8px;">
         </div>
-        <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar turno</button>
+        <button type="submit" class="btn" style="padding: 8px 12px; font-size: 14px;">
+          <i class="fas fa-save"></i> Guardar turno
+        </button>
       </form>
     </div>
 
     <!-- Buscar Paciente -->
-    <div class="card" id="pacientes">
+    <div class="card" id="pacientes" style="min-height: 200px;">
       <h3><i class="fas fa-search"></i> Buscar paciente</h3>
-      <div class="form-group">
-        <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI">
+      <div class="form-group" style="margin-bottom: 10px;">
+        <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI" style="padding: 8px;">
       </div>
-      <button class="btn" id="btn-buscar-paciente">
+      <button class="btn" id="btn-buscar-paciente" style="padding: 8px 12px; font-size: 14px;">
         <i class="fas fa-search"></i> Buscar
       </button>
-      <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
-        <a href="#" id="btn-ficha-completa" class="btn" style="background: var(--violeta-acento); color: white;">
+      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
+        <a href="#" id="btn-ficha-completa" class="btn" style="background: var(--violeta-acento); color: white; padding: 8px 12px; font-size: 14px;">
           <i class="fas fa-file-medical"></i> Ficha Completa
         </a>
       </div>
     </div>
 
     <!-- Nuevo Paciente -->
-    <div class="card">
+    <div class="card" style="min-height: 200px;">
       <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
-      <p>Agregar un nuevo paciente al sistema</p>
-      <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'">
+      <p style="margin-bottom: 15px; font-size: 14px;">Agregar un nuevo paciente al sistema</p>
+      <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'" style="padding: 8px 12px; font-size: 14px;">
         <i class="fas fa-plus-circle"></i> Agendar Paciente
       </button>
     </div>
