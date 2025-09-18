@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     /* Estilos para las pestañas */
     .tabs {
@@ -38,15 +39,14 @@
     
     .tab-content.active {
       display: block;
-      animation: fadeIn 0.3s ease;
+      animation: fadeIn 0.5s ease;
     }
     
     @keyframes fadeIn {
-      from { opacity: 0; }
-      to { opacity: 1; }
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
   <div class="container">
@@ -56,13 +56,13 @@
       <a href="home.html" class="btn"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
     </header>
 
-    <!-- Pestañas -->
+    <!-- Pestañas de navegación -->
     <div class="tabs">
       <button class="tab-btn active" onclick="cambiarPestaña('datos')">
         <i class="fas fa-user"></i> Datos Principales
       </button>
       <button class="tab-btn" onclick="cambiarPestaña('procedimientos')">
-        <i class="fas fa-procedures"></i> Procedimientos
+        <i class="fas fa-stethoscope"></i> Procedimientos
       </button>
       <button class="tab-btn" onclick="cambiarPestaña('medicamentos')">
         <i class="fas fa-pills"></i> Medicamentos
@@ -71,8 +71,9 @@
 
     <!-- Pestaña 1: Datos Principales -->
     <div id="tab-datos" class="tab-content active">
+      <!-- Datos Básicos -->
       <div class="card">
-        <h2>Datos Personales</h2>
+        <h2><i class="fas fa-user"></i> Datos Personales</h2>
         <form id="form-editar-paciente">
           <div class="grid">
             <div class="form-group">
@@ -83,14 +84,30 @@
               <label><strong>DNI:</strong></label>
               <input type="text" id="paciente-dni" name="dni" class="editable-field" readonly>
             </div>
-            <!-- ... resto de datos personales ... -->
+            <div class="form-group">
+              <label><strong>Teléfono:</strong></label>
+              <input type="tel" id="paciente-telefono" name="telefono" class="editable-field">
+            </div>
+            <div class="form-group">
+              <label><strong>Email:</strong></label>
+              <input type="email" id="paciente-email" name="email" class="editable-field">
+            </div>
+            <div class="form-group">
+              <label><strong>Obra Social:</strong></label>
+              <input type="text" id="paciente-obra-social" name="obra_social" class="editable-field">
+            </div>
+            <div class="form-group">
+              <label><strong>Historial Médico:</strong></label>
+              <textarea id="paciente-historial" name="historial_medico" class="editable-field" rows="3"></textarea>
+            </div>
           </div>
           <button type="submit" class="btn mt-20"><i class="fas fa-save"></i> Guardar Cambios</button>
         </form>
       </div>
 
+      <!-- Turnos -->
       <div class="card">
-        <h2>Turnos</h2>
+        <h2><i class="fas fa-calendar"></i> Turnos</h2>
         <table>
           <thead>
             <tr>
@@ -100,7 +117,7 @@
             </tr>
           </thead>
           <tbody id="tabla-turnos">
-            <!-- Los turnos se cargan con JavaScript -->
+            <tr><td colspan="3">Cargando turnos...</td></tr>
           </tbody>
         </table>
       </div>
@@ -108,8 +125,9 @@
 
     <!-- Pestaña 2: Procedimientos -->
     <div id="tab-procedimientos" class="tab-content">
+      <!-- Procedimientos Realizados -->
       <div class="card">
-        <h2>Procedimientos Realizados</h2>
+        <h2><i class="fas fa-stethoscope"></i> Procedimientos Realizados</h2>
         <table>
           <thead>
             <tr>
@@ -120,23 +138,41 @@
             </tr>
           </thead>
           <tbody id="tabla-procedimientos">
-            <!-- Los procedimientos se cargan con JavaScript -->
+            <tr><td colspan="4">Cargando procedimientos...</td></tr>
           </tbody>
         </table>
       </div>
 
+      <!-- Formulario para agregar procedimiento -->
       <div class="card">
-        <h2>Agregar Procedimiento</h2>
+        <h2><i class="fas fa-plus-circle"></i> Agregar Procedimiento</h2>
         <form id="form-procedimiento">
-          <!-- ... formulario de procedimientos ... -->
+          <div class="form-group">
+            <label>Fecha</label>
+            <input type="date" id="fecha-procedimiento" required>
+          </div>
+          <div class="form-group">
+            <label>Procedimiento</label>
+            <input type="text" id="tipo-procedimiento" required>
+          </div>
+          <div class="form-group">
+            <label>Detalles</label>
+            <textarea id="detalles-procedimiento"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Subir imagen (radiografía/foto)</label>
+            <input type="file" id="imagen-procedimiento">
+          </div>
+          <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar Procedimiento</button>
         </form>
       </div>
     </div>
 
     <!-- Pestaña 3: Medicamentos -->
     <div id="tab-medicamentos" class="tab-content">
+      <!-- Medicamentos -->
       <div class="card">
-        <h2>Medicamentos</h2>
+        <h2><i class="fas fa-pills"></i> Medicamentos</h2>
         <table>
           <thead>
             <tr>
@@ -148,26 +184,50 @@
             </tr>
           </thead>
           <tbody id="tabla-medicamentos">
-            <!-- Los medicamentos se cargan con JavaScript -->
+            <tr><td colspan="5">Cargando medicamentos...</td></tr>
           </tbody>
         </table>
       </div>
 
+      <!-- Formulario para agregar medicamento -->
       <div class="card">
-        <h2>Agregar Medicamento</h2>
+        <h2><i class="fas fa-plus-circle"></i> Agregar Medicamento</h2>
         <form id="form-medicamento">
-          <!-- ... formulario de medicamentos ... -->
+          <div class="form-group">
+            <label>Medicamento</label>
+            <input type="text" id="nombre-medicamento" required>
+          </div>
+          <div class="form-group">
+            <label>Dosis</label>
+            <input type="text" id="dosis-medicamento" placeholder="Ej: 500mg" required>
+          </div>
+          <div class="form-group">
+            <label>Frecuencia</label>
+            <input type="text" id="frecuencia-medicamento" placeholder="Ej: Cada 8 horas" required>
+          </div>
+          <div class="form-group">
+            <label>Fecha inicio</label>
+            <input type="date" id="inicio-medicamento" required>
+          </div>
+          <div class="form-group">
+            <label>Fecha fin (opcional)</label>
+            <input type="date" id="fin-medicamento">
+          </div>
+          <button type="submit" class="btn"><i class="fas fa-save"></i> Guardar Medicamento</button>
         </form>
       </div>
     </div>
   </div>
 
   <script src="js/supabase.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/app.js"></script>
   <script src="js/paciente.js"></script>
+  
   <script>
-  // Función para cambiar pestañas
-  function cambiarPestaña(pestaña) {
-    // Ocultar todas las pestañas
+  // Función para cambiar entre pestañas
+  function cambiarPestaña(pestañaId) {
+    // Ocultar todos los contenidos
     document.querySelectorAll('.tab-content').forEach(tab => {
       tab.classList.remove('active');
     });
@@ -177,11 +237,19 @@
       btn.classList.remove('active');
     });
     
-    // Mostrar pestaña seleccionada
-    document.getElementById('tab-' + pestaña).classList.add('active');
+    // Mostrar la pestaña seleccionada
+    document.getElementById('tab-' + pestañaId).classList.add('active');
     
-    // Activar botón seleccionado
-    document.querySelector(`.tab-btn[onclick="cambiarPestaña('${pestaña}')"]`).classList.add('active');
+    // Activar el botón seleccionado
+    document.querySelector(`.tab-btn[onclick="cambiarPestaña('${pestañaId}')"]`).classList.add('active');
+    
+    // Cargar datos específicos de la pestaña si es necesario
+    if (pestañaId === 'procedimientos') {
+      // cargarProcedimientos(); // ← Implementar después
+    } else if (pestañaId === 'medicamentos') {
+      const dni = document.getElementById('paciente-dni').value;
+      if (dni) cargarMedicamentos(dni);
+    }
   }
   </script>
 </body>
