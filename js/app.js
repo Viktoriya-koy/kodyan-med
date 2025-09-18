@@ -270,7 +270,7 @@ async function cargarProximosTurnos() {
         console.error('Error en cargarProximosTurnos:', error);
     }
 }
-}); 
+}; 
 // ===== CONSOLA GENERAL =====
 console.log("✅ app.js cargado correctamente en:", window.location.pathname);
 // ===== FUNCIONES DE EMERGENCIA =====
