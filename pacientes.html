@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Pacientes - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <!-- Botón de Volver -->
+  <div style="position: fixed; top: 20px; left: 20px; z-index: 1000;">
+    <button class="btn" onclick="window.location.href='home.html'" 
+            style="background: var(--violeta-acento); color: white; padding: 10px 15px; border-radius: 50%;">
+        <i class="fas fa-arrow-left"></i>
+    </button>
+  </div>
+
+  <!-- Barra lateral -->
+  <nav class="navbar" style="position: fixed; left: 0; top: 0; height: 100vh; z-index: 1000;">
+    <div class="navbar-brand">
+      <h1>KodyanMED</h1>
+    </div>
+    <ul class="navbar-menu">
+      <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+      <li class="navbar-item"><a href="agenda.html"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
+      <li class="navbar-item"><a href="pacientes.html" style="background: var(--violeta-acento);"><i class="fas fa-user-injured"></i> Pacientes</a></li>
+      <li class="navbar-item"><a href="#" id="btn-probar-alertas"><i class="fas fa-bell"></i> Alertas 🔔</a></li>
+      <li class="navbar-item"><a href="#configuracion" onclick="alert('¡Función en desarrollo! 🚧')"><i class="fas fa-cog"></i> Configuración</a></li>
+      <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+    </ul>
+  </nav>
+
+  <!-- Contenido principal -->
+  <main class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 30px;">
+    <div class="header">
+      <h2><i class="fas fa-user-injured"></i> Gestión de Pacientes</h2>
+      <p>Administrá toda la información de tus pacientes</p>
+    </div>
+
+    <div class="grid" style="grid-template-columns: repeat(3, 1fr); gap: 20px;">
+      <!-- Tarjeta 1: Buscar Paciente -->
+      <div class="card">
+        <h3><i class="fas fa-search"></i> Buscar Paciente</h3>
+        <div class="form-group">
+          <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI" class="compact-input">
+        </div>
+        <button class="btn" id="btn-buscar-paciente">
+          <i class="fas fa-search"></i> Buscar
+        </button>
+        <div id="resultados-busqueda" style="margin-top: 15px; max-height: 200px; overflow-y: auto;"></div>
+      </div>
+
+      <!-- Tarjeta 2: Nuevo Paciente -->
+      <div class="card">
+        <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
+        <p style="margin-bottom: 15px;">Agregar un nuevo paciente al sistema</p>
+        <button class="btn" onclick="window.location.href='nuevo-paciente.html'">
+          <i class="fas fa-plus-circle"></i> Crear Paciente
+        </button>
+      </div>
+
+      <!-- Tarjeta 3: Lista Rápida -->
+      <div class="card">
+        <h3><i class="fas fa-list"></i> Pacientes Recientes</h3>
+        <div id="pacientes-recientes" style="max-height: 200px; overflow-y: auto;">
+          <p class="loading">Cargando pacientes...</p>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/supabase.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/database.js"></script>
+  <script src="js/app.js"></script>
+  
+  <script>
+  // Funcionalidad específica para pacientes.html
+  document.addEventListener('DOMContentLoaded', function() {
+    cargarPacientesRecientes();
+    
+    // Búsqueda de pacientes
+    const btnBuscar = document.getElementById('btn-buscar-paciente');
+    if (btnBuscar) {
+      btnBuscar.addEventListener('click', ejecutarBusquedaPacientes);
+    }
+  });
+
+  async function cargarPacientesRecientes() {
+    try {
+      const { data: pacientes, error } = await supabase
+        .from('pacientes')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(5);
+
+      if (error) throw error;
+
+      const container = document.getElementById('pacientes-recientes');
+      if (!container) return;
+
+      if (pacientes.length === 0) {
+        container.innerHTML = '<p>No hay pacientes registrados</p>';
+        return;
+      }
+
+      let html = '';
+      pacientes.forEach(paciente => {
+        html += `
+          <div style="padding: 8px; margin: 5px 0; background: var(--violeta-secundario); 
+                      border-radius: 5px; cursor: pointer;" 
+               onclick="window.location.href='patient-profile.html?dni=${paciente.dni}'">
+            <strong>👤 ${paciente.nombre_completo}</strong><br>
+            <small>📄 DNI: ${paciente.dni}</small>
+          </div>
+        `;
+      });
+
+      container.innerHTML = html;
+    } catch (error) {
+      console.error('Error cargando pacientes recientes:', error);
+    }
+  }
+
+  async function ejecutarBusquedaPacientes() {
+    const termino = document.getElementById('input-buscar-paciente').value;
+    if (!termino) {
+      alert('Ingresá un DNI o nombre para buscar');
+      return;
+    }
+
+    const { data: pacientes, error } = await supabase
+      .from('pacientes')
+      .select('*')
+      .or(`dni.ilike.%${termino}%,nombre_completo.ilike.%${termino}%`);
+
+    if (error) {
+      console.error('Error buscando:', error);
+      alert('Error en la búsqueda: ' + error.message);
+      return;
+    }
+
+    const container = document.getElementById('resultados-busqueda');
+    if (!container) return;
+
+    if (pacientes.length === 0) {
+      container.innerHTML = '<p>No se encontraron pacientes</p>';
+      return;
+    }
+
+    let html = '';
+    pacientes.forEach(paciente => {
+      html += `
+        <div style="padding: 10px; margin: 10px 0; background: white; border-radius: 5px; 
+                    cursor: pointer; border: 1px solid #ddd;" 
+             onclick="window.location.href='patient-profile.html?dni=${paciente.dni}'">
+          <strong>👤 ${paciente.nombre_completo}</strong><br>
+          <small>📄 DNI: ${paciente.dni}</small><br>
+          <small>📞 ${paciente.telefono || 'Sin teléfono'}</small>
+        </div>
+      `;
+    });
+
+    container.innerHTML = html;
+  }
+  </script>
+</body>
+</html>
