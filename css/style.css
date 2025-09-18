@@ -459,3 +459,47 @@ tr:hover {
   background-color: #f5f5f5;
   cursor: not-allowed;
 }
+/* ===== ESTILOS COMPACTOS PARA HOME ===== */
+.compact-card {
+  min-height: 200px;
+  padding: 15px;
+}
+
+.compact-input {
+  padding: 8px !important;
+  font-size: 14px !important;
+  height: auto !important;
+}
+
+.compact-btn {
+  padding: 8px 12px !important;
+  font-size: 14px !important;
+  height: auto !important;
+}
+
+.compact-stats {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  margin-top: 15px;
+}
+
+.compact-stats h4 {
+  color: var(--violeta-acento);
+  font-size: 1.5rem;
+  margin: 5px 0;
+}
+
+.scroll-container {
+  max-height: 120px;
+  overflow-y: auto;
+  margin-top: 10px;
+}
+
+/* Grid para 3 columnas */
+.grid-3-columns {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-bottom: 20px;
+}
