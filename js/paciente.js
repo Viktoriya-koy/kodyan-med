@@ -159,6 +159,107 @@ function configurarFormularioEdicion() {
             btn.disabled = false;
         }
     }); // ← Cierre del addEventListener
+    // ===== FUNCIONES PARA MEDICAMENTOS =====
+async function cargarMedicamentos(dniPaciente) {
+    try {
+        const { data: medicamentos, error } = await supabase
+            .from('medicamentos')
+            .select('*')
+            .eq('dni_paciente', dniPaciente)
+            .order('fecha_inicio', { ascending: false });
+
+        if (error) {
+            console.error('❌ Error cargando medicamentos:', error);
+            return;
+        }
+
+        const tabla = document.getElementById('tabla-medicamentos');
+        if (!tabla) return;
+
+        if (medicamentos.length === 0) {
+            tabla.innerHTML = '<tr><td colspan="5">No hay medicamentos registrados</td></tr>';
+            return;
+        }
+
+        tabla.innerHTML = '';
+        medicamentos.forEach(med => {
+            const fila = document.createElement('tr');
+            fila.innerHTML = `
+                <td>${med.nombre}</td>
+                <td>${med.dosis}</td>
+                <td>${med.frecuencia}</td>
+                <td>${med.fecha_inicio}</td>
+                <td>${med.fecha_fin || 'Continúa'}</td>
+            `;
+            tabla.appendChild(fila);
+        });
+    } catch (error) {
+        console.error('Error en cargarMedicamentos:', error);
+    }
+}
+
+function configurarFormularioMedicamentos() {
+    const form = document.getElementById('form-medicamento');
+    if (!form) return;
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        
+        const btn = form.querySelector('button[type="submit"]');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+        btn.disabled = true;
+
+        try {
+            const dniPaciente = document.getElementById('paciente-dni').value;
+            const medicamentoData = {
+                dni_paciente: dniPaciente,
+                nombre: document.getElementById('nombre-medicamento').value,
+                dosis: document.getElementById('dosis-medicamento').value,
+                frecuencia: document.getElementById('frecuencia-medicamento').value,
+                fecha_inicio: document.getElementById('inicio-medicamento').value,
+                fecha_fin: document.getElementById('fin-medicamento').value || null
+            };
+
+            const { error } = await supabase
+                .from('medicamentos')
+                .insert([medicamentoData]);
+
+            if (error) {
+                console.error('❌ Error guardando medicamento:', error);
+                alert('Error al guardar medicamento: ' + error.message);
+            } else {
+                alert('✅ Medicamento guardado correctamente');
+                form.reset();
+                cargarMedicamentos(dniPaciente); // Recargar la tabla
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    });
+}
+
+// ===== INICIALIZAR TODO AL CARGAR LA PÁGINA =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('✅ Script de paciente cargado');
     
+    // Obtener DNI de la URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const dniPaciente = urlParams.get('dni');
+
+    if (dniPaciente) {
+        console.log('Buscando paciente con DNI:', dniPaciente);
+        cargarDatosPaciente(dniPaciente);
+        configurarFormularioEdicion();
+        cargarMedicamentos(dniPaciente); // ← ¡NUEVA LÍNEA!
+        configurarFormularioMedicamentos(); // ← ¡NUEVA LÍNEA!
+    } else {
+        console.error('❌ No se especificó DNI del paciente en la URL');
+        alert('Error: No se especificó paciente. Volvé a la lista de pacientes.');
+    }
+});
     console.log('✅ Formulario de edición configurado');
 } // ← Cierre de la función
