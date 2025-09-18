@@ -94,7 +94,6 @@ function agregarBotonEditar() {
     // Agregar botón al formulario
     form.appendChild(btnEditar);
 }
-// Configurar formulario de edición
 function configurarFormularioEdicion() {
     const form = document.getElementById('form-editar-paciente');
     
@@ -111,51 +110,55 @@ function configurarFormularioEdicion() {
         btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
         btn.disabled = true;
         
-        const datosActualizados = {
-            nombre_completo: document.getElementById('paciente-nombre').value,
-            telefono: document.getElementById('paciente-telefono').value,
-            email: document.getElementById('paciente-email').value,
-            obra_social: document.getElementById('paciente-obra-social').value,
-            historial_medico: document.getElementById('paciente-historial').value,
-            updated_at: new Date().toISOString()
+        try {
+            const datosActualizados = {
+                nombre_completo: document.getElementById('paciente-nombre').value,
+                telefono: document.getElementById('paciente-telefono').value,
+                email: document.getElementById('paciente-email').value,
+                obra_social: document.getElementById('paciente-obra-social').value,
+                historial_medico: document.getElementById('paciente-historial').value,
+                updated_at: new Date().toISOString()
+            }; // ✅ Llave cerrada
 
+            const dni = document.getElementById('paciente-dni').value;
 
-        const dni = document.getElementById('paciente-dni').value;
+            console.log('💾 Guardando cambios para DNI:', dni, datosActualizados);
+            
+            const { error } = await supabase
+                .from('pacientes')
+                .update(datosActualizados)
+                .eq('dni', dni);
 
-        console.log('💾 Guardando cambios para DNI:', dni, datosActualizados);
-        
-        const { error } = await supabase
-            .from('pacientes')
-            .update(datosActualizados)
-            .eq('dni', dni);
-
-        if (error) {
-            console.error('❌ Error actualizando paciente:', error);
-            alert('Error al guardar cambios: ' + error.message);
-        } else {
-            console.log('✅ Paciente actualizado correctamente');
-            alert('✅ Datos actualizados correctamente');
-  // 👇 NUEVO CÓDIGO: Volver a modo lectura después de guardar
-        const campos = ['nombre', 'telefono', 'email', 'obra-social', 'historial'];
-        campos.forEach(campo => {
-            const element = document.getElementById('paciente-' + campo);
-            if (element) {
-                element.readOnly = true;
+            if (error) {
+                console.error('❌ Error actualizando paciente:', error);
+                alert('Error al guardar cambios: ' + error.message);
+            } else {
+                console.log('✅ Paciente actualizado correctamente');
+                alert('✅ Datos actualizados correctamente');
+                
+                // 👇 Volver a modo lectura después de guardar
+                const campos = ['nombre', 'telefono', 'email', 'obra-social', 'historial'];
+                campos.forEach(campo => {
+                    const element = document.getElementById('paciente-' + campo);
+                    if (element) {
+                        element.readOnly = true;
+                    }
+                });
+                
+                // Resetear botón de edición
+                const btnEditar = document.querySelector('#form-editar-paciente button[type="button"]');
+                if (btnEditar) {
+                    btnEditar.innerHTML = '<i class="fas fa-edit"></i> Habilitar Edición';
+                    btnEditar.style.background = '';
+                }
             }
-        });
-        
-        // Resetear botón de edición
-        const btnEditar = document.querySelector('#form-editar-paciente button[type="button"]');
-        if (btnEditar) {
-            btnEditar.innerHTML = '<i class="fas fa-edit"></i> Habilitar Edición';
-            btnEditar.style.background = '';
+        } catch (error) {
+            console.error('Error:', error);
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
         }
-    }
-        }
-        
-        btn.innerHTML = originalText;
-        btn.disabled = false;
-    });
+    }); // ← Cierre del addEventListener
     
     console.log('✅ Formulario de edición configurado');
-}
+} // ← Cierre de la función
