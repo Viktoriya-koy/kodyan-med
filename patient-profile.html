@@ -148,83 +148,128 @@
       </div>
     </div>
 
-    <!-- Pestaña 2: Odontograma -->
-    <div class="tab-content" id="tab-2">
-      <div class="card">
-        <h2><i class="fas fa-tooth"></i> Odontograma</h2>
-        
-        <!-- Selector de tratamientos -->
-        <div class="form-group">
-          <label>Seleccionar tratamiento:</label>
-          <select id="tipo-tratamiento" class="compact-input">
-            <option value="caries">Caries</option>
-            <option value="obturacion">Obturación</option>
-            <option value="corona">Corona</option>
-            <option value="extraccion">Extracción</option>
-            <option value="endodoncia">Endodoncia</option>
-          </select>
-        </div>
+   <!-- Pestaña 2: Odontograma -->
+<div class="tab-content" id="tab-2">
+  <div class="card">
+    <h2><i class="fas fa-tooth"></i> Odontograma</h2>
+    
+    <!-- Selector de tratamientos -->
+    <div class="form-group">
+      <label>Seleccionar tratamiento:</label>
+      <select id="tipo-tratamiento" class="compact-input">
+        <option value="caries">🦷 Caries</option>
+        <option value="obturacion">⭐ Obturación (Arreglo)</option>
+        <option value="corona">👑 Corona</option>
+        <option value="endodoncia">🔍 Endodoncia</option>
+        <option value="extraccion">❌ Extracción</option>
+        <option value="sano">✅ Sano</option>
+      </select>
+    </div>
 
-        <!-- Odontograma visual -->
-        <div class="odontograma">
-          <!-- Dientes del 1 al 8 (superior derecho) -->
-          <div class="diente" data-diente="18">18</div>
-          <div class="diente" data-diente="17">17</div>
-          <div class="diente" data-diente="16">16</div>
-          <div class="diente" data-diente="15">15</div>
-          <div class="diente" data-diente="14">14</div>
-          <div class="diente" data-diente="13">13</div>
-          <div class="diente" data-diente="12">12</div>
-          <div class="diente" data-diente="11">11</div>
-          
-          <!-- Dientes del 21 al 28 (superior izquierdo) -->
-          <div class="diente" data-diente="21">21</div>
-          <div class="diente" data-diente="22">22</div>
-          <div class="diente" data-diente="23">23</div>
-          <div class="diente" data-diente="24">24</div>
-          <div class="diente" data-diente="25">25</div>
-          <div class="diente" data-diente="26">26</div>
-          <div class="diente" data-diente="27">27</div>
-          <div class="diente" data-diente="28">28</div>
-          
-          <!-- Dientes del 31 al 38 (inferior izquierdo) -->
-          <div class="diente" data-diente="31">31</div>
-          <div class="diente" data-diente="32">32</div>
-          <div class="diente" data-diente="33">33</div>
-          <div class="diente" data-diente="34">34</div>
-          <div class="diente" data-diente="35">35</div>
-          <div class="diente" data-diente="36">36</div>
-          <div class="diente" data-diente="37">37</div>
-          <div class="diente" data-diente="38">38</div>
-          
-          <!-- Dientes del 41 al 48 (inferior derecho) -->
-          <div class="diente" data-diente="41">41</div>
-          <div class="diente" data-diente="42">42</div>
-          <div class="diente" data-diente="43">43</div>
-          <div class="diente" data-diente="44">44</div>
-          <div class="diente" data-diente="45">45</div>
-          <div class="diente" data-diente="46">46</div>
-          <div class="diente" data-diente="47">47</div>
-          <div class="diente" data-diente="48">48</div>
-        </div>
-
-        <!-- Historial de tratamientos -->
-        <h3 style="margin-top: 20px;">Historial de Tratamientos</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Diente</th>
-              <th>Tratamiento</th>
-              <th>Fecha</th>
-            </tr>
-          </thead>
-          <tbody id="tabla-tratamientos">
-            <tr><td colspan="3">No hay tratamientos registrados</td></tr>
-          </tbody>
-        </table>
+    <!-- Leyenda de tratamientos -->
+    <div style="display: flex; flex-wrap: wrap; gap: 10px; margin: 15px 0; padding: 10px; background: var(--violeta-secundario); border-radius: 8px;">
+      <div style="display: flex; align-items: center; gap: 5px;">
+        <div style="width: 15px; height: 15px; background: #FF6B6B; border-radius: 2px;"></div>
+        <small>Caries</small>
+      </div>
+      <div style="display: flex; align-items: center; gap: 5px;">
+        <div style="width: 15px; height: 15px; background: #4ECDC4; border-radius: 2px;"></div>
+        <small>Obturación</small>
+      </div>
+      <div style="display: flex; align-items: center; gap: 5px;">
+        <div style="width: 15px; height: 15px; background: #FFE66D; border-radius: 2px;"></div>
+        <small>Corona</small>
+      </div>
+      <div style="display: flex; align-items: center; gap: 5px;">
+        <div style="width: 15px; height: 15px; background: #6A0572; border-radius: 2px;"></div>
+        <small>Endodoncia</small>
+      </div>
+      <div style="display: flex; align-items: center; gap: 5px;">
+        <div style="width: 15px; height: 15px; background: #666; border-radius: 2px;"></div>
+        <small>Extraído</small>
       </div>
     </div>
 
+    <!-- Odontograma visual con representación gráfica -->
+    <div class="odontograma-container">
+      <!-- Arcada Superior -->
+      <div class="arcada" style="margin-bottom: 30px;">
+        <h4>Arcada Superior</h4>
+        <div class="dientes-row">
+          <!-- Dientes derechos (18-11) -->
+          <div class="diente-group">
+            <div class="diente" data-diente="18" title="Molar 3° (18)">◻</div>
+            <div class="diente" data-diente="17" title="Molar 2° (17)">◻</div>
+            <div class="diente" data-diente="16" title="Molar 1° (16)">◻</div>
+            <div class="diente" data-diente="15" title="Premolar 2° (15)">◻</div>
+            <div class="diente" data-diente="14" title="Premolar 1° (14)">◻</div>
+            <div class="diente" data-diente="13" title="Canino (13)">◻</div>
+            <div class="diente" data-diente="12" title="Incisivo Lateral (12)">◻</div>
+            <div class="diente" data-diente="11" title="Incisivo Central (11)">◻</div>
+          </div>
+          
+          <!-- Dientes izquierdos (21-28) -->
+          <div class="diente-group">
+            <div class="diente" data-diente="21" title="Incisivo Central (21)">◻</div>
+            <div class="diente" data-diente="22" title="Incisivo Lateral (22)">◻</div>
+            <div class="diente" data-diente="23" title="Canino (23)">◻</div>
+            <div class="diente" data-diente="24" title="Premolar 1° (24)">◻</div>
+            <div class="diente" data-diente="25" title="Premolar 2° (25)">◻</div>
+            <div class="diente" data-diente="26" title="Molar 1° (26)">◻</div>
+            <div class="diente" data-diente="27" title="Molar 2° (27)">◻</div>
+            <div class="diente" data-diente="28" title="Molar 3° (28)">◻</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Arcada Inferior -->
+      <div class="arcada">
+        <h4>Arcada Inferior</h4>
+        <div class="dientes-row">
+          <!-- Dientes izquierdos (31-38) -->
+          <div class="diente-group">
+            <div class="diente" data-diente="38" title="Molar 3° (38)">◻</div>
+            <div class="diente" data-diente="37" title="Molar 2° (37)">◻</div>
+            <div class="diente" data-diente="36" title="Molar 1° (36)">◻</div>
+            <div class="diente" data-diente="35" title="Premolar 2° (35)">◻</div>
+            <div class="diente" data-diente="34" title="Premolar 1° (34)">◻</div>
+            <div class="diente" data-diente="33" title="Canino (33)">◻</div>
+            <div class="diente" data-diente="32" title="Incisivo Lateral (32)">◻</div>
+            <div class="diente" data-diente="31" title="Incisivo Central (31)">◻</div>
+          </div>
+          
+          <!-- Dientes derechos (41-48) -->
+          <div class="diente-group">
+            <div class="diente" data-diente="41" title="Incisivo Central (41)">◻</div>
+            <div class="diente" data-diente="42" title="Incisivo Lateral (42)">◻</div>
+            <div class="diente" data-diente="43" title="Canino (43)">◻</div>
+            <div class="diente" data-diente="44" title="Premolar 1° (44)">◻</div>
+            <div class="diente" data-diente="45" title="Premolar 2° (45)">◻</div>
+            <div class="diente" data-diente="46" title="Molar 1° (46)">◻</div>
+            <div class="diente" data-diente="47" title="Molar 2° (47)">◻</div>
+            <div class="diente" data-diente="48" title="Molar 3° (48)">◻</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Historial de tratamientos -->
+    <h3 style="margin-top: 30px;"><i class="fas fa-history"></i> Historial de Tratamientos</h3>
+    <table>
+      <thead>
+        <tr>
+          <th>Diente</th>
+          <th>Nombre</th>
+          <th>Tratamiento</th>
+          <th>Fecha</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-tratamientos">
+        <tr><td colspan="4">No hay tratamientos registrados</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
     <!-- Pestaña 3: Procedimientos -->
     <div class="tab-content" id="tab-3">
       <!-- Procedimientos Realizados -->
