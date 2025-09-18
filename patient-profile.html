@@ -329,6 +329,46 @@
     </table>
   </div>
 </div>
+<!-- Formulario para detalles del tratamiento -->
+<div id="formulario-tratamiento" style="display: none; margin: 20px 0; padding: 15px; background: var(--violeta-secundario); border-radius: 8px;">
+  <h4>Detalles del tratamiento en <span id="diente-seleccionado"></span></h4>
+  
+  <div class="form-group">
+    <label>Tratamiento aplicado:</label>
+    <select id="tratamiento-detalle" class="compact-input">
+      <option value="caries">🦷 Caries</option>
+      <option value="obturacion">⭐ Obturación (Arreglo)</option>
+      <option value="corona">👑 Corona</option>
+      <option value="endodoncia">🔍 Endodoncia</option>
+      <option value="extraccion">❌ Extracción</option>
+      <option value="sano">✅ Sano</option>
+    </select>
+  </div>
+
+  <div class="form-group">
+    <label>Fecha del tratamiento:</label>
+    <input type="date" id="fecha-tratamiento" class="compact-input" value="<?php echo date('Y-m-d'); ?>">
+  </div>
+
+  <div class="form-group">
+    <label>Observaciones:</label>
+    <textarea id="observaciones-tratamiento" class="compact-input" rows="3" placeholder="Detalles del tratamiento realizado..."></textarea>
+  </div>
+
+  <div class="form-group">
+    <label>Subir imagen (opcional):</label>
+    <input type="file" id="imagen-tratamiento" accept="image/*">
+  </div>
+
+  <div style="display: flex; gap: 10px;">
+    <button type="button" class="btn" onclick="guardarTratamiento()">
+      <i class="fas fa-save"></i> Guardar Tratamiento
+    </button>
+    <button type="button" class="btn" style="background: #ff4757;" onclick="cancelarTratamiento()">
+      <i class="fas fa-times"></i> Cancelar
+    </button>
+  </div>
+</div>
     <!-- Pestaña 3: Procedimientos -->
     <div class="tab-content" id="tab-3">
       <!-- Procedimientos Realizados -->
