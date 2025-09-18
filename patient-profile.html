@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="css/style.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    /* Estilos para las pestañas */
+    /* Estilos para pestañas */
     .tabs {
       display: flex;
       margin-bottom: 20px;
@@ -24,13 +24,11 @@
       font-weight: 500;
       margin-right: 5px;
       border-radius: 8px 8px 0 0;
-      transition: all 0.3s ease;
     }
     
     .tab-btn.active {
       background: var(--violeta-primario);
       color: var(--texto);
-      border-bottom: 3px solid var(--violeta-acento);
     }
     
     .tab-content {
@@ -39,12 +37,36 @@
     
     .tab-content.active {
       display: block;
-      animation: fadeIn 0.5s ease;
     }
     
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    /* Odontograma */
+    .odontograma {
+      display: grid;
+      grid-template-columns: repeat(8, 1fr);
+      gap: 5px;
+      margin: 20px 0;
+    }
+    
+    .diente {
+      width: 40px;
+      height: 40px;
+      border: 2px solid var(--violeta-acento);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: white;
+    }
+    
+    .diente.tratado {
+      background: var(--violeta-secundario);
+      border-color: var(--violeta-acento);
+    }
+    
+    .diente.extraido {
+      background: #ccc;
+      text-decoration: line-through;
     }
   </style>
 </head>
@@ -56,22 +78,25 @@
       <a href="home.html" class="btn"><i class="fas fa-arrow-left"></i> Volver al Inicio</a>
     </header>
 
-    <!-- Pestañas de navegación -->
+    <!-- Pestañas -->
     <div class="tabs">
-      <button class="tab-btn active" onclick="cambiarPestaña('datos')">
-        <i class="fas fa-user"></i> Datos Principales
+      <button class="tab-btn active" onclick="cambiarPestaña(1)">
+        <i class="fas fa-user"></i> Datos
       </button>
-      <button class="tab-btn" onclick="cambiarPestaña('procedimientos')">
-        <i class="fas fa-stethoscope"></i> Procedimientos
+      <button class="tab-btn" onclick="cambiarPestaña(2)">
+        <i class="fas fa-tooth"></i> Odontograma
       </button>
-      <button class="tab-btn" onclick="cambiarPestaña('medicamentos')">
+      <button class="tab-btn" onclick="cambiarPestaña(3)">
+        <i class="fas fa-procedures"></i> Procedimientos
+      </button>
+      <button class="tab-btn" onclick="cambiarPestaña(4)">
         <i class="fas fa-pills"></i> Medicamentos
       </button>
     </div>
 
-    <!-- Pestaña 1: Datos Principales -->
-    <div id="tab-datos" class="tab-content active">
-      <!-- Datos Básicos -->
+    <!-- Pestaña 1: Datos y Turnos -->
+    <div class="tab-content active" id="tab-1">
+      <!-- Datos Personales -->
       <div class="card">
         <h2><i class="fas fa-user"></i> Datos Personales</h2>
         <form id="form-editar-paciente">
@@ -123,11 +148,88 @@
       </div>
     </div>
 
-    <!-- Pestaña 2: Procedimientos -->
-    <div id="tab-procedimientos" class="tab-content">
+    <!-- Pestaña 2: Odontograma -->
+    <div class="tab-content" id="tab-2">
+      <div class="card">
+        <h2><i class="fas fa-tooth"></i> Odontograma</h2>
+        
+        <!-- Selector de tratamientos -->
+        <div class="form-group">
+          <label>Seleccionar tratamiento:</label>
+          <select id="tipo-tratamiento" class="compact-input">
+            <option value="caries">Caries</option>
+            <option value="obturacion">Obturación</option>
+            <option value="corona">Corona</option>
+            <option value="extraccion">Extracción</option>
+            <option value="endodoncia">Endodoncia</option>
+          </select>
+        </div>
+
+        <!-- Odontograma visual -->
+        <div class="odontograma">
+          <!-- Dientes del 1 al 8 (superior derecho) -->
+          <div class="diente" data-diente="18">18</div>
+          <div class="diente" data-diente="17">17</div>
+          <div class="diente" data-diente="16">16</div>
+          <div class="diente" data-diente="15">15</div>
+          <div class="diente" data-diente="14">14</div>
+          <div class="diente" data-diente="13">13</div>
+          <div class="diente" data-diente="12">12</div>
+          <div class="diente" data-diente="11">11</div>
+          
+          <!-- Dientes del 21 al 28 (superior izquierdo) -->
+          <div class="diente" data-diente="21">21</div>
+          <div class="diente" data-diente="22">22</div>
+          <div class="diente" data-diente="23">23</div>
+          <div class="diente" data-diente="24">24</div>
+          <div class="diente" data-diente="25">25</div>
+          <div class="diente" data-diente="26">26</div>
+          <div class="diente" data-diente="27">27</div>
+          <div class="diente" data-diente="28">28</div>
+          
+          <!-- Dientes del 31 al 38 (inferior izquierdo) -->
+          <div class="diente" data-diente="31">31</div>
+          <div class="diente" data-diente="32">32</div>
+          <div class="diente" data-diente="33">33</div>
+          <div class="diente" data-diente="34">34</div>
+          <div class="diente" data-diente="35">35</div>
+          <div class="diente" data-diente="36">36</div>
+          <div class="diente" data-diente="37">37</div>
+          <div class="diente" data-diente="38">38</div>
+          
+          <!-- Dientes del 41 al 48 (inferior derecho) -->
+          <div class="diente" data-diente="41">41</div>
+          <div class="diente" data-diente="42">42</div>
+          <div class="diente" data-diente="43">43</div>
+          <div class="diente" data-diente="44">44</div>
+          <div class="diente" data-diente="45">45</div>
+          <div class="diente" data-diente="46">46</div>
+          <div class="diente" data-diente="47">47</div>
+          <div class="diente" data-diente="48">48</div>
+        </div>
+
+        <!-- Historial de tratamientos -->
+        <h3 style="margin-top: 20px;">Historial de Tratamientos</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Diente</th>
+              <th>Tratamiento</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-tratamientos">
+            <tr><td colspan="3">No hay tratamientos registrados</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pestaña 3: Procedimientos -->
+    <div class="tab-content" id="tab-3">
       <!-- Procedimientos Realizados -->
       <div class="card">
-        <h2><i class="fas fa-stethoscope"></i> Procedimientos Realizados</h2>
+        <h2><i class="fas fa-procedures"></i> Procedimientos Realizados</h2>
         <table>
           <thead>
             <tr>
@@ -168,8 +270,8 @@
       </div>
     </div>
 
-    <!-- Pestaña 3: Medicamentos -->
-    <div id="tab-medicamentos" class="tab-content">
+    <!-- Pestaña 4: Medicamentos -->
+    <div class="tab-content" id="tab-4">
       <!-- Medicamentos -->
       <div class="card">
         <h2><i class="fas fa-pills"></i> Medicamentos</h2>
@@ -225,32 +327,44 @@
   <script src="js/paciente.js"></script>
   
   <script>
-  // Función para cambiar entre pestañas
-  function cambiarPestaña(pestañaId) {
-    // Ocultar todos los contenidos
+  // Funciones para las pestañas
+  function cambiarPestaña(numero) {
+    // Ocultar todas las pestañas
     document.querySelectorAll('.tab-content').forEach(tab => {
       tab.classList.remove('active');
     });
     
-    // Desactivar todos los botones
+    // Mostrar la pestaña seleccionada
+    document.getElementById('tab-' + numero).classList.add('active');
+    
+    // Actualizar botones
     document.querySelectorAll('.tab-btn').forEach(btn => {
       btn.classList.remove('active');
     });
-    
-    // Mostrar la pestaña seleccionada
-    document.getElementById('tab-' + pestañaId).classList.add('active');
-    
-    // Activar el botón seleccionado
-    document.querySelector(`.tab-btn[onclick="cambiarPestaña('${pestañaId}')"]`).classList.add('active');
-    
-    // Cargar datos específicos de la pestaña si es necesario
-    if (pestañaId === 'procedimientos') {
-      // cargarProcedimientos(); // ← Implementar después
-    } else if (pestañaId === 'medicamentos') {
-      const dni = document.getElementById('paciente-dni').value;
-      if (dni) cargarMedicamentos(dni);
-    }
+    document.querySelectorAll('.tab-btn')[numero - 1].classList.add('active');
   }
+
+  // Odontograma interactivo
+  document.addEventListener('DOMContentLoaded', function() {
+    const dientes = document.querySelectorAll('.diente');
+    dientes.forEach(diente => {
+      diente.addEventListener('click', function() {
+        const tratamiento = document.getElementById('tipo-tratamiento').value;
+        const numeroDiente = this.getAttribute('data-diente');
+        
+        // Cambiar apariencia según tratamiento
+        this.classList.remove('tratado', 'extraido');
+        if (tratamiento === 'extraccion') {
+          this.classList.add('extraido');
+        } else {
+          this.classList.add('tratado');
+        }
+        
+        // Aquí guardaríamos en Supabase
+        console.log('Diente:', numeroDiente, 'Tratamiento:', tratamiento);
+      });
+    });
+  });
   </script>
 </body>
 </html>
