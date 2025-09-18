@@ -138,7 +138,7 @@ async function ejecutarBusqueda() {
         
         html += '</div>';
         
-        // Insertar después del botón de búsqueda
+         // Insertar después del botón de búsqueda
         const buscarCard = document.querySelector('.card:has(#btn-buscar-paciente)');
         if (buscarCard) {
             const oldResults = buscarCard.querySelector('.resultados-busqueda');
@@ -149,6 +149,78 @@ async function ejecutarBusqueda() {
     } else {
         alert('No se encontraron pacientes con ese criterio.');
     }
+}
+
+// ===== AGENDA DEL DÍA (NUEVO CÓDIGO) =====
+async function cargarAgendaHoy() {
+    try {
+        const hoy = new Date().toISOString().split('T')[0];
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        if (!session) return;
+
+        const { data: turnos, error } = await supabase
+            .from('turnos')
+            .select(`
+                *,
+                pacientes:dni_paciente (nombre_completo, telefono)
+            `)
+            .eq('profesional_id', session.user.id)
+            .eq('fecha', hoy)
+            .order('hora', { ascending: true });
+
+        if (error) {
+            console.error('Error cargando agenda:', error);
+            return;
+        }
+
+        const container = document.getElementById('agenda-hoy');
+        if (!container) return;
+
+        if (turnos.length === 0) {
+            container.innerHTML = '<p>🎉 No hay turnos para hoy</p>';
+            // Actualizar estadísticas
+            document.querySelectorAll('#estadisticas-hoy h4').forEach(h4 => h4.textContent = '0');
+            return;
+        }
+
+        let html = '';
+        turnos.forEach(turno => {
+            html += `
+                <div style="padding: 10px; margin: 5px 0; background: var(--violeta-secundario); 
+                            border-radius: 8px; border-left: 4px solid var(--violeta-acento);">
+                    <strong>⏰ ${turno.hora}</strong>
+                    <br>
+                    <span>👤 ${turno.pacientes?.nombre_completo || 'N/A'}</span>
+                    <br>
+                    <small>📞 ${turno.pacientes?.telefono || 'Sin teléfono'}</small>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        
+        // Actualizar estadísticas
+        const statsContainer = document.getElementById('estadisticas-hoy');
+        if (statsContainer) {
+            const statsElements = statsContainer.querySelectorAll('h4');
+            if (statsElements.length >= 3) {
+                statsElements[0].textContent = turnos.length;
+                statsElements[1].textContent = 
+                    turnos.filter(t => t.estado === 'confirmado').length;
+                statsElements[2].textContent = 
+                    turnos.filter(t => t.estado === 'pendiente' || !t.estado).length;
+            }
+        }
+            
+    } catch (error) {
+        console.error('Error en cargarAgendaHoy:', error);
+    }
+}
+
+// Ejecutar al cargar la página en home.html
+if (window.location.pathname.includes('home.html')) {
+    cargarAgendaHoy();
 }
 
 // ===== CONSOLA GENERAL =====
