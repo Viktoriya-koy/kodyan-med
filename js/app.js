@@ -271,8 +271,7 @@ async function cargarProximosTurnos() {
     }
 }
 }; 
-// ===== CONSOLA GENERAL =====
-console.log("✅ app.js cargado correctamente en:", window.location.pathname);
+
 // ===== FUNCIONES DE EMERGENCIA =====
 function guardarTurnoEmergencia(turnoData) {
     console.log('⚠️ Modo emergencia - Turno simulado:', turnoData);
@@ -360,3 +359,5 @@ if (window.location.pathname.includes('home.html')) {
         </div>
     `;
 }
+// ===== CONSOLA GENERAL =====
+console.log("✅ app.js cargado correctamente en:", window.location.pathname);
