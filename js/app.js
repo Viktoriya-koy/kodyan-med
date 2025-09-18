@@ -267,10 +267,9 @@ async function cargarProximosTurnos() {
 
         container.innerHTML = html;
     } catch (error) {
-        console.error('Error en cargarProximosTurnos:', error);
+      console.error('Error en cargarProximosTurnos:', error);
     }
-}
-}); 
+} // ← SOLO ESTA LLAVE DE CIERRE
 
 // ===== FUNCIONES DE EMERGENCIA =====
 function guardarTurnoEmergencia(turnoData) {
@@ -278,6 +277,7 @@ function guardarTurnoEmergencia(turnoData) {
     alert('✅ Turno agendado (modo demo) para: ' + turnoData.dni_paciente);
     return true;
 }
+
 
 function buscarPacientesEmergencia(termino) {
     console.log('⚠️ Modo emergencia - Búsqueda simulada:', termino);
@@ -335,7 +335,16 @@ if (window.location.pathname.includes('home.html')) {
             }
         });
     }
-
+// Simular estadísticas
+    const stats = document.getElementById('estadisticas-hoy');
+    if (stats) {
+        const statsElements = stats.querySelectorAll('h4');
+        if (statsElements.length >= 3) {
+            statsElements[0].textContent = '3';
+            statsElements[1].textContent = '2';
+            statsElements[2].textContent = '1';
+        }
+    }
     // Simular agenda de hoy
     document.getElementById('agenda-hoy').innerHTML = `
         <div style="padding: 10px; margin: 5px 0; background: var(--violeta-secundario); 
