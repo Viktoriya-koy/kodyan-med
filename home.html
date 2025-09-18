@@ -226,7 +226,46 @@
   </div>
 
   <div class="grid">
-    <!-- Tarjeta de turnos -->
+    <!-- FILA 1: VISIÓN GENERAL -->
+    <!-- Agenda de Hoy -->
+    <div class="card">
+      <h3><i class="fas fa-calendar-day"></i> Agenda de Hoy</h3>
+      <div id="agenda-hoy">
+        <p class="loading">Cargando turnos de hoy...</p>
+      </div>
+    </div>
+
+    <!-- Próximos Turnos (mañana en adelante) -->
+    <div class="card">
+      <h3><i class="fas fa-clock"></i> Próximos Turnos</h3>
+      <div id="proximos-turnos">
+        <p class="loading">Cargando próximos turnos...</p>
+      </div>
+    </div>
+
+    <!-- Estadísticas -->
+    <div class="card">
+      <h3><i class="fas fa-chart-pie"></i> Hoy</h3>
+      <div id="estadisticas-hoy">
+        <div style="display: flex; justify-content: space-around; text-align: center;">
+          <div>
+            <h4 style="color: var(--violeta-acento);">0</h4>
+            <small>Total</small>
+          </div>
+          <div>
+            <h4 style="color: var(--violeta-acento);">0</h4>
+            <small>Confirmados</small>
+          </div>
+          <div>
+            <h4 style="color: var(--violeta-acento);">0</h4>
+            <small>Pendientes</small>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- FILA 2: ACCIONES -->
+    <!-- Nuevo Turno -->
     <div class="card" id="agenda">
       <h3><i class="fas fa-plus-circle"></i> Nuevo turno</h3>
       <form id="form-turno">
@@ -246,16 +285,7 @@
       </form>
     </div>
 
-    <!-- Tarjeta de Nuevo Paciente -->  
-    <div class="card">
-      <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
-      <p>Agregar un nuevo paciente al sistema</p>
-      <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'">
-        <i class="fas fa-plus-circle"></i> Agendar Paciente
-      </button>
-    </div>
-
-    <!-- Tarjeta de Búsqueda -->
+    <!-- Buscar Paciente -->
     <div class="card" id="pacientes">
       <h3><i class="fas fa-search"></i> Buscar paciente</h3>
       <div class="form-group">
@@ -264,48 +294,21 @@
       <button class="btn" id="btn-buscar-paciente">
         <i class="fas fa-search"></i> Buscar
       </button>
- <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
+      <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid #eee;">
         <a href="#" id="btn-ficha-completa" class="btn" style="background: var(--violeta-acento); color: white;">
-            <i class="fas fa-file-medical"></i> Ficha Completa
+          <i class="fas fa-file-medical"></i> Ficha Completa
         </a>
+      </div>
     </div>
-    </div>
-<!-- Tarjeta 4: Agenda de Hoy -->
-<div class="card">
-    <h3><i class="fas fa-calendar-day"></i> Agenda de Hoy</h3>
-    <div id="agenda-hoy">
-        <p class="loading">Cargando turnos de hoy...</p>
-    </div>
-</div>
 
-<!-- Tarjeta 5: Próximos Turnos -->
-<div class="card">
-    <h3><i class="fas fa-clock"></i> Próximos Turnos</h3>
-    <div id="proximos-turnos">
-        <p class="loading">Cargando próximos turnos...</p>
+    <!-- Nuevo Paciente -->
+    <div class="card">
+      <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
+      <p>Agregar un nuevo paciente al sistema</p>
+      <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'">
+        <i class="fas fa-plus-circle"></i> Agendar Paciente
+      </button>
     </div>
-</div>
-
-<!-- Tarjeta 6: Estadísticas -->
-<div class="card">
-    <h3><i class="fas fa-chart-pie"></i> Hoy</h3>
-    <div id="estadisticas-hoy">
-        <div style="display: flex; justify-content: space-around; text-align: center;">
-            <div>
-                <h4 style="color: var(--violeta-acento);">0</h4>
-                <small>Turnos totales</small>
-            </div>
-            <div>
-                <h4 style="color: var(--violeta-acento);">0</h4>
-                <small>Confirmados</small>
-            </div>
-            <div>
-                <h4 style="color: var(--violeta-acento);">0</h4>
-                <small>Pendientes</small>
-            </div>
-        </div>
-    </div>
-</div>
   </div>
 </main>
 
