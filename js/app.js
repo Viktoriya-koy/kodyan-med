@@ -76,28 +76,27 @@ if (formTurno) {
     });
 }
 
-    // ===== PARA PATIENT-PROFILE.HTML =====
-    if (window.location.pathname.includes('patient-profile.html')) {
-        console.log("📋 Configurando patient-profile.html...");
+   // ===== PARA PATIENT-PROFILE.HTML =====
+if (window.location.pathname.includes('patient-profile.html')) {
+    console.log("📋 Configurando patient-profile.html...");
+    
+    // Cargar datos del paciente
+    async function cargarDatosPaciente() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const dni = urlParams.get('dni');
         
-        // Cargar datos del paciente
-        async function cargarDatosPaciente() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const dni = urlParams.get('dni');
-            
-            if (dni) {
-                const paciente = await obtenerPaciente(dni);
-                if (paciente) {
-                    document.getElementById('paciente-nombre').textContent = paciente.nombre_completo;
-                    document.getElementById('paciente-dni').textContent = paciente.dni;
-                    // ... completar los demás campos
-                }
+        if (dni) {
+            const paciente = await obtenerPaciente(dni);
+            if (paciente) {
+                document.getElementById('paciente-nombre').textContent = paciente.nombre_completo;
+                document.getElementById('paciente-dni').textContent = paciente.dni;
+                // ... completar los demás campos
             }
         }
-        
-        cargarDatosPaciente();
     }
-});
+    
+    cargarDatosPaciente();
+} // ← ✅ Solo esta llave de cierre del if
 
 // ===== FUNCIÓN DE BÚSQUEDA =====
 async function ejecutarBusqueda() {
