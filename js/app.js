@@ -238,8 +238,7 @@ async function cargarProximosTurnos() {
             .order('fecha', { ascending: true })
             .order('hora', { ascending: true })
             .limit(5); // Solo 5 próximos turnos
-
-        if (error) {
+ if (error) {
             console.error('Error cargando próximos turnos:', error);
             return;
         }
@@ -272,10 +271,5 @@ async function cargarProximosTurnos() {
     }
 }
 
-// Actualizar la función que se ejecuta al cargar:
-if (window.location.pathname.includes('home.html')) {
-    cargarAgendaHoy();
-    cargarProximosTurnos(); // ← Agregar esta línea
-}
 // ===== CONSOLA GENERAL =====
 console.log("✅ app.js cargado correctamente en:", window.location.pathname);
