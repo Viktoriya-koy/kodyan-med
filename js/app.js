@@ -46,29 +46,35 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
 
-        // Formulario de turnos
-        const formTurno = document.getElementById('form-turno');
-        if (formTurno) {
-            formTurno.addEventListener('submit', async function(e) {
-                e.preventDefault();
-                const { data: { session } } = await supabase.auth.getSession(); // ← Obtener sesión
-
-const turnoData = {
-    fecha: document.getElementById('fecha-turno').value,
-    hora: document.getElementById('hora-turno').value,
-    dni_paciente: document.getElementById('dni-paciente').value,
-    profesional_id: session.user.id // ✅ Usar el UUID del usuario logueado
-};
-
-                
-                const result = await guardarTurno(turnoData);
-                if (result) {
-                    alert('Turno guardado!');
-                    formTurno.reset();
-                }
-            });
+       // Formulario de turnos
+const formTurno = document.getElementById('form-turno');
+if (formTurno) {
+    formTurno.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        // 👇 OBTENER SESIÓN PRIMERO
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        // 👇 VALIDAR QUE HAY SESIÓN ACTIVA
+        if (!session) {
+            alert('❌ No hay usuario logueado. Volvé a iniciar sesión.');
+            return;
         }
-    }
+
+        const turnoData = {
+            fecha: document.getElementById('fecha-turno').value,
+            hora: document.getElementById('hora-turno').value,
+            dni_paciente: document.getElementById('dni-paciente').value,
+            profesional_id: session.user.id // ✅ UUID del usuario logueado
+        };
+        
+        const result = await guardarTurno(turnoData);
+        if (result) {
+            alert('Turno guardado!');
+            formTurno.reset();
+        }
+    });
+}
 
     // ===== PARA PATIENT-PROFILE.HTML =====
     if (window.location.pathname.includes('patient-profile.html')) {
