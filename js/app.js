@@ -3,9 +3,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     console.log("✅ DOM cargado, registrando eventos...");
      if (window.location.pathname.includes('patient-profile.html')) {
-        console.log('🩺 Detectada página de perfil de paciente - omitiendo configuración general');
-        return; // ← No ejecutar el resto del código
-    }
+    console.log('🩺 Detectada página de perfil de paciente - configurando...');
+         
     // ===== DEBUG: VERIFICAR QUE LOS ELEMENTOS EXISTAN =====
     console.log("🔍 Buscando elementos...");
     console.log("btn-agendar-paciente:", document.getElementById('btn-agendar-paciente'));
@@ -52,12 +51,15 @@ document.addEventListener('DOMContentLoaded', function() {
         if (formTurno) {
             formTurno.addEventListener('submit', async function(e) {
                 e.preventDefault();
-                const turnoData = {
-                    fecha: document.getElementById('fecha-turno').value,
-                    hora: document.getElementById('hora-turno').value,
-                    dni_paciente: document.getElementById('dni-paciente').value,
-                    profesional_id: 1
-                };
+                const { data: { session } } = await supabase.auth.getSession(); // ← Obtener sesión
+
+const turnoData = {
+    fecha: document.getElementById('fecha-turno').value,
+    hora: document.getElementById('hora-turno').value,
+    dni_paciente: document.getElementById('dni-paciente').value,
+    profesional_id: session.user.id // ✅ Usar el UUID del usuario logueado
+};
+
                 
                 const result = await guardarTurno(turnoData);
                 if (result) {
