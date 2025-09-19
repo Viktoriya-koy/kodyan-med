@@ -142,8 +142,9 @@
       <button class="tab-btn active" data-tab="1">
         <i class="fas fa-user"></i> Datos
       </button>
-     <button class="tab-btn active" data-tab="2">
-      </button>
+     <button class="tab-btn" data-tab="2">
+    <i class="fas fa-tooth"></i> Odontograma
+</button>
      <button class="tab-btn active" data-tab="3">
         <i class="fas fa-procedures"></i> Procedimientos
       </button>
@@ -469,12 +470,12 @@
   <script src="js/app.js"></script>
   <script src="js/paciente.js"></script>
   
-  <script>
-  // Funciones para las pestañas
-  function cambiarPestaña(numero) {
+<script>
+// Función para cambiar pestañas
+function cambiarPestaña(numero) {
     // Ocultar todas las pestañas
     document.querySelectorAll('.tab-content').forEach(tab => {
-      tab.classList.remove('active');
+        tab.classList.remove('active');
     });
     
     // Mostrar la pestaña seleccionada
@@ -482,146 +483,164 @@
     
     // Actualizar botones
     document.querySelectorAll('.tab-btn').forEach(btn => {
-      btn.classList.remove('active');
+        btn.classList.remove('active');
     });
     document.querySelectorAll('.tab-btn')[numero - 1].classList.add('active');
-  }
+}
 
- // Variables globales
+// Variables globales
 let dienteActual = null;
 
-// Odontograma interactivo MEJORADO
-document.addEventListener('DOMContentLoaded', function()  document.querySelectorAll('.tab-btn').forEach(btn => {
-    btn.addEventListener('click', function() {
-      const numero = this.getAttribute('data-tab');
-      cambiarPestaña(numero);{
-  const dientes = document.querySelectorAll('.diente');
-  
-  dientes.forEach(diente => {
-    diente.addEventListener('click', function() {
-      dienteActual = this.getAttribute('data-diente');
-      const nombreDiente = obtenerNombreDiente(dienteActual);
-      
-      // Mostrar formulario
-      document.getElementById('formulario-tratamiento').style.display = 'block';
-      document.getElementById('diente-seleccionado').textContent = `Diente ${dienteActual} - ${nombreDiente}`;
-      
-      // Scroll al formulario
-      document.getElementById('formulario-tratamiento').scrollIntoView({ behavior: 'smooth' });
+// Cuando se carga la página
+document.addEventListener('DOMContentLoaded', function() {
+    // Configurar event listeners para las pestañas
+    document.querySelectorAll('.tab-btn').forEach(btn => {
+        btn.addEventListener('click', function() {
+            const numero = this.getAttribute('data-tab');
+            cambiarPestaña(numero);
+        });
     });
-  });
+
+    // Configurar odontograma
+    const dientes = document.querySelectorAll('.diente');
+    dientes.forEach(diente => {
+        diente.addEventListener('click', function() {
+            dienteActual = this.getAttribute('data-diente');
+            const nombreDiente = obtenerNombreDiente(dienteActual);
+            
+            // Mostrar formulario
+            document.getElementById('formulario-tratamiento').style.display = 'block';
+            document.getElementById('diente-seleccionado').textContent = `Diente ${dienteActual} - ${nombreDiente}`;
+            
+            // Scroll al formulario
+            document.getElementById('formulario-tratamiento').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        });
+    });
 });
 
 function obtenerNombreDiente(numero) {
-  const nombresDientes = {
-    '11': 'Incisivo Central Superior Derecho', '12': 'Incisivo Lateral Superior Derecho',
-    '13': 'Canino Superior Derecho', '14': 'Primer Premolar Superior Derecho',
-    '15': 'Segundo Premolar Superior Derecho', '16': 'Primer Molar Superior Derecho',
-    '17': 'Segundo Molar Superior Derecho', '18': 'Tercer Molar Superior Derecho',
-    '21': 'Incisivo Central Superior Izquierdo', '22': 'Incisivo Lateral Superior Izquierdo',
-    '23': 'Canino Superior Izquierdo', '24': 'Primer Premolar Superior Izquierdo',
-    '25': 'Segundo Premolar Superior Izquierdo', '26': 'Primer Molar Superior Izquierdo',
-    '27': 'Segundo Molar Superior Izquierdo', '28': 'Tercer Molar Superior Izquierdo',
-    '31': 'Incisivo Central Inferior Izquierdo', '32': 'Incisivo Lateral Inferior Izquierdo',
-    '33': 'Canino Inferior Izquierdo', '34': 'Primer Premolar Inferior Izquierdo',
-    '35': 'Segundo Premolar Inferior Izquierdo', '36': 'Primer Molar Inferior Izquierdo',
-    '37': 'Segundo Molar Inferior Izquierdo', '38': 'Tercer Molar Inferior Izquierdo',
-    '41': 'Incisivo Central Inferior Derecho', '42': 'Incisivo Lateral Inferior Derecho',
-    '43': 'Canino Inferior Derecho', '44': 'Primer Premolar Inferior Derecho',
-    '45': 'Segundo Premolar Inferior Derecho', '46': 'Primer Molar Inferior Derecho',
-    '47': 'Segundo Molar Inferior Derecho', '48': 'Tercer Molar Inferior Derecho'
-  };
-  return nombresDientes[numero] || `Diente ${numero}`;
+    const nombresDientes = {
+        '11': 'Incisivo Central Superior Derecho', '12': 'Incisivo Lateral Superior Derecho',
+        '13': 'Canino Superior Derecho', '14': 'Primer Premolar Superior Derecho',
+        '15': 'Segundo Premolar Superior Derecho', '16': 'Primer Molar Superior Derecho',
+        '17': 'Segundo Molar Superior Derecho', '18': 'Tercer Molar Superior Derecho',
+        '21': 'Incisivo Central Superior Izquierdo', '22': 'Incisivo Lateral Superior Izquierdo',
+        '23': 'Canino Superior Izquierdo', '24': 'Primer Premolar Superior Izquierdo',
+        '25': 'Segundo Premolar Superior Izquierdo', '26': 'Primer Molar Superior Izquierdo',
+        '27': 'Segundo Molar Superior Izquierdo', '28': 'Tercer Molar Superior Izquierdo',
+        '31': 'Incisivo Central Inferior Izquierdo', '32': 'Incisivo Lateral Inferior Izquierdo',
+        '33': 'Canino Inferior Izquierdo', '34': 'Primer Premolar Inferior Izquierdo',
+        '35': 'Segundo Premolar Inferior Izquierdo', '36': 'Primer Molar Inferior Izquierdo',
+        '37': 'Segundo Molar Inferior Izquierdo', '38': 'Tercer Molar Inferior Izquierdo',
+        '41': 'Incisivo Central Inferior Derecho', '42': 'Incisivo Lateral Inferior Derecho',
+        '43': 'Canino Inferior Derecho', '44': 'Primer Premolar Inferior Derecho',
+        '45': 'Segundo Premolar Inferior Derecho', '46': 'Primer Molar Inferior Derecho',
+        '47': 'Segundo Molar Inferior Derecho', '48': 'Tercer Molar Inferior Derecho'
+    };
+    return nombresDientes[numero] || `Diente ${numero}`;
 }
 
 async function guardarTratamiento() {
-  if (!dienteActual) return;
+    if (!dienteActual) return;
 
-  const tratamiento = document.getElementById('tratamiento-detalle').value;
-  const fecha = document.getElementById('fecha-tratamiento').value;
-  const observaciones = document.getElementById('observaciones-tratamiento').value;
-  
-  try {
-    // 1. Guardar en Supabase
-    const { error } = await supabase
-      .from('tratamientos_dentales')
-      .insert([{
-        dni_paciente: obtenerDNIPaciente(), // Función que debes crear
-        diente: dienteActual,
-        tratamiento: tratamiento,
-        fecha: fecha,
-        observaciones: observaciones,
-        profesional_id: await obtenerProfesionalId()
-      }]);
+    const tratamiento = document.getElementById('tratamiento-detalle').value;
+    const fecha = document.getElementById('fecha-tratamiento').value;
+    const observaciones = document.getElementById('observaciones-tratamiento').value;
+    
+    // Valor por defecto para fecha si está vacía
+    const fechaTratamiento = fecha || new Date().toISOString().split('T')[0];
+    
+    try {
+        // 1. Guardar en Supabase
+        const { error } = await supabase
+            .from('tratamientos_dentales')
+            .insert([{
+                dni_paciente: obtenerDNIPaciente(),
+                diente: dienteActual,
+                tratamiento: tratamiento,
+                fecha: fechaTratamiento,
+                observaciones: observaciones,
+                profesional_id: await obtenerProfesionalId()
+            }]);
 
-    if (error) throw error;
+        if (error) throw error;
 
-    // 2. Actualizar visualización del diente
-    const dienteElement = document.querySelector(`.diente[data-diente="${dienteActual}"]`);
-    dienteElement.removeAttribute('data-tratamiento');
-    if (tratamiento !== 'sano') {
-      dienteElement.setAttribute('data-tratamiento', tratamiento);
+        // 2. Actualizar visualización del diente
+        const dienteElement = document.querySelector(`.diente[data-diente="${dienteActual}"]`);
+        if (dienteElement) {
+            dienteElement.removeAttribute('data-tratamiento');
+            if (tratamiento !== 'sano') {
+                dienteElement.setAttribute('data-tratamiento', tratamiento);
+            }
+        }
+
+        // 3. Actualizar historial
+        actualizarHistorialTratamientos(dienteActual, tratamiento, fechaTratamiento);
+
+        // 4. Limpiar y ocultar formulario
+        cancelarTratamiento();
+
+        alert('✅ Tratamiento guardado correctamente');
+
+    } catch (error) {
+        console.error('Error guardando tratamiento:', error);
+        alert('❌ Error al guardar: ' + error.message);
     }
-
-    // 3. Actualizar historial
-    actualizarHistorialTratamientos(dienteActual, tratamiento, fecha);
-
-    // 4. Limpiar y ocultar formulario
-    cancelarTratamiento();
-
-    alert('✅ Tratamiento guardado correctamente');
-
-  } catch (error) {
-    console.error('Error guardando tratamiento:', error);
-    alert('❌ Error al guardar: ' + error.message);
-  }
 }
 
 function cancelarTratamiento() {
-  document.getElementById('formulario-tratamiento').style.display = 'none';
-  document.getElementById('observaciones-tratamiento').value = '';
-  dienteActual = null;
+    document.getElementById('formulario-tratamiento').style.display = 'none';
+    document.getElementById('observaciones-tratamiento').value = '';
+    dienteActual = null;
 }
 
 function actualizarHistorialTratamientos(diente, tratamiento, fecha) {
-  const tratamientos = {
-    'caries': 'Caries', 'obturacion': 'Obturación', 'corona': 'Corona',
-    'endodoncia': 'Endodoncia', 'extraccion': 'Extracción', 'sano': 'Sano'
-  };
-  
-  const tabla = document.getElementById('tabla-tratamientos');
-  const nuevaFila = `
-    <tr>
-      <td><strong>${diente}</strong></td>
-      <td>${obtenerNombreDiente(diente)}</td>
-      <td>${tratamientos[tratamiento]}</td>
-      <td>${new Date(fecha).toLocaleDateString('es-AR')}</td>
-    </tr>
-  `;
-  
-  if (tabla.innerHTML.includes('No hay tratamientos')) {
-    tabla.innerHTML = nuevaFila;
-  } else {
-    tabla.innerHTML = nuevaFila + tabla.innerHTML;
-  }
+    const tratamientos = {
+        'caries': 'Caries', 
+        'obturacion': 'Obturación', 
+        'corona': 'Corona',
+        'endodoncia': 'Endodoncia', 
+        'extraccion': 'Extracción', 
+        'sano': 'Sano'
+    };
+    
+    const tabla = document.getElementById('tabla-tratamientos');
+    if (!tabla) return;
+    
+    const nuevaFila = `
+        <tr>
+            <td><strong>${diente}</strong></td>
+            <td>${obtenerNombreDiente(diente)}</td>
+            <td>${tratamientos[tratamiento] || tratamiento}</td>
+            <td>${new Date(fecha).toLocaleDateString('es-AR')}</td>
+        </tr>
+    `;
+    
+    if (tabla.innerHTML.includes('No hay tratamientos')) {
+        tabla.innerHTML = nuevaFila;
+    } else {
+        tabla.innerHTML = nuevaFila + tabla.innerHTML;
+    }
 }
 
-// Función auxiliar para obtener DNI del paciente (debes implementar)
+// Función auxiliar para obtener DNI del paciente
 function obtenerDNIPaciente() {
-  return document.getElementById('paciente-dni')?.value || 'unknown';
+    const dniInput = document.getElementById('paciente-dni');
+    return dniInput ? dniInput.value : 'unknown';
 }
 
-// Función auxiliar para obtener ID del profesional (debes implementar)
+// Función auxiliar para obtener ID del profesional
 async function obtenerProfesionalId() {
-  const { data: { session } } = await supabase.auth.getSession();
-  return session?.user?.id || 'demo';
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        return session?.user?.id || 'demo';
+    } catch (error) {
+        console.error('Error obteniendo sesión:', error);
+        return 'demo';
+    }
 }
-        
-        // Aquí guardaríamos en Supabase
-        console.log('Diente:', numeroDiente, 'Tratamiento:', tratamiento);
-      });
-    });
-  });
-  </script>
+</script>
 </body>
 </html>
