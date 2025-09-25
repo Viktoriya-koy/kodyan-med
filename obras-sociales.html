@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Obras Sociales - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      border-left: 4px solid var(--violeta-acento);
+      margin-bottom: 25px;
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .estadistica-os {
+      text-align: center;
+      padding: 15px;
+      background: var(--violeta-secundario);
+      border-radius: 8px;
+    }
+
+    .numero-estadistica {
+      font-size: 1.8rem;
+      font-weight: 600;
+      color: var(--violeta-acento);
+      margin: 5px 0;
+    }
+
+    .lista-facturas {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .item-factura {
+      padding: 12px;
+      margin: 8px 0;
+      background: var(--violeta-secundario);
+      border-radius: 6px;
+      border-left: 3px solid var(--violeta-acento);
+    }
+
+    .item-factura.vencida {
+      border-left-color: #e74c3c;
+      background: #ffeaea;
+    }
+
+    .item-factura.proxima {
+      border-left-color: #f39c12;
+      background: #fff4e6;
+    }
+
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 8px 12px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transicion);
+      text-decoration: none;
+      margin: 2px;
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    .btn-pequeno {
+      padding: 4px 8px;
+      font-size: 11px;
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--violeta-primario);
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab.activa {
+      border-bottom-color: var(--violeta-acento);
+      font-weight: 500;
+    }
+
+    .contenido-tab {
+      display: none;
+    }
+
+    .contenido-tab.activa {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Barra lateral -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>KodyanMED</h1>
+  </div>
+  <ul class="navbar-menu">
+    <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+    <li class="navbar-item"><a href="finanzas.html"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="nuevo-gasto.html"><i class="fas fa-receipt"></i> Gastos</a></li>
+    <li class="navbar-item"><a href="obras-sociales.html" style="background: var(--violeta-acento);"><i class="fas fa-hospital"></i> Obras Sociales</a></li>
+    <li class="navbar-item"><a href="nueva-factura.html"><i class="fas fa-file-invoice"></i> Facturación</a></li>
+    <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+  <div class="header">
+    <h2><i class="fas fa-hospital"></i> Gestión de Obras Sociales</h2>
+    <p>Seguimiento y control de facturación a obras sociales</p>
+  </div>
+
+  <!-- Estadísticas rápidas -->
+  <div class="grid-3">
+    <div class="estadistica-os">
+      <i class="fas fa-clock fa-2x"></i>
+      <div class="numero-estadistica" id="facturas-pendientes">0</div>
+      <div>Facturas Pendientes</div>
+    </div>
+    <div class="estadistica-os">
+      <i class="fas fa-exclamation-triangle fa-2x"></i>
+      <div class="numero-estadistica" id="facturas-vencidas">0</div>
+      <div>Facturas Vencidas</div>
+    </div>
+    <div class="estadistica-os">
+      <i class="fas fa-money-bill-wave fa-2x"></i>
+      <div class="numero-estadistica" id="total-pendiente">$0</div>
+      <div>Total Pendiente</div>
+    </div>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="tabs">
+    <div class="tab activa" data-tab="facturas">Facturas Pendientes</div>
+    <div class="tab" data-tab="obras-sociales">Por Obra Social</div>
+    <div class="tab" data-tab="reclamos">Reclamos y Seguimiento</div>
+  </div>
+
+  <!-- Contenido de pestañas -->
+  <div class="contenido-tab activa" id="tab-facturas">
+    <div class="card">
+      <h3><i class="fas fa-list"></i> Facturas Pendientes de Cobro</h3>
+      <div class="lista-facturas" id="lista-facturas-pendientes">
+        <p>Cargando facturas pendientes...</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="contenido-tab" id="tab-obras-sociales">
+    <div class="grid-2">
+      <div class="card">
+        <h3><i class="fas fa-chart-pie"></i> Distribución por Obra Social</h3>
+        <div id="grafico-obras-sociales">
+          <p>Gráfico de distribución...</p>
+        </div>
+      </div>
+      <div class="card">
+        <h3><i class="fas fa-ranking-star"></i> Top Obras Sociales</h3>
+        <div id="ranking-obras-sociales">
+          <p>Cargando ranking...</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contenido-tab" id="tab-reclamos">
+    <div class="card">
+      <h3><i class="fas fa-comments"></i> Gestión de Reclamos</h3>
+      <p>Módulo de reclamos - Próximamente</p>
+    </div>
+  </div>
+
+  <!-- Acciones rápidas -->
+  <div class="card">
+    <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+      <button class="btn" onclick="nuevaFacturaOS()">
+        <i class="fas fa-plus"></i> Nueva Factura OS
+      </button>
+      <button class="btn" onclick="registrarPago()">
+        <i class="fas fa-check"></i> Registrar Pago
+      </button>
+      <button class="btn" onclick="generarReporteOS()">
+        <i class="fas fa-file-export"></i> Reporte OS
+      </button>
+      <button class="btn" onclick="verFacturasVencidas()">
+        <i class="fas fa-exclamation-triangle"></i> Facturas Vencidas
+      </button>
+    </div>
+  </div>
+</main>
+
+<script src="js/supabase.js"></script>
+<script>
+// ===== SISTEMA OBRAS SOCIALES - KODYANMED =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🏥 Inicializando módulo de obras sociales...');
+    inicializarModuloOS();
+});
+
+async function inicializarModuloOS() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Configurar pestañas
+    configurarPestanas();
+    
+    // Cargar datos
+    await cargarEstadisticasOS();
+    await cargarFacturasPendientes();
+    await cargarRankingOS();
+    configurarEventListeners();
+}
+
+// 1. CONFIGURAR PESTAÑAS
+function configurarPestanas() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remover clase activa de todas
+            tabs.forEach(t => t.classList.remove('activa'));
+            document.querySelectorAll('.contenido-tab').forEach(ct => ct.classList.remove('activa'));
+            
+            // Activar la seleccionada
+            this.classList.add('activa');
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(`tab-${tabId}`).classList.add('activa');
+        });
+    });
+}
+
+// 2. CARGAR ESTADÍSTICAS
+async function cargarEstadisticasOS() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        // Facturas pendientes
+        const { data: pendientes, error: errorPendientes } = await supabase
+            .from('facturas')
+            .select('monto_total')
+            .eq('profesional_id', session.user.id)
+            .eq('estado', 'pendiente');
+
+        // Facturas vencidas
+        const hoy = new Date().toISOString().split('T')[0];
+        const { data: vencidas, error: errorVencidas } = await supabase
+            .from('facturas')
+            .select('monto_total')
+            .eq('profesional_id', session.user.id)
+            .eq('estado', 'pendiente')
+            .lt('fecha_vencimiento', hoy);
+
+        if (errorPendientes || errorVencidas) {
+            console.error('Error cargando estadísticas:', errorPendientes, errorVencidas);
+            return;
+        }
+
+        const totalPendientes = pendientes?.length || 0;
+        const totalVencidas = vencidas?.length || 0;
+        const totalMonto = pendientes?.reduce((sum, f) => sum + parseFloat(f.monto_total), 0) || 0;
+
+        document.getElementById('facturas-pendientes').textContent = totalPendientes;
+        document.getElementById('facturas-vencidas').textContent = totalVencidas;
+        document.getElementById('total-pendiente').textContent = `$${totalMonto.toLocaleString()}`;
+
+    } catch (error) {
+        console.error('Error en estadísticas OS:', error);
+    }
+}
+
+// 3. CARGAR FACTURAS PENDIENTES
+async function cargarFacturasPendientes() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const hoy = new Date().toISOString().split('T')[0];
+
+        const { data: facturas, error } = await supabase
+            .from('facturas')
+            .select(`
+                *,
+                pacientes!dni_paciente (nombre_completo)
+            `)
+            .eq('profesional_id', session.user.id)
+            .eq('estado', 'pendiente')
+            .order('fecha_vencimiento', { ascending: true });
+
+        const container = document.getElementById('lista-facturas-pendientes');
+        
+        if (error) {
+            container.innerHTML = '<p>❌ Error cargando facturas</p>';
+            return;
+        }
+
+        if (!facturas || facturas.length === 0) {
+            container.innerHTML = '<p>🎉 No hay facturas pendientes</p>';
+            return;
+        }
+
+        let html = '';
+        facturas.forEach(factura => {
+            const vencimiento = new Date(factura.fecha_vencimiento);
+            const hoy = new Date();
+            const diasRestantes = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+            
+            let clase = 'item-factura';
+            let estado = '';
+            
+            if (diasRestantes < 0) {
+                clase += ' vencida';
+                estado = '⏰ VENCIDA';
+            } else if (diasRestantes <= 3) {
+                clase += ' proxima';
+                estado = '⚠️ POR VENCER';
+            } else {
+                estado = '⏳ PENDIENTE';
+            }
+
+            html += `
+                <div class="${clase}">
+                    <strong>${factura.obra_social} - Factura #${factura.numero_factura}</strong>
+                    <span style="float: right; font-size: 12px; background: #666; color: white; padding: 2px 6px; border-radius: 3px;">${estado}</span>
+                    <br>
+                    <small>Paciente: ${factura.pacientes?.nombre_completo || 'N/A'}</small><br>
+                    <small>Monto: $${factura.monto_total.toLocaleString()} • Vence: ${vencimiento.toLocaleDateString('es-AR')}</small>
+                    <div style="margin-top: 8px;">
+                        <button class="btn btn-pequeno" onclick="marcarFacturaPagada(${factura.id})">
+                            <i class="fas fa-check"></i> Pagada
+                        </button>
+                        <button class="btn btn-pequeno" onclick="verDetalleFactura(${factura.id})">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                        <button class="btn btn-pequeno" onclick="recordatorioFactura(${factura.id})">
+                            <i class="fas fa-bell"></i> Recordatorio
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando facturas pendientes:', error);
+    }
+}
+
+// 4. CARGAR RANKING OBRA SOCIALES
+async function cargarRankingOS() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const { data: facturas, error } = await supabase
+            .from('facturas')
+            .select('obra_social, monto_total')
+            .eq('profesional_id', session.user.id)
+            .eq('estado', 'pendiente');
+
+        const container = document.getElementById('ranking-obras-sociales');
+        
+        if (error || !facturas || facturas.length === 0) {
+            container.innerHTML = '<p>No hay datos de obras sociales</p>';
+            return;
+        }
+
+        // Agrupar por obra social
+        const ranking = {};
+        facturas.forEach(factura => {
+            if (!ranking[factura.obra_social]) {
+                ranking[factura.obra_social] = 0;
+            }
+            ranking[factura.obra_social] += parseFloat(factura.monto_total);
+        });
+
+        // Ordenar por monto descendente
+        const rankingOrdenado = Object.entries(ranking)
+            .sort(([,a], [,b]) => b - a)
+            .slice(0, 5);
+
+        let html = '';
+        rankingOrdenado.forEach(([os, monto], index) => {
+            html += `
+                <div style="padding: 10px; margin: 5px 0; background: var(--violeta-secundario); border-radius: 5px;">
+                    <strong>${index + 1}. ${os}</strong><br>
+                    <span style="color: var(--violeta-acento);">$${monto.toLocaleString()}</span>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando ranking OS:', error);
+    }
+}
+
+// 5. FUNCIONES DE ACCIÓN
+async function marcarFacturaPagada(facturaId) {
+    if (!confirm('¿Marcar esta factura como pagada?')) return;
+    
+    try {
+        const { error } = await supabase
+            .from('facturas')
+            .update({ 
+                estado: 'pagada',
+                monto_pagado: await obtenerMontoFactura(facturaId)
+            })
+            .eq('id', facturaId);
+
+        if (error) throw error;
+        
+        alert('✅ Factura marcada como pagada');
+        location.reload();
+    } catch (error) {
+        console.error('Error marcando factura:', error);
+        alert('❌ Error al actualizar la factura');
+    }
+}
+
+async function obtenerMontoFactura(facturaId) {
+    const { data } = await supabase
+        .from('facturas')
+        .select('monto_total')
+        .eq('id', facturaId)
+        .single();
+    
+    return data?.monto_total || 0;
+}
+
+function verDetalleFactura(id) {
+    alert(`📋 Viendo detalle de factura #${id} - Próximamente!`);
+}
+
+function recordatorioFactura(id) {
+    alert(`🔔 Enviando recordatorio para factura #${id} - Próximamente!`);
+}
+
+function nuevaFacturaOS() {
+    window.location.href = 'nueva-factura.html';
+}
+
+function registrarPago() {
+    alert('💳 Módulo de registro de pagos - Próximamente!');
+}
+
+function generarReporteOS() {
+    alert('📊 Generando reporte de obras sociales...');
+}
+
+function verFacturasVencidas() {
+    document.querySelector('.tab[data-tab="facturas"]').click();
+}
+
+// 6. CONFIGURAR EVENT LISTENERS
+function configurarEventListeners() {
+    // Event listeners adicionales si son necesarios
+}
+
+// 7. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+</script>
+</body>
+</html>
