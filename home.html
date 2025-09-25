@@ -6,6 +6,8 @@
   <title>KodyanMED - Gestión de pacientes</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     :root {
       --violeta-primario: #D1C4E9;
@@ -31,13 +33,16 @@
       min-height: 100vh;
     }
 
-    /* Navbar lateral */
     .navbar {
       width: 250px;
       background: var(--violeta-primario);
       padding: 25px 0;
       box-shadow: var(--sombra-suave);
-      transition: var(--transicion);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
     }
 
     .navbar-brand {
@@ -76,10 +81,10 @@
       font-size: 1.2rem;
     }
 
-    /* Contenido principal */
     .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
       padding: 30px;
-      overflow-y: auto;
     }
 
     .header {
@@ -96,72 +101,65 @@
       margin-bottom: 10px;
     }
 
-    /* Tarjetas */
     .grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
       gap: 25px;
+      margin-bottom: 20px;
     }
 
     .card {
       background: var(--blanco);
-      padding: 25px;
+      padding: 20px;
       border-radius: var(--border-radius);
       box-shadow: var(--sombra-suave);
-      transition: var(--transicion);
       border-left: 4px solid var(--violeta-acento);
-    }
-
-    .card:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+      min-height: 200px;
     }
 
     .card h3 {
       color: var(--violeta-acento);
       margin-bottom: 15px;
-      font-size: 1.3rem;
+      font-size: 1.2rem;
     }
 
-    /* Formularios */
     .form-group {
-      margin-bottom: 20px;
+      margin-bottom: 15px;
     }
 
     label {
       display: block;
-      margin-bottom: 8px;
+      margin-bottom: 5px;
       font-weight: 500;
+      font-size: 14px;
     }
 
     input, select, textarea {
       width: 100%;
-      padding: 12px 15px;
+      padding: 10px;
       border: 2px solid var(--violeta-secundario);
-      border-radius: 8px;
+      border-radius: 6px;
       font-family: 'Poppins', sans-serif;
-      transition: var(--transicion);
+      font-size: 14px;
     }
 
     input:focus, select:focus, textarea:focus {
       outline: none;
       border-color: var(--violeta-acento);
-      box-shadow: 0 0 0 3px rgba(179, 157, 219, 0.3);
     }
 
-    /* Botones */
     .btn {
       background: var(--violeta-primario);
       color: var(--texto);
       border: none;
-      padding: 12px 25px;
-      border-radius: 8px;
+      padding: 10px 15px;
+      border-radius: 6px;
       cursor: pointer;
-      font-weight: 500;
-      transition: var(--transicion);
+      font-size: 14px;
       display: inline-flex;
       align-items: center;
-      gap: 8px;
+      gap: 5px;
+      transition: var(--transicion);
     }
 
     .btn:hover {
@@ -169,144 +167,446 @@
       color: var(--blanco);
     }
 
-    /* Responsive */
-    @media (max-width: 768px) {
-      body {
-        flex-direction: column;
-      }
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
 
+    .scroll-container {
+      max-height: 120px;
+      overflow-y: auto;
+      margin-top: 10px;
+    }
+
+    .turno-item {
+      padding: 8px;
+      margin: 5px 0;
+      background: var(--violeta-secundario);
+      border-radius: 5px;
+      border-left: 3px solid var(--violeta-acento);
+      font-size: 13px;
+    }
+
+    .stats-container {
+      display: flex;
+      justify-content: space-around;
+      text-align: center;
+      margin-top: 15px;
+    }
+
+    .stat-number {
+      color: var(--violeta-acento);
+      font-size: 1.5rem;
+      margin: 5px 0;
+      font-weight: bold;
+    }
+
+    @media (max-width: 768px) {
       .navbar {
         width: 100%;
-        padding: 15px;
-        position: relative !important;
-        height: auto !important;
+        height: auto;
+        position: relative;
       }
-
       .main-content {
-        margin-left: 0 !important;
-        width: 100% !important;
+        margin-left: 0;
+        width: 100%;
       }
     }
   </style>
-  <link rel="stylesheet" href="css/style.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 </head>
 <body>
 <!-- Barra lateral -->
-<nav class="navbar" style="position: fixed; left: 0; top: 0; height: 100vh; z-index: 1000;">
+<nav class="navbar">
   <div class="navbar-brand">
     <h1>KodyanMED</h1>
   </div>
   <ul class="navbar-menu">
     <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
     <li class="navbar-item"><a href="agenda.html"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
-  <li class="navbar-item"><a href="pacientes.html"><i class="fas fa-user-injured"></i> Pacientes</a></li>
+    <li class="navbar-item"><a href="pacientes.html"><i class="fas fa-user-injured"></i> Pacientes</a></li>
     <li class="navbar-item"><a href="#" id="btn-probar-alertas"><i class="fas fa-bell"></i> Alertas 🔔</a></li>
     <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
-<li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li> 
- </ul>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
 </nav>
+
 <!-- Contenido principal -->
-<main class="main-content" style="margin-left: 250px; width: calc(100% - 250px); padding: 30px;">
+<main class="main-content">
   <div class="header">
     <h2>Bienvenida, Violeta</h2>
     <p>Gestioná tus turnos y pacientes de forma simple</p>
   </div>
 
   <!-- FILA 1: 3 TARJETAS -->
-  <div class="grid" style="grid-template-columns: repeat(3, 1fr); margin-bottom: 20px;">
+  <div class="grid">
     <!-- Agenda de Hoy -->
-    <div class="card" style="min-height: 200px;">
+    <div class="card">
       <h3><i class="fas fa-calendar-day"></i> Agenda de Hoy</h3>
-      <div id="agenda-hoy" style="max-height: 120px; overflow-y: auto;">
-        <p class="loading">Cargando turnos de hoy...</p>
+      <div id="agenda-hoy" class="scroll-container">
+        <p>Cargando turnos de hoy...</p>
       </div>
     </div>
 
     <!-- Próximos Turnos -->
-    <div class="card" style="min-height: 200px;">
+    <div class="card">
       <h3><i class="fas fa-clock"></i> Próximos Turnos</h3>
-      <div id="proximos-turnos" style="max-height: 120px; overflow-y: auto;">
-        <p class="loading">Cargando próximos turnos...</p>
+      <div id="proximos-turnos" class="scroll-container">
+        <p>Cargando próximos turnos...</p>
       </div>
     </div>
 
     <!-- Estadísticas -->
-    <div class="card" style="min-height: 200px;">
+    <div class="card">
       <h3><i class="fas fa-chart-pie"></i> Hoy</h3>
-      <div id="estadisticas-hoy">
-        <div style="display: flex; justify-content: space-around; text-align: center; margin-top: 15px;">
-          <div>
-            <h4 style="color: var(--violeta-acento); font-size: 1.5rem; margin: 5px 0;">0</h4>
-            <small>Total</small>
-          </div>
-          <div>
-            <h4 style="color: var(--violeta-acento); font-size: 1.5rem; margin: 5px 0;">0</h4>
-            <small>Confirmados</small>
-          </div>
-          <div>
-            <h4 style="color: var(--violeta-acento); font-size: 1.5rem; margin: 5px 0;">0</h4>
-            <small>Pendientes</small>
-          </div>
+      <div id="estadisticas-hoy" class="stats-container">
+        <div>
+          <div class="stat-number">0</div>
+          <small>Total</small>
+        </div>
+        <div>
+          <div class="stat-number">0</div>
+          <small>Confirmados</small>
+        </div>
+        <div>
+          <div class="stat-number">0</div>
+          <small>Pendientes</small>
         </div>
       </div>
     </div>
   </div>
 
   <!-- FILA 2: 3 TARJETAS -->
-  <div class="grid" style="grid-template-columns: repeat(3, 1fr);">
+  <div class="grid">
     <!-- Nuevo Turno -->
-    <div class="card" id="agenda" style="min-height: 200px;">
-      <h3><i class="fas fa-plus-circle"></i> Nuevo turno</h3>
+    <div class="card">
+      <h3><i class="fas fa-plus-circle"></i> Nuevo Turno</h3>
       <form id="form-turno">
-        <div class="form-group" style="margin-bottom: 10px;">
+        <div class="form-group">
           <label>Fecha</label>
-          <input type="date" id="fecha-turno" required style="padding: 8px;">
+          <input type="date" id="fecha-turno" required>
         </div>
-        <div class="form-group" style="margin-bottom: 10px;">
+        <div class="form-group">
           <label>Hora</label>
-          <input type="time" id="hora-turno" required style="padding: 8px;">
+          <input type="time" id="hora-turno" required>
         </div>
-        <div class="form-group" style="margin-bottom: 10px;">
-          <label>DNI del paciente</label>
-          <input type="text" id="dni-paciente" placeholder="Buscar por DNI" style="padding: 8px;">
+        <div class="form-group">
+          <label>DNI del Paciente</label>
+          <input type="text" id="dni-paciente" placeholder="Ej: 12345678" required>
         </div>
-        <button type="submit" class="btn" style="padding: 8px 12px; font-size: 14px;">
-          <i class="fas fa-save"></i> Guardar turno
+        <button type="submit" class="btn btn-block">
+          <i class="fas fa-save"></i> Guardar Turno
         </button>
       </form>
     </div>
 
     <!-- Buscar Paciente -->
-    <div class="card" id="pacientes" style="min-height: 200px;">
-      <h3><i class="fas fa-search"></i> Buscar paciente</h3>
-      <div class="form-group" style="margin-bottom: 10px;">
-        <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI" style="padding: 8px;">
+    <div class="card">
+      <h3><i class="fas fa-search"></i> Buscar Paciente</h3>
+      <div class="form-group">
+        <input type="text" id="input-buscar-paciente" placeholder="Nombre o DNI">
       </div>
-      <button class="btn" id="btn-buscar-paciente" style="padding: 8px 12px; font-size: 14px;">
+      <button class="btn btn-block" id="btn-buscar-paciente">
         <i class="fas fa-search"></i> Buscar
       </button>
-      <div style="margin-top: 10px; padding-top: 10px; border-top: 1px solid #eee;">
-        <a href="#" id="btn-ficha-completa" class="btn" style="background: var(--violeta-acento); color: white; padding: 8px 12px; font-size: 14px;">
-          <i class="fas fa-file-medical"></i> Ficha Completa
-        </a>
-      </div>
+      <div id="resultados-busqueda" style="margin-top: 10px;"></div>
     </div>
 
     <!-- Nuevo Paciente -->
-    <div class="card" style="min-height: 200px;">
+    <div class="card">
       <h3><i class="fas fa-user-plus"></i> Nuevo Paciente</h3>
       <p style="margin-bottom: 15px; font-size: 14px;">Agregar un nuevo paciente al sistema</p>
-      <button class="btn" id="btn-agendar-paciente" onclick="window.location.href='nuevo-paciente.html'" style="padding: 8px 12px; font-size: 14px;">
-        <i class="fas fa-plus-circle"></i> Agendar Paciente
+      <button class="btn btn-block" onclick="window.location.href='nuevo-paciente.html'">
+        <i class="fas fa-plus-circle"></i> Crear Paciente
       </button>
     </div>
   </div>
 </main>
 
 <script src="js/supabase.js"></script>
-<script src="js/database.js"></script>  
-<script src="js/alertas.js"></script>     
-<script src="js/app.js"></script>
+<script>
+// ===== HOME FUNCIONAL - CÓDIGO NUEVO =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🏠 Inicializando KodyanMED Home...');
+    inicializarHome();
+});
+
+async function inicializarHome() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Cargar datos iniciales
+    await cargarAgendaHoy();
+    await cargarProximosTurnos();
+    configurarEventListeners();
+}
+
+// 1. CARGAR AGENDA DE HOY
+async function cargarAgendaHoy() {
+    try {
+        const hoy = new Date().toISOString().split('T')[0];
+        
+        const { data: turnos, error } = await supabase
+            .from('turnos')
+            .select(`
+                *,
+                pacientes!dni_paciente (nombre_completo, telefono)
+            `)
+            .eq('fecha', hoy)
+            .order('hora', { ascending: true });
+
+        const container = document.getElementById('agenda-hoy');
+        
+        if (error) {
+            container.innerHTML = '<p>❌ Error cargando agenda</p>';
+            return;
+        }
+
+        if (!turnos || turnos.length === 0) {
+            container.innerHTML = '<p>🎉 No hay turnos para hoy</p>';
+            actualizarEstadisticas(0, 0, 0);
+            return;
+        }
+
+        let html = '';
+        turnos.forEach(turno => {
+            html += `
+                <div class="turno-item">
+                    <strong>⏰ ${turno.hora}</strong><br>
+                    <span>👤 ${turno.pacientes?.nombre_completo || 'N/A'}</span><br>
+                    <small>📞 ${turno.pacientes?.telefono || 'Sin teléfono'}</small>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        
+        // Actualizar estadísticas
+        const total = turnos.length;
+        const confirmados = turnos.filter(t => t.estado === 'confirmado').length;
+        const pendientes = total - confirmados;
+        
+        actualizarEstadisticas(total, confirmados, pendientes);
+        
+    } catch (error) {
+        console.error('Error cargando agenda:', error);
+        document.getElementById('agenda-hoy').innerHTML = '<p>❌ Error del sistema</p>';
+    }
+}
+
+// 2. CARGAR PRÓXIMOS TURNOS
+async function cargarProximosTurnos() {
+    try {
+        const manana = new Date();
+        manana.setDate(manana.getDate() + 1);
+        const fechaManana = manana.toISOString().split('T')[0];
+
+        const { data: turnos, error } = await supabase
+            .from('turnos')
+            .select(`
+                *,
+                pacientes!dni_paciente (nombre_completo)
+            `)
+            .gte('fecha', fechaManana)
+            .order('fecha', { ascending: true })
+            .order('hora', { ascending: true })
+            .limit(5);
+
+        const container = document.getElementById('proximos-turnos');
+        
+        if (error) {
+            container.innerHTML = '<p>❌ Error cargando turnos</p>';
+            return;
+        }
+
+        if (!turnos || turnos.length === 0) {
+            container.innerHTML = '<p>📅 No hay próximos turnos</p>';
+            return;
+        }
+
+        let html = '';
+        turnos.forEach(turno => {
+            const fecha = new Date(turno.fecha).toLocaleDateString('es-AR');
+            html += `
+                <div class="turno-item">
+                    <strong>📅 ${fecha}</strong><br>
+                    <strong>⏰ ${turno.hora}</strong><br>
+                    <span>👤 ${turno.pacientes?.nombre_completo || 'N/A'}</span>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando próximos turnos:', error);
+    }
+}
+
+// 3. ACTUALIZAR ESTADÍSTICAS
+function actualizarEstadisticas(total, confirmados, pendientes) {
+    const stats = document.getElementById('estadisticas-hoy');
+    const numbers = stats.querySelectorAll('.stat-number');
+    
+    numbers[0].textContent = total;
+    numbers[1].textContent = confirmados;
+    numbers[2].textContent = pendientes;
+}
+
+// 4. CONFIGURAR EVENTOS
+function configurarEventListeners() {
+    // Formulario de nuevo turno
+    const formTurno = document.getElementById('form-turno');
+    if (formTurno) {
+        formTurno.addEventListener('submit', guardarNuevoTurno);
+    }
+
+    // Búsqueda de pacientes
+    const btnBuscar = document.getElementById('btn-buscar-paciente');
+    if (btnBuscar) {
+        btnBuscar.addEventListener('click', buscarPacientes);
+    }
+
+    // Botón de alertas
+    const btnAlertas = document.getElementById('btn-probar-alertas');
+    if (btnAlertas) {
+        btnAlertas.addEventListener('click', function(e) {
+            e.preventDefault();
+            alert('🔔 Sistema de alertas - Próximamente!');
+        });
+    }
+}
+
+// 5. GUARDAR NUEVO TURNO
+async function guardarNuevoTurno(e) {
+    e.preventDefault();
+    
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+    btn.disabled = true;
+
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('No hay sesión activa');
+
+        const turnoData = {
+            fecha: document.getElementById('fecha-turno').value,
+            hora: document.getElementById('hora-turno').value,
+            dni_paciente: document.getElementById('dni-paciente').value,
+            profesional_id: session.user.id,
+            estado: 'programado'
+        };
+
+        // Verificar que el paciente existe
+        const { data: paciente, error: errorPaciente } = await supabase
+            .from('pacientes')
+            .select('dni')
+            .eq('dni', turnoData.dni_paciente)
+            .single();
+
+        if (errorPaciente || !paciente) {
+            throw new Error('El paciente no existe. Creá primero su ficha.');
+        }
+
+        const { error } = await supabase
+            .from('turnos')
+            .insert([turnoData]);
+
+        if (error) throw error;
+
+        alert('✅ Turno guardado correctamente!');
+        e.target.reset();
+        
+        // Recargar datos
+        await cargarAgendaHoy();
+        await cargarProximosTurnos();
+        
+    } catch (error) {
+        console.error('Error guardando turno:', error);
+        alert('❌ Error: ' + error.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// 6. BUSCAR PACIENTES
+async function buscarPacientes() {
+    const termino = document.getElementById('input-buscar-paciente').value.trim();
+    const resultados = document.getElementById('resultados-busqueda');
+    
+    if (!termino) {
+        alert('Ingresá un DNI o nombre para buscar');
+        return;
+    }
+
+    try {
+        const { data: pacientes, error } = await supabase
+            .from('pacientes')
+            .select('*')
+            .or(`dni.ilike.%${termino}%,nombre_completo.ilike.%${termino}%`)
+            .limit(5);
+
+        if (error) throw error;
+
+        if (!pacientes || pacientes.length === 0) {
+            resultados.innerHTML = '<p>❌ No se encontraron pacientes</p>';
+            return;
+        }
+
+        let html = '<div style="margin-top: 10px;"><strong>Resultados:</strong></div>';
+        pacientes.forEach(paciente => {
+            html += `
+                <div class="turno-item" style="cursor: pointer;" 
+                     onclick="window.location.href='patient-profile.html?dni=${paciente.dni}'">
+                    <strong>👤 ${paciente.nombre_completo}</strong><br>
+                    <small>📄 DNI: ${paciente.dni}</small><br>
+                    <small>📞 ${paciente.telefono || 'Sin teléfono'}</small>
+                </div>
+            `;
+        });
+
+        resultados.innerHTML = html;
+    } catch (error) {
+        console.error('Error buscando pacientes:', error);
+        resultados.innerHTML = '<p>❌ Error en la búsqueda</p>';
+    }
+}
+
+// 7. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+
+// 8. MODO DEMO (si falla la conexión)
+setTimeout(() => {
+    const agendaHoy = document.getElementById('agenda-hoy');
+    if (agendaHoy && agendaHoy.innerHTML.includes('Cargando')) {
+        console.log('🔄 Activando modo demo...');
+        agendaHoy.innerHTML = `
+            <div class="turno-item">
+                <strong>⏰ 10:00</strong> - 👤 Juan Pérez (Control)
+            </div>
+            <div class="turno-item">
+                <strong>⏰ 15:30</strong> - 👤 María García (Limpieza)
+            </div>
+        `;
+        actualizarEstadisticas(2, 1, 1);
+        
+        document.getElementById('proximos-turnos').innerHTML = `
+            <div class="turno-item">
+                <strong>📅 Mañana - ⏰ 11:00</strong><br>
+                👤 Carlos López
+            </div>
+        `;
+    }
+}, 3000);
+</script>
 </body>
 </html>
