@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Registrar Pago - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      border-left: 4px solid var(--violeta-acento);
+      margin-bottom: 25px;
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid var(--violeta-secundario);
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      transition: var(--transicion);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--violeta-acento);
+      box-shadow: 0 0 0 3px rgba(179, 157, 219, 0.3);
+    }
+
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transicion);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-pequeno {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .info-paciente {
+      background: var(--violeta-secundario);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .facturas-pendientes {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .item-factura {
+      padding: 15px;
+      margin: 10px 0;
+      background: var(--violeta-secundario);
+      border-radius: 8px;
+      border-left: 3px solid var(--violeta-acento);
+    }
+
+    .item-factura.seleccionada {
+      border-left-color: #27ae60;
+      background: #eafaf1;
+    }
+
+    .metodo-pago {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 15px 0;
+    }
+
+    .metodo-pago-btn {
+      padding: 10px;
+      border: 2px solid var(--violeta-secundario);
+      border-radius: 6px;
+      cursor: pointer;
+      text-align: center;
+      transition: var(--transicion);
+    }
+
+    .metodo-pago-btn.seleccionado {
+      border-color: var(--violeta-acento);
+      background: var(--violeta-secundario);
+    }
+
+    .resumen-pago {
+      background: #f8f9fa;
+      padding: 15px;
+      border-radius: 8px;
+      margin: 15px 0;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .metodo-pago {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Barra lateral -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>KodyanMED</h1>
+  </div>
+  <ul class="navbar-menu">
+    <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+    <li class="navbar-item"><a href="finanzas.html"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="obras-sociales.html"><i class="fas fa-hospital"></i> Obras Sociales</a></li>
+    <li class="navbar-item"><a href="registrar-pago.html" style="background: var(--violeta-acento);"><i class="fas fa-money-bill-wave"></i> Registrar Pago</a></li>
+    <li class="navbar-item"><a href="nueva-factura.html"><i class="fas fa-file-invoice"></i> Facturación</a></li>
+    <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+  <div class="header">
+    <h2><i class="fas fa-money-bill-wave"></i> Registrar Pago Rápido</h2>
+    <p>Gestión eficiente de pagos desde la ficha del paciente</p>
+  </div>
+
+  <!-- Búsqueda de paciente -->
+  <div class="card">
+    <h3><i class="fas fa-search"></i> Buscar Paciente</h3>
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="buscar-dni">Buscar por DNI</label>
+        <input type="text" id="buscar-dni" placeholder="Ej: 12345678">
+      </div>
+      <div class="form-group">
+        <label for="buscar-nombre">Buscar por Nombre</label>
+        <input type="text" id="buscar-nombre" placeholder="Nombre del paciente">
+      </div>
+    </div>
+    <button class="btn" onclick="buscarPaciente()">
+      <i class="fas fa-search"></i> Buscar Paciente
+    </button>
+  </div>
+
+  <!-- Información del paciente -->
+  <div class="card" id="info-paciente-container" style="display: none;">
+    <h3><i class="fas fa-user"></i> Información del Paciente</h3>
+    <div class="info-paciente" id="info-paciente">
+      <!-- Aquí se cargará la información del paciente -->
+    </div>
+  </div>
+
+  <!-- Facturas pendientes del paciente -->
+  <div class="card" id="facturas-container" style="display: none;">
+    <h3><i class="fas fa-receipt"></i> Facturas Pendientes</h3>
+    <div class="facturas-pendientes" id="lista-facturas">
+      <!-- Aquí se cargarán las facturas pendientes -->
+    </div>
+  </div>
+
+  <!-- Formulario de registro de pago -->
+  <div class="card" id="form-pago-container" style="display: none;">
+    <h3><i class="fas fa-credit-card"></i> Registrar Pago</h3>
+    
+    <div class="resumen-pago" id="resumen-pago">
+      <strong>Resumen del Pago:</strong>
+      <div id="detalles-pago">Selecciona una factura para continuar</div>
+    </div>
+
+    <form id="form-registrar-pago">
+      <div class="form-group">
+        <label for="fecha-pago">Fecha del Pago *</label>
+        <input type="date" id="fecha-pago" required>
+      </div>
+
+      <div class="form-group">
+        <label>Método de Pago *</label>
+        <div class="metodo-pago">
+          <div class="metodo-pago-btn" data-metodo="efectivo" onclick="seleccionarMetodoPago('efectivo')">
+            💵 Efectivo
+          </div>
+          <div class="metodo-pago-btn" data-metodo="transferencia" onclick="seleccionarMetodoPago('transferencia')">
+            📊 Transferencia
+          </div>
+          <div class="metodo-pago-btn" data-metodo="debito" onclick="seleccionarMetodoPago('debito')">
+            💳 Débito
+          </div>
+          <div class="metodo-pago-btn" data-metodo="credito" onclick="seleccionarMetodoPago('credito')">
+            📅 Crédito
+          </div>
+        </div>
+        <input type="hidden" id="metodo-pago" required>
+      </div>
+
+      <div class="form-group">
+        <label for="monto-pago">Monto a Pagar ($) *</label>
+        <input type="number" id="monto-pago" step="0.01" min="0" required>
+      </div>
+
+      <div class="form-group">
+        <label for="referencia-pago">Referencia/Número de Operación</label>
+        <input type="text" id="referencia-pago" placeholder="Número de transferencia, voucher, etc.">
+      </div>
+
+      <div class="form-group">
+        <label for="observaciones-pago">Observaciones</label>
+        <textarea id="observaciones-pago" rows="3" placeholder="Detalles adicionales del pago..."></textarea>
+      </div>
+
+      <button type="submit" class="btn btn-block">
+        <i class="fas fa-check-circle"></i> Registrar Pago
+      </button>
+    </form>
+  </div>
+
+  <!-- Historial de pagos recientes -->
+  <div class="card">
+    <h3><i class="fas fa-history"></i> Pagos Recientes</h3>
+    <div id="historial-pagos">
+      <p>Cargando historial de pagos...</p>
+    </div>
+  </div>
+</main>
+
+<script src="js/supabase.js"></script>
+<script>
+// ===== REGISTRO RÁPIDO DE PAGOS - KODYANMED =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('💳 Inicializando módulo de pagos...');
+    inicializarModuloPagos();
+});
+
+let pacienteActual = null;
+let facturaSeleccionada = null;
+
+async function inicializarModuloPagos() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Configurar fecha actual
+    document.getElementById('fecha-pago').value = new Date().toISOString().split('T')[0];
+    
+    // Cargar historial de pagos
+    await cargarHistorialPagos();
+    configurarEventListeners();
+}
+
+// 1. BUSCAR PACIENTE
+async function buscarPaciente() {
+    const dni = document.getElementById('buscar-dni').value.trim();
+    const nombre = document.getElementById('buscar-nombre').value.trim();
+
+    if (!dni && !nombre) {
+        alert('Ingresá DNI o nombre del paciente');
+        return;
+    }
+
+    try {
+        let query = supabase.from('pacientes').select('*');
+        
+        if (dni) {
+            query = query.eq('dni', dni);
+        } else {
+            query = query.ilike('nombre_completo', `%${nombre}%`);
+        }
+
+        const { data: pacientes, error } = await query;
+
+        if (error) throw error;
+
+        if (!pacientes || pacientes.length === 0) {
+            alert('❌ No se encontró el paciente');
+            return;
+        }
+
+        // Si hay múltiples resultados, tomar el primero
+        pacienteActual = pacientes[0];
+        mostrarInfoPaciente(pacienteActual);
+        await cargarFacturasPendientes(pacienteActual.dni);
+
+    } catch (error) {
+        console.error('Error buscando paciente:', error);
+        alert('❌ Error al buscar paciente: ' + error.message);
+    }
+}
+
+// 2. MOSTRAR INFORMACIÓN DEL PACIENTE
+function mostrarInfoPaciente(paciente) {
+    const container = document.getElementById('info-paciente');
+    container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <strong>👤 Nombre:</strong><br>
+                ${paciente.nombre_completo}
+            </div>
+            <div>
+                <strong>📄 DNI:</strong><br>
+                ${paciente.dni}
+            </div>
+            <div>
+                <strong>📞 Teléfono:</strong><br>
+                ${paciente.telefono || 'No registrado'}
+            </div>
+            <div>
+                <strong>🏥 Obra Social:</strong><br>
+                ${paciente.obra_social || 'Particular'}
+            </div>
+        </div>
+    `;
+    
+    document.getElementById('info-paciente-container').style.display = 'block';
+}
+
+// 3. CARGAR FACTURAS PENDIENTES DEL PACIENTE
+async function cargarFacturasPendientes(dniPaciente) {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const { data: facturas, error } = await supabase
+            .from('facturas')
+            .select('*')
+            .eq('profesional_id', session.user.id)
+            .eq('dni_paciente', dniPaciente)
+            .eq('estado', 'pendiente')
+            .order('fecha_emision', { ascending: true });
+
+        const container = document.getElementById('lista-facturas');
+        
+        if (error) throw error;
+
+        if (!facturas || facturas.length === 0) {
+            container.innerHTML = '<p>✅ El paciente no tiene facturas pendientes</p>';
+            document.getElementById('facturas-container').style.display = 'block';
+            return;
+        }
+
+        let html = '';
+        facturas.forEach(factura => {
+            const vencimiento = new Date(factura.fecha_vencimiento).toLocaleDateString('es-AR');
+            html += `
+                <div class="item-factura" data-factura-id="${factura.id}" onclick="seleccionarFactura(${factura.id}, ${factura.monto_total})">
+                    <strong>Factura #${factura.numero_factura} - $${factura.monto_total.toLocaleString()}</strong><br>
+                    <small>🏥 ${factura.obra_social || 'Particular'} • Vence: ${vencimiento}</small><br>
+                    <small>📝 ${factura.concepto || 'Sin concepto'}</small>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+        document.getElementById('facturas-container').style.display = 'block';
+
+    } catch (error) {
+        console.error('Error cargando facturas:', error);
+    }
+}
+
+// 4. SELECCIONAR FACTURA PARA PAGO
+function seleccionarFactura(facturaId, montoTotal) {
+    // Remover selección anterior
+    document.querySelectorAll('.item-factura').forEach(item => {
+        item.classList.remove('seleccionada');
+    });
+    
+    // Marcar como seleccionada
+    document.querySelector(`[data-factura-id="${facturaId}"]`).classList.add('seleccionada');
+    
+    facturaSeleccionada = facturaId;
+    
+    // Actualizar resumen
+    document.getElementById('detalles-pago').innerHTML = `
+        Factura #${facturaId} - $${montoTotal.toLocaleString()}<br>
+        <small>Monto pendiente: $${montoTotal.toLocaleString()}</small>
+    `;
+    
+    document.getElementById('monto-pago').value = montoTotal;
+    document.getElementById('monto-pago').max = montoTotal;
+    
+    // Mostrar formulario de pago
+    document.getElementById('form-pago-container').style.display = 'block';
+}
+
+// 5. SELECCIONAR MÉTODO DE PAGO
+function seleccionarMetodoPago(metodo) {
+    document.querySelectorAll('.metodo-pago-btn').forEach(btn => {
+        btn.classList.remove('seleccionado');
+    });
+    document.querySelector(`[data-metodo="${metodo}"]`).classList.add('seleccionado');
+    document.getElementById('metodo-pago').value = metodo;
+}
+
+// 6. REGISTRAR PAGO
+async function registrarPago(e) {
+    e.preventDefault();
+    
+    if (!facturaSeleccionada) {
+        alert('Seleccioná una factura para pagar');
+        return;
+    }
+
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Registrando...';
+    btn.disabled = true;
+
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('No hay sesión activa');
+
+        const pagoData = {
+            factura_id: facturaSeleccionada,
+            fecha_pago: document.getElementById('fecha-pago').value,
+            monto: parseFloat(document.getElementById('monto-pago').value),
+            metodo_pago: document.getElementById('metodo-pago').value,
+            referencia: document.getElementById('referencia-pago').value || null,
+            observaciones: document.getElementById('observaciones-pago').value || null
+        };
+
+        // Validar monto
+        const { data: factura } = await supabase
+            .from('facturas')
+            .select('monto_total, monto_pagado')
+            .eq('id', facturaSeleccionada)
+            .single();
+
+        if (pagoData.monto > (factura.monto_total - (factura.monto_pagado || 0))) {
+            throw new Error('El monto excede el saldo pendiente de la factura');
+        }
+
+        // Registrar pago
+        const { error: errorPago } = await supabase
+            .from('pagos')
+            .insert([pagoData]);
+
+        if (errorPago) throw errorPago;
+
+        // Actualizar factura
+        const nuevoMontoPagado = (factura.monto_pagado || 0) + pagoData.monto;
+        const estadoFactura = nuevoMontoPagado >= factura.monto_total ? 'pagada' : 'parcial';
+
+        const { error: errorFactura } = await supabase
+            .from('facturas')
+            .update({ 
+                monto_pagado: nuevoMontoPagado,
+                estado: estadoFactura
+            })
+            .eq('id', facturaSeleccionada);
+
+        if (errorFactura) throw errorFactura;
+
+        // Éxito
+        alert('✅ Pago registrado correctamente!');
+        e.target.reset();
+        document.getElementById('fecha-pago').value = new Date().toISOString().split('T')[0];
+        
+        // Recargar datos
+        await cargarFacturasPendientes(pacienteActual.dni);
+        await cargarHistorialPagos();
+        
+        // Resetear selección
+        facturaSeleccionada = null;
+        document.getElementById('form-pago-container').style.display = 'none';
+        
+    } catch (error) {
+        console.error('Error registrando pago:', error);
+        alert('❌ Error: ' + error.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// 7. CARGAR HISTORIAL DE PAGOS
+async function cargarHistorialPagos() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const { data: pagos, error } = await supabase
+            .from('pagos')
+            .select(`
+                *,
+                facturas!factura_id (
+                    numero_factura,
+                    pacientes!dni_paciente (nombre_completo)
+                )
+            `)
+            .eq('facturas.profesional_id', session.user.id)
+            .order('fecha_pago', { ascending: false })
+            .limit(10);
+
+        const container = document.getElementById('historial-pagos');
+        
+        if (error) throw error;
+
+        if (!pagos || pagos.length === 0) {
+            container.innerHTML = '<p>📝 No hay pagos registrados</p>';
+            return;
+        }
+
+        let html = '';
+        pagos.forEach(pago => {
+            const fecha = new Date(pago.fecha_pago).toLocaleDateString('es-AR');
+            const iconosMetodo = {
+                'efectivo': '💵',
+                'transferencia': '📊',
+                'debito': '💳',
+                'credito': '📅'
+            };
+            
+            html += `
+                <div class="item-factura">
+                    <strong>${iconosMetodo[pago.metodo_pago] || '💰'} $${pago.monto.toLocaleString()}</strong><br>
+                    <small>Factura: ${pago.facturas?.numero_factura || 'N/A'} • ${pago.facturas?.pacientes?.nombre_completo || 'N/A'}</small><br>
+                    <small>${fecha} • ${pago.metodo_pago}</small>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando historial:', error);
+    }
+}
+
+// 8. CONFIGURAR EVENT LISTENERS
+function configurarEventListeners() {
+    const form = document.getElementById('form-registrar-pago');
+    if (form) {
+        form.addEventListener('submit', registrarPago);
+    }
+
+    // Buscar con Enter
+    document.getElementById('buscar-dni').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') buscarPaciente();
+    });
+    document.getElementById('buscar-nombre').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') buscarPaciente();
+    });
+}
+
+// 9. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+</script>
+</body>
+</html>
