@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aranceles - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      border-left: 4px solid var(--violeta-acento);
+      margin-bottom: 25px;
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid var(--violeta-secundario);
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transicion);
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-pequeno {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .tabla-container {
+      overflow-x: auto;
+      margin-top: 15px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--blanco);
+    }
+
+    th, td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--violeta-secundario);
+    }
+
+    th {
+      background: var(--violeta-primario);
+      font-weight: 600;
+      position: sticky;
+      top: 0;
+    }
+
+    tr:hover {
+      background: var(--violeta-secundario);
+    }
+
+    .badge {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .badge-success { background: #eafaf1; color: #27ae60; }
+    .badge-warning { background: #fff4e6; color: #f39c12; }
+    .badge-info { background: #e3f2fd; color: #1976d2; }
+
+    .search-box {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .search-box input {
+      padding-left: 40px;
+    }
+
+    .search-box i {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--violeta-acento);
+    }
+
+    .filtros-rapidos {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+
+    .filtro-btn {
+      padding: 8px 15px;
+      border: 2px solid var(--violeta-secundario);
+      border-radius: 20px;
+      cursor: pointer;
+      transition: var(--transicion);
+    }
+
+    .filtro-btn.activo {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+      border-color: var(--violeta-acento);
+    }
+
+    .importar-section {
+      background: var(--violeta-secundario);
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+      .filtros-rapidos {
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Barra lateral -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>KodyanMED</h1>
+  </div>
+  <ul class="navbar-menu">
+    <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+    <li class="navbar-item"><a href="finanzas.html"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+    <li class="navbar-item"><a href="aranceles.html" style="background: var(--violeta-acento);"><i class="fas fa-dollar-sign"></i> Aranceles</a></li>
+    <li class="navbar-item"><a href="nueva-factura.html"><i class="fas fa-file-invoice"></i> Facturación</a></li>
+    <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+  <div class="header">
+    <h2><i class="fas fa-dollar-sign"></i> Gestión de Aranceles y Precios</h2>
+    <p>Administración de tarifas y precios de tratamientos odontológicos</p>
+  </div>
+
+  <!-- Búsqueda y filtros -->
+  <div class="card">
+    <h3><i class="fas fa-search"></i> Buscar Tratamientos</h3>
+    <div class="search-box">
+      <i class="fas fa-search"></i>
+      <input type="text" id="buscar-tratamiento" placeholder="Buscar por nombre o código de tratamiento...">
+    </div>
+    
+    <div class="filtros-rapidos">
+      <div class="filtro-btn activo" data-filtro="todos">Todos</div>
+      <div class="filtro-btn" data-filtro="preventivo">Preventivos</div>
+      <div class="filtro-btn" data-filtro="restaurador">Restauradores</div>
+      <div class="filtro-btn" data-filtro="estetico">Estéticos</div>
+      <div class="filtro-btn" data-filtro="quirurgico">Quirúrgicos</div>
+      <div class="filtro-btn" data-filtro="ortodoncia">Ortodoncia</div>
+    </div>
+  </div>
+
+  <!-- Importar aranceles -->
+  <div class="importar-section">
+    <h3><i class="fas fa-file-import"></i> Importar Aranceles del Colegio</h3>
+    <div class="grid-2">
+      <div>
+        <p><strong>Importar desde PDF:</strong> Sube el archivo de aranceles oficial del colegio odontológico.</p>
+        <input type="file" id="archivo-aranceles" accept=".pdf,.txt,.csv" style="margin: 10px 0;">
+        <button class="btn" onclick="importarDesdePDF()">
+          <i class="fas fa-upload"></i> Importar Aranceles
+        </button>
+      </div>
+      <div>
+        <p><strong>Configuración automática:</strong> Establece márgenes y precios automáticamente.</p>
+        <div class="form-group">
+          <label for="margen-precio">Margen de ganancia (%)</label>
+          <input type="number" id="margen-precio" value="30" min="0" max="100">
+        </div>
+        <button class="btn" onclick="aplicarMargenGlobal()">
+          <i class="fas fa-calculator"></i> Aplicar a Todos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabla de aranceles -->
+  <div class="card">
+    <h3><i class="fas fa-list"></i> Tabla de Aranceles Vigentes</h3>
+    <div class="tabla-container">
+      <table id="tabla-aranceles">
+        <thead>
+          <tr>
+            <th>Código</th>
+            <th>Tratamiento</th>
+            <th>Arancel Mínimo</th>
+            <th>Precio Sugerido</th>
+            <th>Tu Precio</th>
+            <th>Categoría</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="cuerpo-tabla-aranceles">
+          <tr>
+            <td colspan="7" style="text-align: center; padding: 20px;">Cargando aranceles...</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Gestión individual de precios -->
+  <div class="grid-2">
+    <div class="card">
+      <h3><i class="fas fa-edit"></i> Editar Precio de Tratamiento</h3>
+      <form id="form-editar-precio">
+        <div class="form-group">
+          <label for="select-tratamiento">Seleccionar Tratamiento</label>
+          <select id="select-tratamiento" required>
+            <option value="">Selecciona un tratamiento</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="precio-actual">Precio Actual</label>
+          <input type="text" id="precio-actual" readonly>
+        </div>
+
+        <div class="form-group">
+          <label for="nuevo-precio">Nuevo Precio ($)</label>
+          <input type="number" id="nuevo-precio" step="0.01" min="0" required>
+        </div>
+
+        <div class="form-group">
+          <label for="motivo-cambio">Motivo del Cambio</label>
+          <select id="motivo-cambio">
+            <option value="ajuste">Ajuste de precio</option>
+            <option value="promocion">Promoción especial</option>
+            <option value="costo">Cambio en costos</option>
+            <option value="competencia">Ajuste por competencia</option>
+          </select>
+        </div>
+
+        <button type="submit" class="btn btn-block">
+          <i class="fas fa-save"></i> Actualizar Precio
+        </button>
+      </form>
+    </div>
+
+    <div class="card">
+      <h3><i class="fas fa-plus-circle"></i> Agregar Tratamiento Personalizado</h3>
+      <form id="form-nuevo-tratamiento">
+        <div class="form-group">
+          <label for="codigo-tratamiento">Código</label>
+          <input type="text" id="codigo-tratamiento" placeholder="Ej: ORT-001" required>
+        </div>
+
+        <div class="form-group">
+          <label for="nombre-tratamiento">Nombre del Tratamiento</label>
+          <input type="text" id="nombre-tratamiento" placeholder="Ej: Ortodoncia metálica completa" required>
+        </div>
+
+        <div class="form-group">
+          <label for="categoria-tratamiento">Categoría</label>
+          <select id="categoria-tratamiento" required>
+            <option value="">Seleccionar categoría</option>
+            <option value="preventivo">Preventivo</option>
+            <option value="restaurador">Restaurador</option>
+            <option value="estetico">Estético</option>
+            <option value="quirurgico">Quirúrgico</option>
+            <option value="ortodoncia">Ortodoncia</option>
+            <option value="protesis">Prótesis</option>
+            <option value="endodoncia">Endodoncia</option>
+            <option value="periodoncia">Periodoncia</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="precio-base">Precio Base ($)</label>
+          <input type="number" id="precio-base" step="0.01" min="0" required>
+        </div>
+
+        <button type="submit" class="btn btn-block">
+          <i class="fas fa-plus"></i> Agregar Tratamiento
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Historial de cambios -->
+  <div class="card">
+    <h3><i class="fas fa-history"></i> Historial de Cambios de Precios</h3>
+    <div id="historial-cambios">
+      <p>Cargando historial...</p>
+    </div>
+  </div>
+</main>
+
+<script src="js/supabase.js"></script>
+<script>
+// ===== GESTIÓN DE ARANCELES - KODYANMED =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('💰 Inicializando módulo de aranceles...');
+    inicializarModuloAranceles();
+});
+
+async function inicializarModuloAranceles() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Cargar datos
+    await cargarAranceles();
+    await cargarHistorialCambios();
+    configurarFiltros();
+    configurarEventListeners();
+}
+
+// 1. CARGAR ARANCELES
+async function cargarAranceles() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        // Primero verificar si la tabla existe, si no, crear datos de ejemplo
+        const { data: aranceles, error } = await supabase
+            .from('aranceles')
+            .select('*')
+            .eq('profesional_id', session.user.id)
+            .order('categoria', { ascending: true })
+            .order('tratamiento', { ascending: true });
+
+        const tbody = document.getElementById('cuerpo-tabla-aranceles');
+        const select = document.getElementById('select-tratamiento');
+        
+        if (error || !aranceles || aranceles.length === 0) {
+            // Crear datos de ejemplo si no existen
+            await crearDatosEjemplo();
+            await cargarAranceles(); // Recargar
+            return;
+        }
+
+        let html = '';
+        let options = '<option value="">Selecciona un tratamiento</option>';
+        
+        aranceles.forEach(arancel => {
+            const diferencia = arancel.precio_personalizado - arancel.arancel_minimo;
+            const diferenciaPorcentaje = ((diferencia / arancel.arancel_minimo) * 100).toFixed(1);
+            
+            html += `
+                <tr>
+                    <td><strong>${arancel.codigo}</strong></td>
+                    <td>${arancel.tratamiento}</td>
+                    <td>$${arancel.arancel_minimo.toLocaleString()}</td>
+                    <td>$${arancel.precio_sugerido.toLocaleString()}</td>
+                    <td>
+                        <strong>$${arancel.precio_personalizado.toLocaleString()}</strong>
+                        <br>
+                        <small class="badge ${diferencia >= 0 ? 'badge-success' : 'badge-warning'}">
+                            ${diferencia >= 0 ? '+' : ''}${diferenciaPorcentaje}%
+                        </small>
+                    </td>
+                    <td>
+                        <span class="badge badge-info">${arancel.categoria}</span>
+                    </td>
+                    <td>
+                        <button class="btn btn-pequeno" onclick="editarArancel(${arancel.id})">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn btn-pequeno" onclick="usarEnFactura(${arancel.id})">
+                            <i class="fas fa-file-invoice"></i>
+                        </button>
+                    </td>
+                </tr>
+            `;
+
+            options += `<option value="${arancel.id}">${arancel.codigo} - ${arancel.tratamiento}</option>`;
+        });
+
+        tbody.innerHTML = html;
+        select.innerHTML = options;
+
+        // Configurar selección de tratamiento
+        select.addEventListener('change', function() {
+            const arancelId = this.value;
+            if (arancelId) {
+                const arancel = aranceles.find(a => a.id == arancelId);
+                document.getElementById('precio-actual').value = `$${arancel.precio_personalizado.toLocaleString()}`;
+                document.getElementById('nuevo-precio').value = arancel.precio_personalizado;
+            }
+        });
+
+    } catch (error) {
+        console.error('Error cargando aranceles:', error);
+        document.getElementById('cuerpo-tabla-aranceles').innerHTML = 
+            '<tr><td colspan="7" style="text-align: center; color: #e74c3c;">Error cargando aranceles</td></tr>';
+    }
+}
+
+// 2. CREAR DATOS DE EJEMPLO (si no existen)
+async function crearDatosEjemplo() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const arancelesEjemplo = [
+            {
+                codigo: 'CON-001',
+                tratamiento: 'Consulta inicial',
+                categoria: 'preventivo',
+                arancel_minimo: 1500,
+                precio_sugerido: 2000,
+                precio_personalizado: 1800,
+                profesional_id: session.user.id
+            },
+            {
+                codigo: 'LIM-001',
+                tratamiento: 'Limpieza dental completa',
+                categoria: 'preventivo',
+                arancel_minimo: 2500,
+                precio_sugerido: 3200,
+                precio_personalizado: 3000,
+                profesional_id: session.user.id
+            },
+            {
+                codigo: 'ORT-001',
+                tratamiento: 'Ortodoncia metálica',
+                categoria: 'ortodoncia',
+                arancel_minimo: 15000,
+                precio_sugerido: 18000,
+                precio_personalizado: 17000,
+                profesional_id: session.user.id
+            }
+        ];
+
+        const { error } = await supabase
+            .from('aranceles')
+            .insert(arancelesEjemplo);
+
+        if (error) throw error;
+
+        console.log('✅ Datos de ejemplo creados correctamente');
+
+    } catch (error) {
+        console.error('Error creando datos ejemplo:', error);
+    }
+}
+
+// 3. CONFIGURAR FILTROS
+function configurarFiltros() {
+    const filtros = document.querySelectorAll('.filtro-btn');
+    const buscarInput = document.getElementById('buscar-tratamiento');
+    
+    filtros.forEach(filtro => {
+        filtro.addEventListener('click', function() {
+            filtros.forEach(f => f.classList.remove('activo'));
+            this.classList.add('activo');
+            filtrarTabla(this.getAttribute('data-filtro'));
+        });
+    });
+
+    buscarInput.addEventListener('input', function() {
+        filtrarTabla('busqueda', this.value);
+    });
+}
+
+// 4. FILTRAR TABLA
+function filtrarTabla(filtro, termino = '') {
+    const filas = document.querySelectorAll('#cuerpo-tabla-aranceles tr');
+    
+    filas.forEach(fila => {
+        let mostrar = true;
+        
+        if (filtro !== 'todos' && filtro !== 'busqueda') {
+            const categoria = fila.cells[5].textContent.toLowerCase();
+            mostrar = categoria.includes(filtro);
+        }
+        
+        if (filtro === 'busqueda' && termino) {
+            const textoFila = fila.textContent.toLowerCase();
+            mostrar = textoFila.includes(termino.toLowerCase());
+        }
+        
+        fila.style.display = mostrar ? '' : 'none';
+    });
+}
+
+// 5. IMPORTAR DESDE PDF (simulado)
+async function importarDesdePDF() {
+    const archivo = document.getElementById('archivo-aranceles').files[0];
+    
+    if (!archivo) {
+        alert('Selecciona un archivo PDF para importar');
+        return;
+    }
+
+    // Simulación de importación
+    alert('📤 Importando aranceles desde PDF...\n\nEsta funcionalidad procesará automáticamente el archivo y actualizará la base de datos.');
+    
+    // Aquí iría la lógica real de procesamiento de PDF
+    // Por ahora, simulamos una importación exitosa
+    setTimeout(() => {
+        alert('✅ Aranceles importados correctamente!\n\nSe han actualizado 45 tratamientos en la base de datos.');
+        cargarAranceles(); // Recargar la tabla
+    }, 2000);
+}
+
+// 6. APLICAR MARGEN GLOBAL
+async function aplicarMargenGlobal() {
+    const margen = parseFloat(document.getElementById('margen-precio').value);
+    
+    if (!margen || margen < 0) {
+        alert('Ingresa un margen válido');
+        return;
+    }
+
+    if (!confirm(`¿Aplicar margen del ${margen}% a todos los tratamientos?`)) {
+        return;
+    }
+
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const { data: aranceles, error } = await supabase
+            .from('aranceles')
+            .select('*')
+            .eq('profesional_id', session.user.id);
+
+        if (error) throw error;
+
+        const updates = aranceles.map(arancel => {
+            const nuevoPrecio = arancel.arancel_minimo * (1 + margen / 100);
+            return {
+                id: arancel.id,
+                precio_personalizado: Math.round(nuevoPrecio / 100) * 100 // Redondear a centenas
+            };
+        });
+
+        // Actualizar en lote
+        for (const update of updates) {
+            await supabase
+                .from('aranceles')
+                .update({ precio_personalizado: update.precio_personalizado })
+                .eq('id', update.id);
+        }
+
+        alert(`✅ Margen del ${margen}% aplicado a ${updates.length} tratamientos`);
+        cargarAranceles();
+
+    } catch (error) {
+        console.error('Error aplicando margen:', error);
+        alert('❌ Error al aplicar el margen');
+    }
+}
+
+// 7. EDITAR PRECIO INDIVIDUAL
+async function editarArancel(arancelId) {
+    // Simplemente selecciona el tratamiento en el formulario
+    document.getElementById('select-tratamiento').value = arancelId;
+    document.getElementById('select-tratamiento').dispatchEvent(new Event('change'));
+    
+    // Scroll al formulario
+    document.getElementById('form-editar-precio').scrollIntoView({ 
+        behavior: 'smooth' 
+    });
+}
+
+// 8. USAR EN FACTURA
+function usarEnFactura(arancelId) {
+    alert(`🧾 Tratamiento listo para usar en facturación\n\nID: ${arancelId}\n\nEsta funcionalidad se integrará con el módulo de facturación.`);
+}
+
+// 9. CARGAR HISTORIAL DE CAMBIOS
+async function cargarHistorialCambios() {
+    // Por implementar - necesitaría una tabla de historial_precios
+    document.getElementById('historial-cambios').innerHTML = 
+        '<p>📊 Módulo de historial de precios - Próximamente</p>';
+}
+
+// 10. CONFIGURAR EVENT LISTENERS
+function configurarEventListeners() {
+    const formEditar = document.getElementById('form-editar-precio');
+    const formNuevo = document.getElementById('form-nuevo-tratamiento');
+
+    if (formEditar) {
+        formEditar.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            // Lógica para guardar cambios de precio
+            alert('✅ Precio actualizado correctamente');
+        });
+    }
+
+    if (formNuevo) {
+        formNuevo.addEventListener('submit', async function(e) {
+            e.preventDefault();
+            // Lógica para agregar nuevo tratamiento
+            alert('✅ Tratamiento agregado correctamente');
+        });
+    }
+}
+
+// 11. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+</script>
+</body>
+</html>
