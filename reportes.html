@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reportes - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      border-left: 4px solid var(--violeta-acento);
+      margin-bottom: 25px;
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .filtros {
+      background: var(--violeta-secundario);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid var(--violeta-secundario);
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transicion);
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .grafico-container {
+      height: 300px;
+      margin: 15px 0;
+    }
+
+    .kpi-card {
+      text-align: center;
+      padding: 20px;
+      background: var(--violeta-secundario);
+      border-radius: 8px;
+    }
+
+    .kpi-numero {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--violeta-acento);
+      margin: 10px 0;
+    }
+
+    .kpi-titulo {
+      font-size: 0.9rem;
+      opacity: 0.8;
+    }
+
+    .positivo { color: #27ae60 !important; }
+    .negativo { color: #e74c3c !important; }
+
+    .lista-reporte {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .item-reporte {
+      padding: 12px;
+      margin: 8px 0;
+      background: var(--violeta-secundario);
+      border-radius: 6px;
+      border-left: 3px solid var(--violeta-acento);
+    }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--violeta-primario);
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab.activa {
+      border-bottom-color: var(--violeta-acento);
+      font-weight: 500;
+    }
+
+    .contenido-tab {
+      display: none;
+    }
+
+    .contenido-tab.activa {
+      display: block;
+    }
+
+    @media (max-width: 1200px) {
+      .grid-2 { grid-template-columns: 1fr; }
+      .grid-3 { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .grid-3 { grid-template-columns: 1fr; }
+      .tabs { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+<!-- Barra lateral -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>KodyanMED</h1>
+  </div>
+  <ul class="navbar-menu">
+    <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+    <li class="navbar-item"><a href="finanzas.html"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="obras-sociales.html"><i class="fas fa-hospital"></i> Obras Sociales</a></li>
+    <li class="navbar-item"><a href="reportes.html" style="background: var(--violeta-acento);"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+    <li class="navbar-item"><a href="aranceles.html"><i class="fas fa-dollar-sign"></i> Aranceles</a></li>
+    <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+  <div class="header">
+    <h2><i class="fas fa-chart-bar"></i> Reportes y Análisis</h2>
+    <p>Análisis avanzado del rendimiento financiero de tu consultorio</p>
+  </div>
+
+  <!-- Filtros -->
+  <div class="filtros">
+    <div class="grid-3">
+      <div class="form-group">
+        <label for="fecha-desde">Desde</label>
+        <input type="date" id="fecha-desde">
+      </div>
+      <div class="form-group">
+        <label for="fecha-hasta">Hasta</label>
+        <input type="date" id="fecha-hasta">
+      </div>
+      <div class="form-group">
+        <label for="tipo-reporte">Tipo de Reporte</label>
+        <select id="tipo-reporte">
+          <option value="mensual">Mensual</option>
+          <option value="trimestral">Trimestral</option>
+          <option value="anual">Anual</option>
+          <option value="personalizado">Personalizado</option>
+        </select>
+      </div>
+    </div>
+    <button class="btn" onclick="generarReporte()">
+      <i class="fas fa-sync-alt"></i> Generar Reporte
+    </button>
+    <button class="btn" onclick="exportarReporte()" style="margin-left: 10px;">
+      <i class="fas fa-download"></i> Exportar PDF
+    </button>
+  </div>
+
+  <!-- KPIs principales -->
+  <div class="grid-3">
+    <div class="kpi-card">
+      <i class="fas fa-money-bill-wave fa-2x"></i>
+      <div class="kpi-numero" id="kpi-ingresos">$0</div>
+      <div class="kpi-titulo">Ingresos Totales</div>
+    </div>
+    <div class="kpi-card">
+      <i class="fas fa-receipt fa-2x"></i>
+      <div class="kpi-numero" id="kpi-gastos">$0</div>
+      <div class="kpi-titulo">Gastos Totales</div>
+    </div>
+    <div class="kpi-card">
+      <i class="fas fa-piggy-bank fa-2x"></i>
+      <div class="kpi-numero" id="kpi-ganancia">$0</div>
+      <div class="kpi-titulo">Ganancia Neta</div>
+    </div>
+  </div>
+
+  <!-- Pestañas de reportes -->
+  <div class="tabs">
+    <div class="tab activa" data-tab="resumen">Resumen General</div>
+    <div class="tab" data-tab="ingresos">Análisis de Ingresos</div>
+    <div class="tab" data-tab="gastos">Análisis de Gastos</div>
+    <div class="tab" data-tab="obras-sociales">Por Obra Social</div>
+  </div>
+
+  <!-- Contenido de pestañas -->
+  <div class="contenido-tab activa" id="tab-resumen">
+    <div class="grid-2">
+      <div class="card">
+        <h3><i class="fas fa-chart-line"></i> Evolución Ingresos vs Gastos</h3>
+        <div class="grafico-container">
+          <canvas id="grafico-evolucion"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <h3><i class="fas fa-chart-pie"></i> Distribución de Ingresos</h3>
+        <div class="grafico-container">
+          <canvas id="grafico-distribucion"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="contenido-tab" id="tab-ingresos">
+    <div class="card">
+      <h3><i class="fas fa-money-bill-wave"></i> Detalle de Ingresos</h3>
+      <div class="grafico-container">
+        <canvas id="grafico-ingresos-mensuales"></canvas>
+      </div>
+      <div class="lista-reporte" id="detalle-ingresos">
+        <!-- Detalle de ingresos -->
+      </div>
+    </div>
+  </div>
+
+  <div class="contenido-tab" id="tab-gastos">
+    <div class="card">
+      <h3><i class="fas fa-receipt"></i> Análisis de Gastos por Categoría</h3>
+      <div class="grafico-container">
+        <canvas id="grafico-gastos-categoria"></canvas>
+      </div>
+      <div class="lista-reporte" id="detalle-gastos">
+        <!-- Detalle de gastos -->
+      </div>
+    </div>
+  </div>
+
+  <div class="contenido-tab" id="tab-obras-sociales">
+    <div class="grid-2">
+      <div class="card">
+        <h3><i class="fas fa-hospital"></i> Ingresos por Obra Social</h3>
+        <div class="grafico-container">
+          <canvas id="grafico-os-ingresos"></canvas>
+        </div>
+      </div>
+      <div class="card">
+        <h3><i class="fas fa-clock"></i> Tiempo de Cobro Promedio</h3>
+        <div class="grafico-container">
+          <canvas id="grafico-tiempo-cobro"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Reporte detallado -->
+  <div class="card">
+    <h3><i class="fas fa-list"></i> Reporte Detallado</h3>
+    <div class="lista-reporte" id="reporte-detallado">
+      <p>Selecciona un período y genera el reporte</p>
+    </div>
+  </div>
+</main>
+
+<script src="js/supabase.js"></script>
+<script>
+// ===== REPORTES AVANZADOS - KODYANMED =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('📊 Inicializando módulo de reportes...');
+    inicializarModuloReportes();
+});
+
+let charts = {}; // Almacenar instancias de gráficos
+
+async function inicializarModuloReportes() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Configurar fechas por defecto (últimos 30 días)
+    const hoy = new Date();
+    const hace30Dias = new Date();
+    hace30Dias.setDate(hoy.getDate() - 30);
+
+    document.getElementById('fecha-desde').value = hace30Dias.toISOString().split('T')[0];
+    document.getElementById('fecha-hasta').value = hoy.toISOString().split('T')[0];
+
+    // Configurar pestañas
+    configurarPestanas();
+    
+    // Generar reporte inicial
+    await generarReporte();
+    configurarEventListeners();
+}
+
+// 1. CONFIGURAR PESTAÑAS
+function configurarPestanas() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            // Remover clase activa de todas
+            tabs.forEach(t => t.classList.remove('activa'));
+            document.querySelectorAll('.contenido-tab').forEach(ct => ct.classList.remove('activa'));
+            
+            // Activar la seleccionada
+            this.classList.add('activa');
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(`tab-${tabId}`).classList.add('activa');
+            
+            // Regenerar gráficos específicos si es necesario
+            if (tabId === 'ingresos') actualizarGraficoIngresos();
+            if (tabId === 'gastos') actualizarGraficoGastos();
+            if (tabId === 'obras-sociales') actualizarGraficosOS();
+        });
+    });
+}
+
+// 2. GENERAR REPORTE PRINCIPAL
+async function generarReporte() {
+    try {
+        const fechaDesde = document.getElementById('fecha-desde').value;
+        const fechaHasta = document.getElementById('fecha-hasta').value;
+
+        if (!fechaDesde || !fechaHasta) {
+            alert('Selecciona un rango de fechas');
+            return;
+        }
+
+        // Mostrar loading
+        document.getElementById('kpi-ingresos').textContent = 'Cargando...';
+        document.getElementById('kpi-gastos').textContent = 'Cargando...';
+        document.getElementById('kpi-ganancia').textContent = 'Cargando...';
+
+        // Cargar datos
+        const [ingresos, gastos] = await Promise.all([
+            cargarDatosIngresos(fechaDesde, fechaHasta),
+            cargarDatosGastos(fechaDesde, fechaHasta)
+        ]);
+
+        // Actualizar KPIs
+        const totalIngresos = ingresos.reduce((sum, i) => sum + parseFloat(i.monto_total), 0);
+        const totalGastos = gastos.reduce((sum, g) => sum + parseFloat(g.monto), 0);
+        const gananciaNeta = totalIngresos - totalGastos;
+
+        document.getElementById('kpi-ingresos').textContent = `$${totalIngresos.toLocaleString()}`;
+        document.getElementById('kpi-gastos').textContent = `$${totalGastos.toLocaleString()}`;
+        document.getElementById('kpi-ganancia').textContent = `$${gananciaNeta.toLocaleString()}`;
+        document.getElementById('kpi-ganancia').className = `kpi-numero ${gananciaNeta >= 0 ? 'positivo' : 'negativo'}`;
+
+        // Generar gráficos
+        await generarGraficos(ingresos, gastos, fechaDesde, fechaHasta);
+        await generarReporteDetallado(ingresos, gastos);
+
+    } catch (error) {
+        console.error('Error generando reporte:', error);
+        alert('❌ Error al generar reporte: ' + error.message);
+    }
+}
+
+// 3. CARGAR DATOS DE INGRESOS
+async function cargarDatosIngresos(desde, hasta) {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const { data: facturas, error } = await supabase
+        .from('facturas')
+        .select('*')
+        .eq('profesional_id', session.user.id)
+        .eq('estado', 'pagada')
+        .gte('fecha_emision', desde)
+        .lte('fecha_emision', hasta)
+        .order('fecha_emision', { ascending: true });
+
+    if (error) throw error;
+    return facturas || [];
+}
+
+// 4. CARGAR DATOS DE GASTOS
+async function cargarDatosGastos(desde, hasta) {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    const { data: gastos, error } = await supabase
+        .from('gastos')
+        .select('*')
+        .eq('profesional_id', session.user.id)
+        .gte('fecha', desde)
+        .lte('fecha', hasta)
+        .order('fecha', { ascending: true });
+
+    if (error) throw error;
+    return gastos || [];
+}
+
+// 5. GENERAR GRÁFICOS
+async function generarGraficos(ingresos, gastos, desde, hasta) {
+    // Destruir gráficos existentes
+    Object.values(charts).forEach(chart => chart.destroy());
+    charts = {};
+
+    // Gráfico de evolución
+    const ctxEvolucion = document.getElementById('grafico-evolucion').getContext('2d');
+    charts.evolucion = new Chart(ctxEvolucion, {
+        type: 'line',
+        data: await generarDatosEvolucion(ingresos, gastos, desde, hasta),
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+
+    // Gráfico de distribución
+    const ctxDistribucion = document.getElementById('grafico-distribucion').getContext('2d');
+    charts.distribucion = new Chart(ctxDistribucion, {
+        type: 'doughnut',
+        data: await generarDatosDistribucion(ingresos),
+        options: {
+            responsive: true,
+            maintainAspectRatio: false
+        }
+    });
+}
+
+// 6. GENERAR DATOS PARA GRÁFICO DE EVOLUCIÓN
+async function generarDatosEvolucion(ingresos, gastos, desde, hasta) {
+    // Agrupar por mes
+    const meses = [];
+    const ingresosPorMes = {};
+    const gastosPorMes = {};
+
+    const fechaInicio = new Date(desde);
+    const fechaFin = new Date(hasta);
+
+    let fechaActual = new Date(fechaInicio.getFullYear(), fechaInicio.getMonth(), 1);
+
+    while (fechaActual <= fechaFin) {
+        const mesKey = fechaActual.toISOString().slice(0, 7);
+        const mesLabel = fechaActual.toLocaleDateString('es-AR', { month: 'short', year: 'numeric' });
+        
+        meses.push(mesLabel);
+        ingresosPorMes[mesKey] = 0;
+        gastosPorMes[mesKey] = 0;
+        
+        fechaActual.setMonth(fechaActual.getMonth() + 1);
+    }
+
+    // Procesar ingresos
+    ingresos.forEach(factura => {
+        const mesKey = factura.fecha_emision.slice(0, 7);
+        if (ingresosPorMes[mesKey] !== undefined) {
+            ingresosPorMes[mesKey] += parseFloat(factura.monto_total);
+        }
+    });
+
+    // Procesar gastos
+    gastos.forEach(gasto => {
+        const mesKey = gasto.fecha.slice(0, 7);
+        if (gastosPorMes[mesKey] !== undefined) {
+            gastosPorMes[mesKey] += parseFloat(gasto.monto);
+        }
+    });
+
+    return {
+        labels: meses,
+        datasets: [
+            {
+                label: 'Ingresos',
+                data: Object.values(ingresosPorMes),
+                borderColor: '#B39DDB',
+                backgroundColor: 'rgba(179, 157, 219, 0.1)',
+                tension: 0.4
+            },
+            {
+                label: 'Gastos',
+                data: Object.values(gastosPorMes),
+                borderColor: '#FF6B6B',
+                backgroundColor: 'rgba(255, 107, 107, 0.1)',
+                tension: 0.4
+            }
+        ]
+    };
+}
+
+// 7. GENERAR DATOS PARA GRÁFICO DE DISTRIBUCIÓN
+async function generarDatosDistribucion(ingresos) {
+    // Agrupar por obra social
+    const distribucion = {};
+    ingresos.forEach(factura => {
+        const os = factura.obra_social || 'Particular';
+        if (!distribucion[os]) distribucion[os] = 0;
+        distribucion[os] += parseFloat(factura.monto_total);
+    });
+
+    const colores = ['#B39DDB', '#FF6B6B', '#4ECDC4', '#FFE66D', '#6A0572', '#FF9A8B'];
+
+    return {
+        labels: Object.keys(distribucion),
+        datasets: [{
+            data: Object.values(distribucion),
+            backgroundColor: colores.slice(0, Object.keys(distribucion).length),
+            borderWidth: 2,
+            borderColor: '#fff'
+        }]
+    };
+}
+
+// 8. GENERAR REPORTE DETALLADO
+async function generarReporteDetallado(ingresos, gastos) {
+    const container = document.getElementById('reporte-detallado');
+    
+    let html = '<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">';
+    
+    // Ingresos
+    html += '<div><h4>📈 Ingresos</h4>';
+    ingresos.forEach(ingreso => {
+        const fecha = new Date(ingreso.fecha_emision).toLocaleDateString('es-AR');
+        html += `<div class="item-reporte">
+            <strong>$${ingreso.monto_total.toLocaleString()}</strong><br>
+            <small>${ingreso.obra_social || 'Particular'} • ${fecha}</small>
+        </div>`;
+    });
+    html += '</div>';
+
+    // Gastos
+    html += '<div><h4>📉 Gastos</h4>';
+    gastos.forEach(gasto => {
+        const fecha = new Date(gasto.fecha).toLocaleDateString('es-AR');
+        html += `<div class="item-reporte">
+            <strong>$${gasto.monto.toLocaleString()}</strong><br>
+            <small>${gasto.categoria} • ${fecha}</small>
+        </div>`;
+    });
+    html += '</div></div>';
+
+    container.innerHTML = html;
+}
+
+// 9. FUNCIONES ADICIONALES
+function actualizarGraficoIngresos() {
+    // Implementar actualización específica de ingresos
+    console.log('Actualizando gráfico de ingresos...');
+}
+
+function actualizarGraficoGastos() {
+    // Implementar actualización específica de gastos
+    console.log('Actualizando gráfico de gastos...');
+}
+
+function actualizarGraficosOS() {
+    // Implementar actualización específica de OS
+    console.log('Actualizando gráficos de obras sociales...');
+}
+
+function exportarReporte() {
+    alert('📊 Exportando reporte a PDF...');
+    // Aquí iría la lógica de exportación a PDF
+}
+
+// 10. CONFIGURAR EVENT LISTENERS
+function configurarEventListeners() {
+    // Event listeners adicionales si son necesarios
+}
+
+// 11. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+</script>
+</body>
+</html>
