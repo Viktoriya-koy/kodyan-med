@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finanzas - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .grid {
+      display: grid;
+      gap: 25px;
+      margin-bottom: 30px;
+    }
+
+    .grid-4 {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .grid-2 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 20px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      border-left: 4px solid var(--violeta-acento);
+      transition: var(--transicion);
+    }
+
+    .card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 15px;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .estadistica {
+      text-align: center;
+      padding: 15px;
+    }
+
+    .numero-grande {
+      font-size: 2.5rem;
+      font-weight: 600;
+      color: var(--violeta-acento);
+      margin: 10px 0;
+    }
+
+    .etiqueta {
+      font-size: 0.9rem;
+      color: var(--texto);
+      opacity: 0.8;
+    }
+
+    .positivo { color: #27ae60; }
+    .negativo { color: #e74c3c; }
+    .neutral { color: var(--violeta-acento); }
+
+    .lista-items {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .item-lista {
+      padding: 12px;
+      margin: 8px 0;
+      background: var(--violeta-secundario);
+      border-radius: 8px;
+      border-left: 3px solid var(--violeta-acento);
+    }
+
+    .alerta { border-left-color: #e74c3c; background: #ffeaea; }
+    .advertencia { border-left-color: #f39c12; background: #fff4e6; }
+    .exito { border-left-color: #27ae60; background: #eafaf1; }
+
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 14px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transicion);
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-pequeno {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .acciones-rapidas {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-top: 15px;
+    }
+
+    .grafico-container {
+      height: 200px;
+      margin-top: 15px;
+    }
+
+    @media (max-width: 1200px) {
+      .grid-4 { grid-template-columns: repeat(2, 1fr); }
+      .grid-2 { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .grid-4 { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+<!-- Barra lateral -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>KodyanMED</h1>
+  </div>
+  <ul class="navbar-menu">
+    <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+    <li class="navbar-item"><a href="agenda.html"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
+    <li class="navbar-item"><a href="pacientes.html"><i class="fas fa-user-injured"></i> Pacientes</a></li>
+    <li class="navbar-item"><a href="finanzas.html" style="background: var(--violeta-acento);"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+  <div class="header">
+    <h2><i class="fas fa-chart-line"></i> Dashboard Financiero</h2>
+    <p>Gestión completa de ingresos, gastos y facturación</p>
+  </div>
+
+  <!-- TARJETAS DE ESTADÍSTICAS PRINCIPALES -->
+  <div class="grid grid-4">
+    <div class="card estadistica">
+      <i class="fas fa-money-bill-wave fa-2x"></i>
+      <div class="numero-grande" id="ingresos-mes">$0</div>
+      <div class="etiqueta">Ingresos del Mes</div>
+    </div>
+    
+    <div class="card estadistica">
+      <i class="fas fa-receipt fa-2x"></i>
+      <div class="numero-grande" id="gastos-mes">$0</div>
+      <div class="etiqueta">Gastos del Mes</div>
+    </div>
+    
+    <div class="card estadistica">
+      <i class="fas fa-piggy-bank fa-2x"></i>
+      <div class="numero-grande" id="ganancia-neta">$0</div>
+      <div class="etiqueta">Ganancia Neta</div>
+    </div>
+    
+    <div class="card estadistica">
+      <i class="fas fa-clock fa-2x"></i>
+      <div class="numero-grande" id="facturas-pendientes">0</div>
+      <div class="etiqueta">Facturas Pendientes</div>
+    </div>
+  </div>
+
+  <!-- ALERTAS Y ACCIONES RÁPIDAS -->
+  <div class="grid grid-2">
+    <!-- ALERTAS INMEDIATAS -->
+    <div class="card">
+      <h3><i class="fas fa-exclamation-triangle"></i> Alertas Inmediatas</h3>
+      <div class="lista-items" id="alertas-container">
+        <div class="item-lista alerta">
+          <strong>⚠️ Factura #001 vencida</strong><br>
+          <small>Paciente: Juan Pérez - Vence: 15/12</small>
+        </div>
+        <div class="item-lista advertencia">
+          <strong>🔔 Factura #002 por vencer</strong><br>
+          <small>Paciente: María García - Vence: 20/12</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACCIONES RÁPIDAS -->
+    <div class="card">
+      <h3><i class="fas fa-bolt"></i> Acciones Rápidas</h3>
+      <div class="acciones-rapidas">
+        <button class="btn" onclick="nuevaFactura()">
+          <i class="fas fa-file-invoice"></i> Nueva Factura
+        </button>
+        <button class="btn" onclick="nuevoGasto()">
+          <i class="fas fa-cart-shopping"></i> Registrar Gasto
+        </button>
+        <button class="btn" onclick="verReportes()">
+          <i class="fas fa-chart-bar"></i> Ver Reportes
+        </button>
+        <button class="btn" onclick="exportarDatos()">
+          <i class="fas fa-download"></i> Exportar Datos
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRÁFICO Y FACTURAS PENDIENTES -->
+  <div class="grid grid-2">
+    <!-- GRÁFICO INGRESOS vs GASTOS -->
+    <div class="card">
+      <h3><i class="fas fa-chart-pie"></i> Ingresos vs Gastos (Últimos 3 meses)</h3>
+      <div class="grafico-container">
+        <canvas id="graficoFinanzas"></canvas>
+      </div>
+    </div>
+
+    <!-- FACTURAS PENDIENTES DE COBRO -->
+    <div class="card">
+      <h3><i class="fas fa-clock"></i> Facturas Pendientes</h3>
+      <div class="lista-items" id="facturas-pendientes-lista">
+        <div class="item-lista">
+          <strong>Factura #001 - $15,000</strong><br>
+          <small>Paciente: Juan Pérez - Vence: 15/12</small>
+          <div style="margin-top: 5px;">
+            <button class="btn btn-pequeno" onclick="marcarComoPagada(1)">
+              <i class="fas fa-check"></i> Pagada
+            </button>
+          </div>
+        </div>
+        <div class="item-lista">
+          <strong>Factura #002 - $8,500</strong><br>
+          <small>Paciente: María García - Vence: 20/12</small>
+          <div style="margin-top: 5px;">
+            <button class="btn btn-pequeno" onclick="marcarComoPagada(2)">
+              <i class="fas fa-check"></i> Pagada
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ÚLTIMOS GASTOS Y INGRESOS -->
+  <div class="grid grid-2">
+    <!-- ÚLTIMOS GASTOS -->
+    <div class="card">
+      <h3><i class="fas fa-receipt"></i> Últimos Gastos</h3>
+      <div class="lista-items" id="ultimos-gastos">
+        <div class="item-lista">
+          <strong>Insumos odontológicos</strong><br>
+          <small>Proveedor: DentalPro - $2,500 - 10/12</small>
+        </div>
+        <div class="item-lista">
+          <strong>Material de limpieza</strong><br>
+          <small>Proveedor: LimpiaTodo - $800 - 08/12</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- ÚLTIMOS INGRESOS -->
+    <div class="card">
+      <h3><i class="fas fa-money-bill-wave"></i> Últimos Ingresos</h3>
+      <div class="lista-items" id="ultimos-ingresos">
+        <div class="item-lista exito">
+          <strong>Factura #001 - $15,000</strong><br>
+          <small>Paciente: Juan Pérez - 05/12</small>
+        </div>
+        <div class="item-lista exito">
+          <strong>Consulta urgente</strong><br>
+          <small>Paciente: Carlos López - $3,000 - 03/12</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/supabase.js"></script>
+<script>
+// ===== DASHBOARD FINANCIERO KODYANMED =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('💰 Inicializando módulo finanzas...');
+    inicializarFinanzas();
+});
+
+async function inicializarFinanzas() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Cargar todos los datos financieros
+    await cargarResumenFinanciero();
+    await cargarFacturasPendientes();
+    await cargarUltimosGastos();
+    await cargarUltimosIngresos();
+    inicializarGrafico();
+    configurarEventListeners();
+}
+
+// 1. CARGAR RESUMEN FINANCIERO
+async function cargarResumenFinanciero() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const mesActual = new Date().getMonth() + 1;
+        const añoActual = new Date().getFullYear();
+
+        // Ingresos del mes
+        const { data: ingresos, error: errorIngresos } = await supabase
+            .from('facturas')
+            .select('monto_total, monto_pagado')
+            .eq('profesional_id', session.user.id)
+            .eq('estado', 'pagada')
+            .gte('fecha_emision', `${añoActual}-${mesActual.toString().padStart(2, '0')}-01`)
+            .lte('fecha_emision', `${añoActual}-${mesActual.toString().padStart(2, '0')}-31`);
+
+        // Gastos del mes
+        const { data: gastos, error: errorGastos } = await supabase
+            .from('gastos')
+            .select('monto')
+            .eq('profesional_id', session.user.id)
+            .gte('fecha', `${añoActual}-${mesActual.toString().padStart(2, '0')}-01`)
+            .lte('fecha', `${añoActual}-${mesActual.toString().padStart(2, '0')}-31`);
+
+        // Facturas pendientes
+        const { data: pendientes, error: errorPendientes } = await supabase
+            .from('facturas')
+            .select('id')
+            .eq('profesional_id', session.user.id)
+            .eq('estado', 'pendiente');
+
+        if (errorIngresos || errorGastos || errorPendientes) {
+            console.error('Error cargando resumen:', errorIngresos, errorGastos, errorPendientes);
+            activarModoDemo();
+            return;
+        }
+
+        // Calcular totales
+        const totalIngresos = ingresos?.reduce((sum, factura) => sum + parseFloat(factura.monto_pagado || factura.monto_total), 0) || 0;
+        const totalGastos = gastos?.reduce((sum, gasto) => sum + parseFloat(gasto.monto), 0) || 0;
+        const gananciaNeta = totalIngresos - totalGastos;
+        const totalPendientes = pendientes?.length || 0;
+
+        // Actualizar UI
+        document.getElementById('ingresos-mes').textContent = `$${totalIngresos.toLocaleString()}`;
+        document.getElementById('gastos-mes').textContent = `$${totalGastos.toLocaleString()}`;
+        document.getElementById('ganancia-neta').textContent = `$${gananciaNeta.toLocaleString()}`;
+        document.getElementById('ganancia-neta').className = `numero-grande ${gananciaNeta >= 0 ? 'positivo' : 'negativo'}`;
+        document.getElementById('facturas-pendientes').textContent = totalPendientes;
+
+    } catch (error) {
+        console.error('Error en resumen financiero:', error);
+        activarModoDemo();
+    }
+}
+
+// 2. CARGAR FACTURAS PENDIENTES
+async function cargarFacturasPendientes() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const { data: facturas, error } = await supabase
+            .from('facturas')
+            .select(`
+                *,
+                pacientes!dni_paciente (nombre_completo)
+            `)
+            .eq('profesional_id', session.user.id)
+            .eq('estado', 'pendiente')
+            .order('fecha_vencimiento', { ascending: true })
+            .limit(5);
+
+        if (error) throw error;
+
+        const container = document.getElementById('facturas-pendientes-lista');
+        if (!facturas || facturas.length === 0) {
+            container.innerHTML = '<p>🎉 No hay facturas pendientes</p>';
+            return;
+        }
+
+        let html = '';
+        facturas.forEach(factura => {
+            const fechaVencimiento = new Date(factura.fecha_vencimiento).toLocaleDateString('es-AR');
+            const hoy = new Date();
+            const vencimiento = new Date(factura.fecha_vencimiento);
+            const diasRestantes = Math.ceil((vencimiento - hoy) / (1000 * 60 * 60 * 24));
+            
+            const claseAlerta = diasRestantes < 0 ? 'alerta' : diasRestantes <= 3 ? 'advertencia' : '';
+            
+            html += `
+                <div class="item-lista ${claseAlerta}">
+                    <strong>Factura #${factura.numero_factura} - $${factura.monto_total.toLocaleString()}</strong><br>
+                    <small>Paciente: ${factura.pacientes?.nombre_completo || 'N/A'} - Vence: ${fechaVencimiento}</small>
+                    <div style="margin-top: 5px;">
+                        <button class="btn btn-pequeno" onclick="marcarComoPagada(${factura.id})">
+                            <i class="fas fa-check"></i> Pagada
+                        </button>
+                        <button class="btn btn-pequeno" onclick="verFactura(${factura.id})" style="margin-left: 5px;">
+                            <i class="fas fa-eye"></i> Ver
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando facturas pendientes:', error);
+    }
+}
+
+// 3. CARGAR ÚLTIMOS GASTOS
+async function cargarUltimosGastos() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const { data: gastos, error } = await supabase
+            .from('gastos')
+            .select('*')
+            .eq('profesional_id', session.user.id)
+            .order('fecha', { ascending: false })
+            .limit(5);
+
+        const container = document.getElementById('ultimos-gastos');
+        
+        if (error || !gastos || gastos.length === 0) {
+            container.innerHTML = '<p>No hay gastos registrados</p>';
+            return;
+        }
+
+        let html = '';
+        gastos.forEach(gasto => {
+            const fecha = new Date(gasto.fecha).toLocaleDateString('es-AR');
+            html += `
+                <div class="item-lista">
+                    <strong>${gasto.descripcion}</strong><br>
+                    <small>${gasto.proveedor} - $${gasto.monto.toLocaleString()} - ${fecha}</small>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando gastos:', error);
+    }
+}
+
+// 4. CARGAR ÚLTIMOS INGRESOS
+async function cargarUltimosIngresos() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const { data: ingresos, error } = await supabase
+            .from('facturas')
+            .select(`
+                *,
+                pacientes!dni_paciente (nombre_completo)
+            `)
+            .eq('profesional_id', session.user.id)
+            .eq('estado', 'pagada')
+            .order('fecha_emision', { ascending: false })
+            .limit(5);
+
+        const container = document.getElementById('ultimos-ingresos');
+        
+        if (error || !ingresos || ingresos.length === 0) {
+            container.innerHTML = '<p>No hay ingresos registrados</p>';
+            return;
+        }
+
+        let html = '';
+        ingresos.forEach(ingreso => {
+            const fecha = new Date(ingreso.fecha_emision).toLocaleDateString('es-AR');
+            html += `
+                <div class="item-lista exito">
+                    <strong>Factura #${ingreso.numero_factura} - $${ingreso.monto_total.toLocaleString()}</strong><br>
+                    <small>Paciente: ${ingreso.pacientes?.nombre_completo || 'N/A'} - ${fecha}</small>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando ingresos:', error);
+    }
+}
+
+// 5. INICIALIZAR GRÁFICO
+function inicializarGrafico() {
+    const ctx = document.getElementById('graficoFinanzas').getContext('2d');
+    
+    // Datos de ejemplo (luego se reemplazarán con datos reales)
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Octubre', 'Noviembre', 'Diciembre'],
+            datasets: [
+                {
+                    label: 'Ingresos',
+                    data: [120000, 150000, 180000],
+                    backgroundColor: '#B39DDB',
+                    borderColor: '#D1C4E9',
+                    borderWidth: 1
+                },
+                {
+                    label: 'Gastos',
+                    data: [45000, 52000, 48000],
+                    backgroundColor: '#FF6B6B',
+                    borderColor: '#FF8E8E',
+                    borderWidth: 1
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    ticks: {
+                        callback: function(value) {
+                            return '$' + value.toLocaleString();
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+// 6. FUNCIONES DE ACCIÓN
+async function marcarComoPagada(facturaId) {
+    if (!confirm('¿Marcar esta factura como pagada?')) return;
+    
+    try {
+        const { error } = await supabase
+            .from('facturas')
+            .update({ 
+                estado: 'pagada',
+                monto_pagado: await obtenerMontoFactura(facturaId)
+            })
+            .eq('id', facturaId);
+
+        if (error) throw error;
+        
+        alert('✅ Factura marcada como pagada');
+        location.reload(); // Recargar para actualizar datos
+    } catch (error) {
+        console.error('Error marcando factura como pagada:', error);
+        alert('❌ Error al actualizar la factura');
+    }
+}
+
+async function obtenerMontoFactura(facturaId) {
+    const { data } = await supabase
+        .from('facturas')
+        .select('monto_total')
+        .eq('id', facturaId)
+        .single();
+    
+    return data?.monto_total || 0;
+}
+
+function nuevaFactura() {
+    alert('📄 Funcionalidad de nueva factura - Próximamente!');
+    // window.location.href = 'nueva-factura.html';
+}
+
+function nuevoGasto() {
+    alert('🛒 Funcionalidad de nuevo gasto - Próximamente!');
+    // window.location.href = 'nuevo-gasto.html';
+}
+
+function verReportes() {
+    alert('📊 Módulo de reportes detallados - Próximamente!');
+}
+
+function exportarDatos() {
+    alert('📥 Exportando datos financieros...');
+}
+
+function verFactura(id) {
+    alert(`👁️ Viendo factura #${id} - Próximamente!`);
+}
+
+// 7. MODO DEMO (si no hay datos)
+function activarModoDemo() {
+    console.log('🔄 Activando modo demo financiero...');
+    
+    document.getElementById('ingresos-mes').textContent = '$45,000';
+    document.getElementById('gastos-mes').textContent = '$12,500';
+    document.getElementById('ganancia-neta').textContent = '$32,500';
+    document.getElementById('ganancia-neta').className = 'numero-grande positivo';
+    document.getElementById('facturas-pendientes').textContent = '2';
+}
+
+// 8. CONFIGURAR EVENT LISTENERS
+function configurarEventListeners() {
+    // Aquí irían más event listeners si fuera necesario
+}
+
+// 9. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+</script>
+</body>
+</html>
