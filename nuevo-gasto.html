@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nuevo Gasto - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      border-left: 4px solid var(--violeta-acento);
+      margin-bottom: 25px;
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 12px 15px;
+      border: 2px solid var(--violeta-secundario);
+      border-radius: 8px;
+      font-family: 'Poppins', sans-serif;
+      transition: var(--transicion);
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--violeta-acento);
+      box-shadow: 0 0 0 3px rgba(179, 157, 219, 0.3);
+    }
+
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 12px 25px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 500;
+      transition: var(--transicion);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .ultimos-gastos {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .item-gasto {
+      padding: 15px;
+      margin: 10px 0;
+      background: var(--violeta-secundario);
+      border-radius: 8px;
+      border-left: 3px solid var(--violeta-acento);
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .grid-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Barra lateral -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>KodyanMED</h1>
+  </div>
+  <ul class="navbar-menu">
+    <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+    <li class="navbar-item"><a href="finanzas.html"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="nuevo-gasto.html" style="background: var(--violeta-acento);"><i class="fas fa-receipt"></i> Nuevo Gasto</a></li>
+    <li class="navbar-item"><a href="obras-sociales.html"><i class="fas fa-hospital"></i> Obras Sociales</a></li>
+    <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+  <div class="header">
+    <h2><i class="fas fa-receipt"></i> Registrar Nuevo Gasto</h2>
+    <p>Controlá todos los gastos de tu consultorio</p>
+  </div>
+
+  <div class="grid-2">
+    <!-- Formulario de nuevo gasto -->
+    <div class="card">
+      <h3><i class="fas fa-plus-circle"></i> Nuevo Gasto</h3>
+      <form id="form-nuevo-gasto">
+        <div class="form-group">
+          <label for="fecha-gasto">Fecha del Gasto *</label>
+          <input type="date" id="fecha-gasto" required>
+        </div>
+
+        <div class="form-group">
+          <label for="categoria-gasto">Categoría *</label>
+          <select id="categoria-gasto" required>
+            <option value="">Seleccionar categoría</option>
+            <option value="insumos">Insumos Odontológicos</option>
+            <option value="materiales">Materiales</option>
+            <option value="equipamiento">Equipamiento</option>
+            <option value="limpieza">Limpieza y Mantenimiento</option>
+            <option value="servicios">Servicios (Luz, Agua, Internet)</option>
+            <option value="alquiler">Alquiler</option>
+            <option value="honorarios">Honorarios Profesionales</option>
+            <option value="marketing">Marketing y Publicidad</option>
+            <option value="otros">Otros</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="descripcion-gasto">Descripción *</label>
+          <textarea id="descripcion-gasto" rows="3" placeholder="Ej: Compra de anestesia, guantes, etc." required></textarea>
+        </div>
+
+        <div class="form-group">
+          <label for="monto-gasto">Monto ($) *</label>
+          <input type="number" id="monto-gasto" step="0.01" min="0" placeholder="0.00" required>
+        </div>
+
+        <div class="form-group">
+          <label for="proveedor-gasto">Proveedor</label>
+          <input type="text" id="proveedor-gasto" placeholder="Nombre del proveedor">
+        </div>
+
+        <div class="form-group">
+          <label for="observaciones-gasto">Observaciones</label>
+          <textarea id="observaciones-gasto" rows="2" placeholder="Notas adicionales..."></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-block">
+          <i class="fas fa-save"></i> Guardar Gasto
+        </button>
+      </form>
+    </div>
+
+    <!-- Últimos gastos registrados -->
+    <div class="card">
+      <h3><i class="fas fa-history"></i> Últimos Gastos</h3>
+      <div class="ultimos-gastos" id="lista-ultimos-gastos">
+        <p>Cargando últimos gastos...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Resumen de gastos por categoría -->
+  <div class="card">
+    <h3><i class="fas fa-chart-pie"></i> Resumen por Categoría (Este Mes)</h3>
+    <div id="resumen-categorias">
+      <p>Cargando resumen...</p>
+    </div>
+  </div>
+</main>
+
+<script src="js/supabase.js"></script>
+<script>
+// ===== GESTIÓN DE GASTOS - KODYANMED =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('💰 Inicializando módulo de gastos...');
+    inicializarModuloGastos();
+});
+
+async function inicializarModuloGastos() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Configurar fecha actual por defecto
+    document.getElementById('fecha-gasto').value = new Date().toISOString().split('T')[0];
+    
+    // Cargar datos
+    await cargarUltimosGastos();
+    await cargarResumenCategorias();
+    configurarEventListeners();
+}
+
+// 1. CARGAR ÚLTIMOS GASTOS
+async function cargarUltimosGastos() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        
+        const { data: gastos, error } = await supabase
+            .from('gastos')
+            .select('*')
+            .eq('profesional_id', session.user.id)
+            .order('fecha', { ascending: false })
+            .limit(10);
+
+        const container = document.getElementById('lista-ultimos-gastos');
+        
+        if (error) {
+            container.innerHTML = '<p>❌ Error cargando gastos</p>';
+            return;
+        }
+
+        if (!gastos || gastos.length === 0) {
+            container.innerHTML = '<p>📝 No hay gastos registrados aún</p>';
+            return;
+        }
+
+        let html = '';
+        gastos.forEach(gasto => {
+            const fecha = new Date(gasto.fecha).toLocaleDateString('es-AR');
+            const iconos = {
+                'insumos': '🦷',
+                'materiales': '📦',
+                'equipamiento': '⚙️',
+                'limpieza': '🧹',
+                'servicios': '💡',
+                'alquiler': '🏢',
+                'honorarios': '👨‍⚕️',
+                'marketing': '📢',
+                'otros': '📋'
+            };
+            
+            html += `
+                <div class="item-gasto">
+                    <strong>${iconos[gasto.categoria] || '📋'} ${gasto.descripcion}</strong><br>
+                    <small>💰 $${gasto.monto.toLocaleString()} • ${fecha}</small><br>
+                    <small>🏷️ ${gasto.categoria} • ${gasto.proveedor || 'Sin proveedor'}</small>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando gastos:', error);
+        document.getElementById('lista-ultimos-gastos').innerHTML = '<p>❌ Error del sistema</p>';
+    }
+}
+
+// 2. CARGAR RESUMEN POR CATEGORÍA
+async function cargarResumenCategorias() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const mesActual = new Date().getMonth() + 1;
+        const añoActual = new Date().getFullYear();
+
+        const { data: gastos, error } = await supabase
+            .from('gastos')
+            .select('categoria, monto')
+            .eq('profesional_id', session.user.id)
+            .gte('fecha', `${añoActual}-${mesActual.toString().padStart(2, '0')}-01`)
+            .lte('fecha', `${añoActual}-${mesActual.toString().padStart(2, '0')}-31`);
+
+        const container = document.getElementById('resumen-categorias');
+        
+        if (error || !gastos || gastos.length === 0) {
+            container.innerHTML = '<p>No hay gastos este mes</p>';
+            return;
+        }
+
+        // Agrupar por categoría
+        const resumen = {};
+        gastos.forEach(gasto => {
+            if (!resumen[gasto.categoria]) {
+                resumen[gasto.categoria] = 0;
+            }
+            resumen[gasto.categoria] += parseFloat(gasto.monto);
+        });
+
+        let html = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">';
+        
+        Object.entries(resumen).forEach(([categoria, total]) => {
+            const porcentaje = (total / gastos.reduce((sum, g) => sum + parseFloat(g.monto), 0)) * 100;
+            
+            html += `
+                <div style="padding: 10px; background: var(--violeta-secundario); border-radius: 8px;">
+                    <strong>${categoria}</strong><br>
+                    <span style="color: var(--violeta-acento); font-weight: bold;">$${total.toLocaleString()}</span><br>
+                    <small>${porcentaje.toFixed(1)}% del total</small>
+                </div>
+            `;
+        });
+        
+        html += '</div>';
+        container.innerHTML = html;
+    } catch (error) {
+        console.error('Error cargando resumen:', error);
+    }
+}
+
+// 3. CONFIGURAR EVENT LISTENERS
+function configurarEventListeners() {
+    const form = document.getElementById('form-nuevo-gasto');
+    if (form) {
+        form.addEventListener('submit', guardarNuevoGasto);
+    }
+}
+
+// 4. GUARDAR NUEVO GASTO
+async function guardarNuevoGasto(e) {
+    e.preventDefault();
+    
+    const btn = e.target.querySelector('button[type="submit"]');
+    const originalText = btn.innerHTML;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Guardando...';
+    btn.disabled = true;
+
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('No hay sesión activa');
+
+        const gastoData = {
+            fecha: document.getElementById('fecha-gasto').value,
+            categoria: document.getElementById('categoria-gasto').value,
+            descripcion: document.getElementById('descripcion-gasto').value,
+            monto: parseFloat(document.getElementById('monto-gasto').value),
+            proveedor: document.getElementById('proveedor-gasto').value || null,
+            observaciones: document.getElementById('observaciones-gasto').value || null,
+            profesional_id: session.user.id
+        };
+
+        // Validaciones
+        if (gastoData.monto <= 0) {
+            throw new Error('El monto debe ser mayor a cero');
+        }
+
+        const { error } = await supabase
+            .from('gastos')
+            .insert([gastoData]);
+
+        if (error) throw error;
+
+        // Éxito
+        alert('✅ Gasto registrado correctamente!');
+        e.target.reset();
+        document.getElementById('fecha-gasto').value = new Date().toISOString().split('T')[0];
+        
+        // Recargar datos
+        await cargarUltimosGastos();
+        await cargarResumenCategorias();
+        
+    } catch (error) {
+        console.error('Error guardando gasto:', error);
+        alert('❌ Error: ' + error.message);
+    } finally {
+        btn.innerHTML = originalText;
+        btn.disabled = false;
+    }
+}
+
+// 5. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+
+// 6. MODO DEMO (si no hay datos)
+setTimeout(() => {
+    const lista = document.getElementById('lista-ultimos-gastos');
+    if (lista && lista.innerHTML.includes('Cargando')) {
+        lista.innerHTML = `
+            <div class="item-gasto">
+                <strong>🦷 Insumos odontológicos</strong><br>
+                <small>💰 $2,500 • 10/12/2024</small><br>
+                <small>🏷️ insumos • DentalPro</small>
+            </div>
+            <div class="item-gasto">
+                <strong>🧹 Material de limpieza</strong><br>
+                <small>💰 $800 • 08/12/2024</small><br>
+                <small>🏷️ limpieza • LimpiaTodo</small>
+            </div>
+        `;
+    }
+}, 3000);
+</script>
+</body>
+</html>
