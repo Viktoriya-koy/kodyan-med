@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Alertas - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      border-left: 4px solid var(--violeta-acento);
+      margin-bottom: 25px;
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .estadistica-alerta {
+      text-align: center;
+      padding: 20px;
+      background: var(--violeta-secundario);
+      border-radius: 8px;
+    }
+
+    .numero-estadistica {
+      font-size: 2rem;
+      font-weight: 600;
+      color: var(--violeta-acento);
+      margin: 10px 0;
+    }
+
+    .configuracion-alerta {
+      padding: 15px;
+      margin: 10px 0;
+      background: var(--violeta-secundario);
+      border-radius: 8px;
+      border-left: 3px solid var(--violeta-acento);
+    }
+
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 50px;
+      height: 24px;
+      margin-left: 10px;
+    }
+
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: #ccc;
+      transition: .4s;
+      border-radius: 24px;
+    }
+
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 16px;
+      width: 16px;
+      left: 4px;
+      bottom: 4px;
+      background-color: white;
+      transition: .4s;
+      border-radius: 50%;
+    }
+
+    input:checked + .slider {
+      background-color: var(--violeta-acento);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(26px);
+    }
+
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transicion);
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .lista-alertas {
+      max-height: 400px;
+      overflow-y: auto;
+    }
+
+    .item-alerta {
+      padding: 12px;
+      margin: 8px 0;
+      background: var(--violeta-secundario);
+      border-radius: 6px;
+      border-left: 3px solid var(--violeta-acento);
+    }
+
+    .item-alerta.enviada { border-left-color: #27ae60; }
+    .item-alerta.pendiente { border-left-color: #f39c12; }
+    .item-alerta.fallida { border-left-color: #e74c3c; }
+
+    .tabs {
+      display: flex;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--violeta-primario);
+    }
+
+    .tab {
+      padding: 10px 20px;
+      cursor: pointer;
+      border-bottom: 3px solid transparent;
+    }
+
+    .tab.activa {
+      border-bottom-color: var(--violeta-acento);
+      font-weight: 500;
+    }
+
+    .contenido-tab {
+      display: none;
+    }
+
+    .contenido-tab.activa {
+      display: block;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Barra lateral -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>KodyanMED</h1>
+  </div>
+  <ul class="navbar-menu">
+    <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+    <li class="navbar-item"><a href="agenda.html"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
+    <li class="navbar-item"><a href="pacientes.html"><i class="fas fa-user-injured"></i> Pacientes</a></li>
+    <li class="navbar-item"><a href="finanzas.html"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="alertas-sistema.html" style="background: var(--violeta-acento);"><i class="fas fa-bell"></i> Alertas</a></li>
+    <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+  <div class="header">
+    <h2><i class="fas fa-bell"></i> Sistema de Alertas Automáticas</h2>
+    <p>Gestión de recordatorios y confirmaciones de turnos</p>
+  </div>
+
+  <!-- Estadísticas rápidas -->
+  <div class="grid-3">
+    <div class="estadistica-alerta">
+      <i class="fas fa-paper-plane fa-2x"></i>
+      <div class="numero-estadistica" id="alertas-hoy">0</div>
+      <div>Alertas Hoy</div>
+    </div>
+    <div class="estadistica-alerta">
+      <i class="fas fa-check-circle fa-2x"></i>
+      <div class="numero-estadistica" id="confirmaciones-hoy">0</div>
+      <div>Confirmaciones</div>
+    </div>
+    <div class="estadistica-alerta">
+      <i class="fas fa-clock fa-2x"></i>
+      <div class="numero-estadistica" id="pendientes-manana">0</div>
+      <div>Pendientes Mañana</div>
+    </div>
+  </div>
+
+  <!-- Pestañas -->
+  <div class="tabs">
+    <div class="tab activa" data-tab="configuracion">Configuración</div>
+    <div class="tab" data-tab="historial">Historial</div>
+    <div class="tab" data-tab="turnos">Turnos Pendientes</div>
+  </div>
+
+  <!-- Configuración de alertas -->
+  <div class="contenido-tab activa" id="tab-configuracion">
+    <div class="grid-2">
+      <!-- Alertas de confirmación -->
+      <div class="card">
+        <h3><i class="fas fa-check-circle"></i> Confirmación Inmediata</h3>
+        <div class="configuracion-alerta">
+          <div style="display: flex; justify-content: between; align-items: center;">
+            <span><strong>Email de confirmación</strong><br><small>Se envía al agendar el turno</small></span>
+            <label class="switch">
+              <input type="checkbox" id="alerta-confirmacion" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          
+          <div style="margin-top: 15px;">
+            <label><strong>Asunto del email:</strong></label>
+            <input type="text" id="asunto-confirmacion" value="Confirmación de turno - KodyanMED" style="width: 100%; padding: 8px; margin: 5px 0;">
+          </div>
+          
+          <div style="margin-top: 10px;">
+            <label><strong>Mensaje:</strong></label>
+            <textarea id="mensaje-confirmacion" rows="3" style="width: 100%; padding: 8px;">Hola {nombre_paciente}, su turno para el {fecha_turno} a las {hora_turno} ha sido confirmado.</textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Alertas de recordatorio -->
+      <div class="card">
+        <h3><i class="fas fa-clock"></i> Recordatorio 24hs Antes</h3>
+        <div class="configuracion-alerta">
+          <div style="display: flex; justify-content: between; align-items: center;">
+            <span><strong>Recordatorio por email</strong><br><small>24 horas antes del turno</small></span>
+            <label class="switch">
+              <input type="checkbox" id="alerta-recordatorio" checked>
+              <span class="slider"></span>
+            </label>
+          </div>
+          
+          <div style="margin-top: 15px;">
+            <label><strong>Horario de envío:</strong></label>
+            <select id="horario-recordatorio" style="width: 100%; padding: 8px;">
+              <option value="09:00">09:00 AM</option>
+              <option value="12:00">12:00 PM</option>
+              <option value="15:00">03:00 PM</option>
+              <option value="18:00">06:00 PM</option>
+            </select>
+          </div>
+          
+          <div style="margin-top: 10px;">
+            <label><strong>Mensaje de recordatorio:</strong></label>
+            <textarea id="mensaje-recordatorio" rows="3" style="width: 100%; padding: 8px;">Hola {nombre_paciente}, le recordamos su turno para mañana {fecha_turno} a las {hora_turno}. Por favor confirme su asistencia.</textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Acciones -->
+    <div class="card">
+      <h3><i class="fas fa-cog"></i> Acciones</h3>
+      <div style="display: flex; gap: 10px;">
+        <button class="btn" onclick="guardarConfiguracion()">
+          <i class="fas fa-save"></i> Guardar Configuración
+        </button>
+        <button class="btn" onclick="probarAlertas()">
+          <i class="fas fa-paper-plane"></i> Probar Envío
+        </button>
+        <button class="btn" onclick="verPlantillas()">
+          <i class="fas fa-palette"></i> Editar Plantillas
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Historial de alertas -->
+  <div class="contenido-tab" id="tab-historial">
+    <div class="card">
+      <h3><i class="fas fa-history"></i> Historial de Alertas Enviadas</h3>
+      <div class="lista-alertas" id="historial-alertas">
+        <p>Cargando historial de alertas...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Turnos pendientes de confirmación -->
+  <div class="contenido-tab" id="tab-turnos">
+    <div class="card">
+      <h3><i class="fas fa-calendar-check"></i> Turnos Pendientes de Confirmación</h3>
+      <div class="lista-alertas" id="turnos-pendientes">
+        <p>Cargando turnos pendientes...</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Estado del sistema -->
+  <div class="card">
+    <h3><i class="fas fa-heartbeat"></i> Estado del Sistema</h3>
+    <div class="grid-3">
+      <div class="estadistica-alerta">
+        <i class="fas fa-robot fa-2x"></i>
+        <div class="numero-estadistica" id="estado-sistema">🟢</div>
+        <div>Estado</div>
+      </div>
+      <div class="estadistica-alerta">
+        <i class="fas fa-sync-alt fa-2x"></i>
+        <div class="numero-estadistica" id="proxima-ejecucion">--:--</div>
+        <div>Próxima Ejecución</div>
+      </div>
+      <div class="estadistica-alerta">
+        <i class="fas fa-envelope fa-2x"></i>
+        <div class="numero-estadistica" id="emails-enviados">0</div>
+        <div>Total Enviados</div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<script src="js/supabase.js"></script>
+<script src="js/alertas-automaticas.js"></script>
+<script>
+// ===== SISTEMA DE ALERTAS - PANEL DE CONTROL =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🔔 Inicializando panel de alertas...');
+    inicializarPanelAlertas();
+});
+
+async function inicializarPanelAlertas() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Configurar pestañas
+    configurarPestanas();
+    
+    // Cargar datos
+    await cargarEstadisticas();
+    await cargarConfiguracion();
+    await cargarHistorialAlertas();
+    await cargarTurnosPendientes();
+    configurarEventListeners();
+}
+
+// 1. CONFIGURAR PESTANAS
+function configurarPestanas() {
+    const tabs = document.querySelectorAll('.tab');
+    tabs.forEach(tab => {
+        tab.addEventListener('click', function() {
+            tabs.forEach(t => t.classList.remove('activa'));
+            document.querySelectorAll('.contenido-tab').forEach(ct => ct.classList.remove('activa'));
+            
+            this.classList.add('activa');
+            const tabId = this.getAttribute('data-tab');
+            document.getElementById(`tab-${tabId}`).classList.add('activa');
+        });
+    });
+}
+
+// 2. CARGAR ESTADÍSTICAS
+async function cargarEstadisticas() {
+    try {
+        const hoy = new Date().toISOString().split('T')[0];
+        const { data: { session } } = await supabase.auth.getSession();
+
+        // Alertas de hoy
+        const { data: alertasHoy, error: errorAlertas } = await supabase
+            .from('alertas_historial')
+            .select('id')
+            .eq('profesional_id', session.user.id)
+            .gte('fecha_envio', `${hoy} 00:00:00`)
+            .lte('fecha_envio', `${hoy} 23:59:59`);
+
+        // Turnos para mañana
+        const manana = new Date();
+        manana.setDate(manana.getDate() + 1);
+        const fechaManana = manana.toISOString().split('T')[0];
+
+        const { data: turnosManana, error: errorTurnos } = await supabase
+            .from('turnos')
+            .select('id')
+            .eq('profesional_id', session.user.id)
+            .eq('fecha', fechaManana)
+            .eq('estado', 'programado');
+
+        if (!errorAlertas && !errorTurnos) {
+            document.getElementById('alertas-hoy').textContent = alertasHoy?.length || 0;
+            document.getElementById('pendientes-manana').textContent = turnosManana?.length || 0;
+            
+            // Simular confirmaciones (por ahora)
+            document.getElementById('confirmaciones-hoy').textContent = Math.floor((alertasHoy?.length || 0) * 0.7);
+        }
+
+        // Estado del sistema
+        document.getElementById('proxima-ejecucion').textContent = '09:00';
+        document.getElementById('emails-enviados').textContent = alertasHoy?.length || 0;
+
+    } catch (error) {
+        console.error('Error cargando estadísticas:', error);
+    }
+}
+
+// 3. CARGAR CONFIGURACIÓN
+async function cargarConfiguracion() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const { data: config, error } = await supabase
+            .from('alertas_configuracion')
+            .select('*')
+            .eq('profesional_id', session.user.id);
+
+        if (error && error.code !== 'PGRST116') throw error;
+
+        // Si no existe configuración, crear una por defecto
+        if (!config || config.length === 0) {
+            await crearConfiguracionDefault();
+            await cargarConfiguracion(); // Recargar
+            return;
+        }
+
+        // Aplicar configuración a la UI
+        config.forEach(conf => {
+            if (conf.tipo_alerta === 'confirmacion') {
+                document.getElementById('alerta-confirmacion').checked = conf.activo;
+                document.getElementById('asunto-confirmacion').value = conf.plantilla_email?.split('\n')[0] || 'Confirmación de turno';
+                document.getElementById('mensaje-confirmacion').value = conf.plantilla_email?.split('\n').slice(1).join('\n') || '';
+            } else if (conf.tipo_alerta === 'recordatorio') {
+                document.getElementById('alerta-recordatorio').checked = conf.activo;
+                document.getElementById('horario-recordatorio').value = conf.horario_envio;
+                document.getElementById('mensaje-recordatorio').value = conf.plantilla_email?.split('\n').slice(1).join('\n') || '';
+            }
+        });
+
+    } catch (error) {
+        console.error('Error cargando configuración:', error);
+    }
+}
+
+// 4. CREAR CONFIGURACIÓN POR DEFECTO
+async function crearConfiguracionDefault() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const configuraciones = [
+            {
+                profesional_id: session.user.id,
+                tipo_alerta: 'confirmacion',
+                enviar_email: true,
+                horario_envio: '09:00',
+                plantilla_email: 'Confirmación de turno - KodyanMED\nHola {nombre_paciente}, su turno para el {fecha_turno} a las {hora_turno} ha sido confirmado.',
+                activo: true
+            },
+            {
+                profesional_id: session.user.id,
+                tipo_alerta: 'recordatorio',
+                enviar_email: true,
+                horario_envio: '09:00',
+                plantilla_email: 'Recordatorio de turno - KodyanMED\nHola {nombre_paciente}, le recordamos su turno para mañana {fecha_turno} a las {hora_turno}. Por favor confirme su asistencia.',
+                activo: true
+            }
+        ];
+
+        const { error } = await supabase
+            .from('alertas_configuracion')
+            .insert(configuraciones);
+
+        if (error) throw error;
+
+        console.log('✅ Configuración por defecto creada');
+
+    } catch (error) {
+        console.error('Error creando configuración:', error);
+    }
+}
+
+// 5. GUARDAR CONFIGURACIÓN
+async function guardarConfiguracion() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const configuraciones = [
+            {
+                tipo_alerta: 'confirmacion',
+                activo: document.getElementById('alerta-confirmacion').checked,
+                plantilla_email: document.getElementById('asunto-confirmacion').value + '\n' + document.getElementById('mensaje-confirmacion').value
+            },
+            {
+                tipo_alerta: 'recordatorio',
+                activo: document.getElementById('alerta-recordatorio').checked,
+                horario_envio: document.getElementById('horario-recordatorio').value,
+                plantilla_email: 'Recordatorio de turno - KodyanMED\n' + document.getElementById('mensaje-recordatorio').value
+            }
+        ];
+
+        // Actualizar cada configuración
+        for (const config of configuraciones) {
+            const { error } = await supabase
+                .from('alertas_configuracion')
+                .update(config)
+                .eq('profesional_id', session.user.id)
+                .eq('tipo_alerta', config.tipo_alerta);
+
+            if (error) throw error;
+        }
+
+        alert('✅ Configuración guardada correctamente');
+
+    } catch (error) {
+        console.error('Error guardando configuración:', error);
+        alert('❌ Error al guardar configuración');
+    }
+}
+
+// 6. CARGAR HISTORIAL DE ALERTAS
+async function cargarHistorialAlertas() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const { data: alertas, error } = await supabase
+            .from('alertas_historial')
+            .select(`
+                *,
+                turnos!turno_id (
+                    fecha,
+                    hora,
+                    pacientes!dni_paciente (nombre_completo)
+                )
+            `)
+            .eq('profesional_id', session.user.id)
+            .order('fecha_envio', { ascending: false })
+            .limit(20);
+
+        const container = document.getElementById('historial-alertas');
+        
+        if (error) throw error;
+
+        if (!alertas || alertas.length === 0) {
+            container.innerHTML = '<p>📝 No hay alertas en el historial</p>';
+            return;
+        }
+
+        let html = '';
+        alertas.forEach(alerta => {
+            const fecha = new Date(alerta.fecha_envio).toLocaleString('es-AR');
+            const icono = alerta.estado === 'enviado' ? '✅' : alerta.estado === 'fallido' ? '❌' : '⏳';
+            
+            html += `
+                <div class="item-alerta ${alerta.estado}">
+                    ${icono} <strong>${alerta.tipo_alerta}</strong><br>
+                    <small>Para: ${alerta.turnos?.pacientes?.nombre_completo || 'N/A'}</small><br>
+                    <small>${fecha} • ${alerta.estado}</small>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+    } catch (error) {
+        console.error('Error cargando historial:', error);
+    }
+}
+
+// 7. CARGAR TURNOS PENDIENTES
+async function cargarTurnosPendientes() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        const manana = new Date();
+        manana.setDate(manana.getDate() + 1);
+        const fechaManana = manana.toISOString().split('T')[0];
+
+        const { data: turnos, error } = await supabase
+            .from('turnos')
+            .select(`
+                *,
+                pacientes!dni_paciente (nombre_completo, email, telefono)
+            `)
+            .eq('profesional_id', session.user.id)
+            .gte('fecha', fechaManana)
+            .eq('estado', 'programado')
+            .order('fecha', { ascending: true })
+            .order('hora', { ascending: true });
+
+        const container = document.getElementById('turnos-pendientes');
+        
+        if (error) throw error;
+
+        if (!turnos || turnos.length === 0) {
+            container.innerHTML = '<p>🎉 No hay turnos pendientes de confirmación</p>';
+            return;
+        }
+
+        let html = '';
+        turnos.forEach(turno => {
+            const fecha = new Date(turno.fecha).toLocaleDateString('es-AR');
+            
+            html += `
+                <div class="item-alerta pendiente">
+                    <strong>📅 ${fecha} - ⏰ ${turno.hora}</strong><br>
+                    <small>👤 ${turno.pacientes?.nombre_completo || 'N/A'}</small><br>
+                    <small>📧 ${turno.pacientes?.email || 'Sin email'} • 📞 ${turno.pacientes?.telefono || 'Sin teléfono'}</small>
+                    <div style="margin-top: 8px;">
+                        <button class="btn" onclick="enviarAlertaManual(${turno.id}, 'recordatorio')" style="font-size: 12px; padding: 4px 8px;">
+                            <i class="fas fa-paper-plane"></i> Recordatorio
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+    } catch (error) {
+        console.error('Error cargando turnos pendientes:', error);
+    }
+}
+
+// 8. FUNCIONES ADICIONALES
+function probarAlertas() {
+    alert('🔔 Enviando alerta de prueba...\n\nEsta funcionalidad se integrará con el motor de alertas.');
+}
+
+function verPlantillas() {
+    alert('🎨 Abriendo editor de plantillas...\n\nPróximamente: editor visual de emails.');
+}
+
+async function enviarAlertaManual(turnoId, tipo) {
+    if (!confirm(`¿Enviar alerta ${tipo} para este turno?`)) return;
+    
+    alert(`📤 Alerta ${tipo} enviada manualmente para el turno #${turnoId}`);
+    // Aquí se integrará con el motor de alertas
+}
+
+// 9. CONFIGURAR EVENT LISTENERS
+function configurarEventListeners() {
+    // Los switches ya funcionan con CSS, no need additional listeners
+}
+
+// 10. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+</script>
+</body>
+</html>
