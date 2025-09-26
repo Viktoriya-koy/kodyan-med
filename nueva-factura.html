@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nueva Factura - KodyanMED</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --violeta-primario: #D1C4E9;
+      --violeta-secundario: #EDE7F6;
+      --violeta-acento: #B39DDB;
+      --blanco: #FFFFFF;
+      --texto: #333333;
+      --sombra-suave: 0 4px 12px rgba(0, 0, 0, 0.08);
+      --transicion: all 0.3s ease;
+      --border-radius: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background-color: #FAFAFA;
+      color: var(--texto);
+      min-height: 100vh;
+    }
+
+    .navbar {
+      width: 250px;
+      background: var(--violeta-primario);
+      padding: 25px 0;
+      box-shadow: var(--sombra-suave);
+      position: fixed;
+      left: 0;
+      top: 0;
+      height: 100vh;
+      z-index: 1000;
+    }
+
+    .navbar-brand {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .navbar-brand h1 {
+      font-size: 1.5rem;
+      color: var(--texto);
+      font-weight: 600;
+    }
+
+    .navbar-menu {
+      list-style: none;
+    }
+
+    .navbar-item {
+      padding: 15px 25px;
+      transition: var(--transicion);
+    }
+
+    .navbar-item:hover {
+      background: var(--violeta-acento);
+    }
+
+    .navbar-item a {
+      color: var(--texto);
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .navbar-item i {
+      font-size: 1.2rem;
+    }
+
+    .main-content {
+      margin-left: 250px;
+      width: calc(100% - 250px);
+      padding: 30px;
+    }
+
+    .header {
+      background: linear-gradient(135deg, var(--violeta-primario), var(--violeta-acento));
+      color: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      margin-bottom: 30px;
+      box-shadow: var(--sombra-suave);
+    }
+
+    .header h2 {
+      font-size: 1.8rem;
+      margin-bottom: 10px;
+    }
+
+    .card {
+      background: var(--blanco);
+      padding: 25px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--sombra-suave);
+      border-left: 4px solid var(--violeta-acento);
+      margin-bottom: 25px;
+    }
+
+    .card h3 {
+      color: var(--violeta-acento);
+      margin-bottom: 20px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+
+    .grid-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 15px;
+    }
+
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 500;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 2px solid var(--violeta-secundario);
+      border-radius: 6px;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--violeta-acento);
+      box-shadow: 0 0 0 3px rgba(179, 157, 219, 0.3);
+    }
+
+    .btn {
+      background: var(--violeta-primario);
+      color: var(--texto);
+      border: none;
+      padding: 10px 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: var(--transicion);
+    }
+
+    .btn:hover {
+      background: var(--violeta-acento);
+      color: var(--blanco);
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    .btn-pequeno {
+      padding: 6px 10px;
+      font-size: 12px;
+    }
+
+    .btn-success {
+      background: #27ae60;
+      color: white;
+    }
+
+    .btn-warning {
+      background: #f39c12;
+      color: white;
+    }
+
+    .info-paciente {
+      background: var(--violeta-secundario);
+      padding: 20px;
+      border-radius: 8px;
+      margin-bottom: 20px;
+    }
+
+    .tabla-items {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 20px 0;
+      background: var(--blanco);
+    }
+
+    .tabla-items th, .tabla-items td {
+      padding: 12px;
+      text-align: left;
+      border-bottom: 1px solid var(--violeta-secundario);
+    }
+
+    .tabla-items th {
+      background: var(--violeta-primario);
+      font-weight: 600;
+    }
+
+    .tabla-items input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+
+    .resumen-factura {
+      background: #f8f9fa;
+      padding: 20px;
+      border-radius: 8px;
+      margin: 20px 0;
+    }
+
+    .fila-resumen {
+      display: flex;
+      justify-content: space-between;
+      margin: 10px 0;
+      padding: 5px 0;
+      border-bottom: 1px solid #eee;
+    }
+
+    .fila-resumen.total {
+      font-weight: bold;
+      font-size: 1.2rem;
+      border-top: 2px solid var(--violeta-acento);
+      padding-top: 10px;
+    }
+
+    .tratamiento-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px;
+      margin: 5px 0;
+      background: var(--violeta-secundario);
+      border-radius: 6px;
+      cursor: pointer;
+      transition: var(--transicion);
+    }
+
+    .tratamiento-item:hover {
+      background: var(--violeta-primario);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 2000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.5);
+    }
+
+    .modal-content {
+      background-color: var(--blanco);
+      margin: 5% auto;
+      padding: 20px;
+      border-radius: var(--border-radius);
+      width: 90%;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    .close-modal {
+      float: right;
+      font-size: 1.5rem;
+      cursor: pointer;
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        width: 100%;
+        height: auto;
+        position: relative;
+      }
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+      }
+      .modal-content {
+        width: 95%;
+        margin: 10% auto;
+      }
+    }
+  </style>
+</head>
+<body>
+<!-- Barra lateral -->
+<nav class="navbar">
+  <div class="navbar-brand">
+    <h1>KodyanMED</h1>
+  </div>
+  <ul class="navbar-menu">
+    <li class="navbar-item"><a href="home.html"><i class="fas fa-home"></i> Inicio</a></li>
+    <li class="navbar-item"><a href="finanzas.html"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="obras-sociales.html"><i class="fas fa-hospital"></i> Obras Sociales</a></li>
+    <li class="navbar-item"><a href="aranceles.html"><i class="fas fa-dollar-sign"></i> Aranceles</a></li>
+    <li class="navbar-item"><a href="nueva-factura.html" style="background: var(--violeta-acento);"><i class="fas fa-file-invoice"></i> Facturación</a></li>
+    <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
+    <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
+  </ul>
+</nav>
+
+<!-- Contenido principal -->
+<main class="main-content">
+  <div class="header">
+    <h2><i class="fas fa-file-invoice"></i> Nueva Factura</h2>
+    <p>Sistema de facturación profesional para tu consultorio</p>
+  </div>
+
+  <!-- Información básica -->
+  <div class="card">
+    <h3><i class="fas fa-info-circle"></i> Información de la Factura</h3>
+    <div class="grid-3">
+      <div class="form-group">
+        <label for="numero-factura">Número de Factura *</label>
+        <input type="text" id="numero-factura" placeholder="FAC-001" required>
+      </div>
+      <div class="form-group">
+        <label for="fecha-emision">Fecha de Emisión *</label>
+        <input type="date" id="fecha-emision" required>
+      </div>
+      <div class="form-group">
+        <label for="fecha-vencimiento">Fecha de Vencimiento</label>
+        <input type="date" id="fecha-vencimiento">
+      </div>
+    </div>
+  </div>
+
+  <!-- Búsqueda de paciente -->
+  <div class="card">
+    <h3><i class="fas fa-user"></i> Datos del Paciente</h3>
+    <div class="grid-2">
+      <div class="form-group">
+        <label for="buscar-paciente">Buscar Paciente *</label>
+        <div style="display: flex; gap: 10px;">
+          <input type="text" id="buscar-paciente" placeholder="DNI o nombre del paciente" style="flex: 1;">
+          <button class="btn" onclick="buscarPacienteFactura()">
+            <i class="fas fa-search"></i> Buscar
+          </button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="obra-social">Obra Social</label>
+        <select id="obra-social">
+          <option value="">Particular</option>
+          <option value="OSDE">OSDE</option>
+          <option value="Swiss Medical">Swiss Medical</option>
+          <option value="Galeno">Galeno</option>
+          <option value="Omint">Omint</option>
+          <option value="Medifé">Medifé</option>
+          <option value="otra">Otra obra social</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Información del paciente -->
+    <div class="info-paciente" id="info-paciente-factura" style="display: none;">
+      <!-- Aquí se carga la información del paciente -->
+    </div>
+  </div>
+
+  <!-- Items de la factura -->
+  <div class="card">
+    <h3><i class="fas fa-list"></i> Tratamientos y Servicios</h3>
+    
+    <button class="btn" onclick="abrirModalTratamientos()">
+      <i class="fas fa-plus"></i> Agregar Tratamiento
+    </button>
+
+    <table class="tabla-items">
+      <thead>
+        <tr>
+          <th width="50%">Descripción</th>
+          <th width="15%">Cantidad</th>
+          <th width="20%">Precio Unitario</th>
+          <th width="15%">Subtotal</th>
+          <th width="10%"></th>
+        </tr>
+      </thead>
+      <tbody id="items-factura">
+        <!-- Aquí se agregan los items dinámicamente -->
+      </tbody>
+    </table>
+
+    <div class="resumen-factura">
+      <div class="fila-resumen">
+        <span>Subtotal:</span>
+        <span id="subtotal">$0.00</span>
+      </div>
+      <div class="fila-resumen">
+        <span>Descuento:</span>
+        <span id="descuento">$0.00</span>
+      </div>
+      <div class="fila-resumen total">
+        <span>TOTAL:</span>
+        <span id="total-factura">$0.00</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Observaciones -->
+  <div class="card">
+    <h3><i class="fas fa-sticky-note"></i> Observaciones</h3>
+    <textarea id="observaciones-factura" rows="3" placeholder="Observaciones adicionales para la factura..."></textarea>
+  </div>
+
+  <!-- Acciones -->
+  <div class="card">
+    <h3><i class="fas fa-check-circle"></i> Finalizar Factura</h3>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+      <button class="btn btn-success" onclick="guardarFactura()">
+        <i class="fas fa-save"></i> Guardar Factura
+      </button>
+      <button class="btn" onclick="guardarYEnviar()">
+        <i class="fas fa-paper-plane"></i> Guardar y Enviar
+      </button>
+      <button class="btn" onclick="previsualizarFactura()">
+        <i class="fas fa-eye"></i> Previsualizar
+      </button>
+      <button class="btn" onclick="limpiarFormulario()">
+        <i class="fas fa-broom"></i> Limpiar
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- Modal de tratamientos -->
+<div id="modal-tratamientos" class="modal">
+  <div class="modal-content">
+    <span class="close-modal" onclick="cerrarModalTratamientos()">&times;</span>
+    <h3><i class="fas fa-teeth"></i> Seleccionar Tratamientos</h3>
+    
+    <div class="form-group">
+      <input type="text" id="buscar-tratamiento-modal" placeholder="Buscar tratamiento...">
+    </div>
+
+    <div id="lista-tratamientos" style="max-height: 300px; overflow-y: auto; margin: 15px 0;">
+      <!-- Lista de tratamientos -->
+    </div>
+
+    <button class="btn btn-block" onclick="agregarTratamientosSeleccionados()">
+      <i class="fas fa-check"></i> Agregar Tratamientos Seleccionados
+    </button>
+  </div>
+</div>
+
+<script src="js/supabase.js"></script>
+<script>
+// ===== SISTEMA DE FACTURACIÓN - KODYANMED =====
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🧾 Inicializando módulo de facturación...');
+    inicializarModuloFacturacion();
+});
+
+let pacienteFactura = null;
+let itemsFactura = [];
+let siguienteNumeroFactura = 1;
+
+async function inicializarModuloFacturacion() {
+    // Verificar autenticación
+    const { data: { session } } = await supabase.auth.getSession();
+    if (!session) {
+        window.location.href = 'login.html';
+        return;
+    }
+
+    // Configurar fechas
+    const hoy = new Date();
+    document.getElementById('fecha-emision').value = hoy.toISOString().split('T')[0];
+    
+    const vencimiento = new Date();
+    vencimiento.setDate(hoy.getDate() + 30);
+    document.getElementById('fecha-vencimiento').value = vencimiento.toISOString().split('T')[0];
+
+    // Obtener próximo número de factura
+    await obtenerProximoNumeroFactura();
+    
+    configurarEventListeners();
+    cargarTratamientosModal();
+}
+
+// 1. OBTENER PRÓXIMO NÚMERO DE FACTURA
+async function obtenerProximoNumeroFactura() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const { data: ultimaFactura, error } = await supabase
+            .from('facturas')
+            .select('numero_factura')
+            .eq('profesional_id', session.user.id)
+            .order('id', { ascending: false })
+            .limit(1);
+
+        if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows
+
+        if (ultimaFactura && ultimaFactura.length > 0) {
+            const ultimoNumero = ultimaFactura[0].numero_factura;
+            const numero = parseInt(ultimoNumero.split('-')[1]) + 1;
+            siguienteNumeroFactura = numero;
+        }
+
+        document.getElementById('numero-factura').value = `FAC-${siguienteNumeroFactura.toString().padStart(3, '0')}`;
+
+    } catch (error) {
+        console.error('Error obteniendo número de factura:', error);
+        document.getElementById('numero-factura').value = 'FAC-001';
+    }
+}
+
+// 2. BUSCAR PACIENTE PARA FACTURA
+async function buscarPacienteFactura() {
+    const termino = document.getElementById('buscar-paciente').value.trim();
+
+    if (!termino) {
+        alert('Ingresa DNI o nombre del paciente');
+        return;
+    }
+
+    try {
+        let query = supabase.from('pacientes').select('*');
+        
+        if (/^\d+$/.test(termino)) {
+            query = query.eq('dni', termino);
+        } else {
+            query = query.ilike('nombre_completo', `%${termino}%`);
+        }
+
+        const { data: pacientes, error } = await query;
+
+        if (error) throw error;
+
+        if (!pacientes || pacientes.length === 0) {
+            alert('❌ No se encontró el paciente');
+            return;
+        }
+
+        // Si hay múltiples resultados, tomar el primero
+        pacienteFactura = pacientes[0];
+        mostrarInfoPacienteFactura(pacienteFactura);
+
+        // Si el paciente tiene obra social, establecerla
+        if (pacienteFactura.obra_social) {
+            document.getElementById('obra-social').value = pacienteFactura.obra_social;
+        }
+
+    } catch (error) {
+        console.error('Error buscando paciente:', error);
+        alert('❌ Error al buscar paciente: ' + error.message);
+    }
+}
+
+// 3. MOSTRAR INFORMACIÓN DEL PACIENTE
+function mostrarInfoPacienteFactura(paciente) {
+    const container = document.getElementById('info-paciente-factura');
+    container.innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+            <div>
+                <strong>👤 Nombre:</strong><br>
+                ${paciente.nombre_completo}
+            </div>
+            <div>
+                <strong>📄 DNI:</strong><br>
+                ${paciente.dni}
+            </div>
+            <div>
+                <strong>📞 Teléfono:</strong><br>
+                ${paciente.telefono || 'No registrado'}
+            </div>
+            <div>
+                <strong>📧 Email:</strong><br>
+                ${paciente.email || 'No registrado'}
+            </div>
+        </div>
+    `;
+    
+    container.style.display = 'block';
+}
+
+// 4. MODAL DE TRATAMIENTOS
+function abrirModalTratamientos() {
+    if (!pacienteFactura) {
+        alert('Primero selecciona un paciente');
+        return;
+    }
+    document.getElementById('modal-tratamientos').style.display = 'block';
+}
+
+function cerrarModalTratamientos() {
+    document.getElementById('modal-tratamientos').style.display = 'none';
+}
+
+// 5. CARGAR TRATAMIENTOS EN MODAL
+async function cargarTratamientosModal() {
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+
+        const { data: tratamientos, error } = await supabase
+            .from('aranceles')
+            .select('*')
+            .eq('profesional_id', session.user.id)
+            .order('tratamiento', { ascending: true });
+
+        const container = document.getElementById('lista-tratamientos');
+        
+        if (error || !tratamientos || tratamientos.length === 0) {
+            container.innerHTML = '<p>No hay tratamientos configurados. Configura primero los aranceles.</p>';
+            return;
+        }
+
+        let html = '';
+        tratamientos.forEach(tratamiento => {
+            html += `
+                <div class="tratamiento-item" onclick="seleccionarTratamiento(this, ${tratamiento.id})">
+                    <input type="checkbox" class="tratamiento-checkbox" data-id="${tratamiento.id}">
+                    <div style="flex: 1;">
+                        <strong>${tratamiento.tratamiento}</strong><br>
+                        <small>Código: ${tratamiento.codigo} • $${tratamiento.precio_personalizado.toLocaleString()}</small>
+                    </div>
+                </div>
+            `;
+        });
+
+        container.innerHTML = html;
+
+        // Configurar búsqueda en modal
+        document.getElementById('buscar-tratamiento-modal').addEventListener('input', function(e) {
+            const termino = e.target.value.toLowerCase();
+            const items = container.querySelectorAll('.tratamiento-item');
+            
+            items.forEach(item => {
+                const texto = item.textContent.toLowerCase();
+                item.style.display = texto.includes(termino) ? 'flex' : 'none';
+            });
+        });
+
+    } catch (error) {
+        console.error('Error cargando tratamientos:', error);
+    }
+}
+
+// 6. SELECCIONAR TRATAMIENTOS
+function seleccionarTratamiento(elemento, tratamientoId) {
+    const checkbox = elemento.querySelector('.tratamiento-checkbox');
+    checkbox.checked = !checkbox.checked;
+    
+    if (checkbox.checked) {
+        elemento.style.background = 'var(--violeta-primario)';
+    } else {
+        elemento.style.background = 'var(--violeta-secundario)';
+    }
+}
+
+// 7. AGREGAR TRATAMIENTOS A LA FACTURA
+async function agregarTratamientosSeleccionados() {
+    const checkboxes = document.querySelectorAll('.tratamiento-checkbox:checked');
+    
+    if (checkboxes.length === 0) {
+        alert('Selecciona al menos un tratamiento');
+        return;
+    }
+
+    for (const checkbox of checkboxes) {
+        const tratamientoId = checkbox.getAttribute('data-id');
+        
+        // Obtener detalles del tratamiento
+        const { data: tratamiento, error } = await supabase
+            .from('aranceles')
+            .select('*')
+            .eq('id', tratamientoId)
+            .single();
+
+        if (!error && tratamiento) {
+            agregarItemFactura({
+                id: tratamiento.id,
+                descripcion: tratamiento.tratamiento,
+                precio: tratamiento.precio_personalizado,
+                cantidad: 1
+            });
+        }
+    }
+
+    cerrarModalTratamientos();
+    actualizarResumenFactura();
+}
+
+// 8. AGREGAR ITEM A LA FACTURA
+function agregarItemFactura(item) {
+    // Verificar si el item ya existe
+    const existingIndex = itemsFactura.findIndex(i => i.id === item.id);
+    
+    if (existingIndex !== -1) {
+        // Incrementar cantidad si ya existe
+        itemsFactura[existingIndex].cantidad += item.cantidad;
+        actualizarTablaItems();
+    } else {
+        // Agregar nuevo item
+        itemsFactura.push({
+            id: item.id,
+            descripcion: item.descripcion,
+            precio: item.precio,
+            cantidad: item.cantidad
+        });
+        
+        actualizarTablaItems();
+    }
+}
+
+// 9. ACTUALIZAR TABLA DE ITEMS
+function actualizarTablaItems() {
+    const tbody = document.getElementById('items-factura');
+    let html = '';
+
+    itemsFactura.forEach((item, index) => {
+        const subtotal = item.precio * item.cantidad;
+        html += `
+            <tr>
+                <td>${item.descripcion}</td>
+                <td>
+                    <input type="number" value="${item.cantidad}" min="1" 
+                           onchange="actualizarCantidad(${index}, this.value)">
+                </td>
+                <td>
+                    $<input type="number" value="${item.precio}" step="0.01" min="0"
+                           onchange="actualizarPrecio(${index}, this.value)">
+                </td>
+                <td>$${subtotal.toLocaleString()}</td>
+                <td>
+                    <button class="btn btn-pequeno" onclick="eliminarItem(${index})">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </td>
+            </tr>
+        `;
+    });
+
+    if (itemsFactura.length === 0) {
+        html = '<tr><td colspan="5" style="text-align: center; padding: 20px;">No hay items en la factura</td></tr>';
+    }
+
+    tbody.innerHTML = html;
+    actualizarResumenFactura();
+}
+
+// 10. ACTUALIZAR CANTIDAD
+function actualizarCantidad(index, nuevaCantidad) {
+    if (nuevaCantidad < 1) {
+        alert('La cantidad debe ser al menos 1');
+        return;
+    }
+    itemsFactura[index].cantidad = parseInt(nuevaCantidad);
+    actualizarTablaItems();
+}
+
+// 11. ACTUALIZAR PRECIO
+function actualizarPrecio(index, nuevoPrecio) {
+    if (nuevoPrecio < 0) {
+        alert('El precio no puede ser negativo');
+        return;
+    }
+    itemsFactura[index].precio = parseFloat(nuevoPrecio);
+    actualizarTablaItems();
+}
+
+// 12. ELIMINAR ITEM
+function eliminarItem(index) {
+    itemsFactura.splice(index, 1);
+    actualizarTablaItems();
+}
+
+// 13. ACTUALIZAR RESUMEN
+function actualizarResumenFactura() {
+    const subtotal = itemsFactura.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+    
+    document.getElementById('subtotal').textContent = `$${subtotal.toLocaleString()}`;
+    document.getElementById('total-factura').textContent = `$${subtotal.toLocaleString()}`;
+}
+
+// 14. GUARDAR FACTURA
+async function guardarFactura() {
+    if (!validarFactura()) return;
+
+    try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) throw new Error('No hay sesión activa');
+
+        const facturaData = {
+            numero_factura: document.getElementById('numero-factura').value,
+            fecha_emision: document.getElementById('fecha-emision').value,
+            fecha_vencimiento: document.getElementById('fecha-vencimiento').value || null,
+            dni_paciente: pacienteFactura.dni,
+            obra_social: document.getElementById('obra-social').value || null,
+            monto_total: calcularTotal(),
+            concepto: generarConcepto(),
+            observaciones: document.getElementById('observaciones-factura').value || null,
+            profesional_id: session.user.id,
+            estado: 'pendiente'
+        };
+
+        const { error } = await supabase
+            .from('facturas')
+            .insert([facturaData]);
+
+        if (error) throw error;
+
+        alert('✅ Factura guardada correctamente!');
+        limpiarFormulario();
+
+    } catch (error) {
+        console.error('Error guardando factura:', error);
+        alert('❌ Error al guardar factura: ' + error.message);
+    }
+}
+
+// 15. VALIDAR FACTURA
+function validarFactura() {
+    if (!pacienteFactura) {
+        alert('Selecciona un paciente para la factura');
+        return false;
+    }
+
+    if (itemsFactura.length === 0) {
+        alert('Agrega al menos un tratamiento a la factura');
+        return false;
+    }
+
+    if (!document.getElementById('numero-factura').value) {
+        alert('Ingresa un número de factura');
+        return false;
+    }
+
+    return true;
+}
+
+// 16. CALCULAR TOTAL
+function calcularTotal() {
+    return itemsFactura.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+}
+
+// 17. GENERAR CONCEPTO
+function generarConcepto() {
+    return itemsFactura.map(item => `${item.descripcion} (x${item.cantidad})`).join(', ');
+}
+
+// 18. LIMPIAR FORMULARIO
+function limpiarFormulario() {
+    pacienteFactura = null;
+    itemsFactura = [];
+    document.getElementById('info-paciente-factura').style.display = 'none';
+    document.getElementById('buscar-paciente').value = '';
+    document.getElementById('observaciones-factura').value = '';
+    actualizarTablaItems();
+    obtenerProximoNumeroFactura();
+}
+
+// 19. OTRAS FUNCIONES
+function guardarYEnviar() {
+    alert('📧 Funcionalidad de envío por email - Próximamente!');
+    guardarFactura();
+}
+
+function previsualizarFactura() {
+    alert('👁️ Previsualización de factura - Próximamente!');
+}
+
+// 20. CONFIGURAR EVENT LISTENERS
+function configurarEventListeners() {
+    // Cerrar modal al hacer clic fuera
+    window.addEventListener('click', function(event) {
+        const modal = document.getElementById('modal-tratamientos');
+        if (event.target === modal) {
+            cerrarModalTratamientos();
+        }
+    });
+
+    // Buscar paciente con Enter
+    document.getElementById('buscar-paciente').addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') buscarPacienteFactura();
+    });
+}
+
+// 21. CERRAR SESIÓN
+async function logout() {
+    const { error } = await supabase.auth.signOut();
+    if (!error) {
+        window.location.href = 'login.html';
+    }
+}
+</script>
+</body>
+</html>
