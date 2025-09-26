@@ -605,6 +605,9 @@ async function registrarPago(e) {
 
         // Éxito
         alert('✅ Pago registrado correctamente!');
+      if (window.sincronizarFinanzas) {
+    window.sincronizarFinanzas.notificarPagoRegistrado();
+}
         e.target.reset();
         document.getElementById('fecha-pago').value = new Date().toISOString().split('T')[0];
         
