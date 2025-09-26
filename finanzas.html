@@ -422,12 +422,20 @@ async function inicializarFinanzas() {
     configurarEventListeners();
 }
 
-// 1. CARGAR RESUMEN FINANCIERO
+// 1. CARGAR RESUMEN FINANCIERO - 
 async function cargarResumenFinanciero() {
     try {
         const { data: { session } } = await supabase.auth.getSession();
-        const mesActual = new Date().getMonth() + 1;
-        const añoActual = new Date().getFullYear();
+        const hoy = new Date();
+        const mesActual = hoy.getMonth() + 1;
+        const añoActual = hoy.getFullYear();
+        
+        // ✅ CORRECCIÓN: Obtener último día del mes correctamente
+        const ultimoDiaMes = new Date(añoActual, mesActual, 0).getDate();
+        const fechaInicioMes = `${añoActual}-${mesActual.toString().padStart(2, '0')}-01`;
+        const fechaFinMes = `${añoActual}-${mesActual.toString().padStart(2, '0')}-${ultimoDiaMes.toString().padStart(2, '0')}`;
+
+        console.log('📅 Buscando desde:', fechaInicioMes, 'hasta:', fechaFinMes);
 
         // Ingresos del mes
         const { data: ingresos, error: errorIngresos } = await supabase
@@ -435,16 +443,16 @@ async function cargarResumenFinanciero() {
             .select('monto_total, monto_pagado')
             .eq('profesional_id', session.user.id)
             .eq('estado', 'pagada')
-            .gte('fecha_emision', `${añoActual}-${mesActual.toString().padStart(2, '0')}-01`)
-            .lte('fecha_emision', `${añoActual}-${mesActual.toString().padStart(2, '0')}-31`);
+            .gte('fecha_emision', fechaInicioMes)
+            .lte('fecha_emision', fechaFinMes);
 
         // Gastos del mes
         const { data: gastos, error: errorGastos } = await supabase
             .from('gastos')
             .select('monto')
             .eq('profesional_id', session.user.id)
-            .gte('fecha', `${añoActual}-${mesActual.toString().padStart(2, '0')}-01`)
-            .lte('fecha', `${añoActual}-${mesActual.toString().padStart(2, '0')}-31`);
+            .gte('fecha', fechaInicioMes)
+            .lte('fecha', fechaFinMes);
 
         // Facturas pendientes
         const { data: pendientes, error: errorPendientes } = await supabase
@@ -472,12 +480,13 @@ async function cargarResumenFinanciero() {
         document.getElementById('ganancia-neta').className = `numero-grande ${gananciaNeta >= 0 ? 'positivo' : 'negativo'}`;
         document.getElementById('facturas-pendientes').textContent = totalPendientes;
 
+        console.log('✅ Resumen cargado:', { totalIngresos, totalGastos, gananciaNeta });
+
     } catch (error) {
         console.error('Error en resumen financiero:', error);
         activarModoDemo();
     }
 }
-
 // 2. CARGAR FACTURAS PENDIENTES
 async function cargarFacturasPendientes() {
     try {
