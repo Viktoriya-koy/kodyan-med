@@ -250,9 +250,15 @@
     <li class="navbar-item"><a href="agenda.html"><i class="fas fa-calendar-alt"></i> Agenda</a></li>
     <li class="navbar-item"><a href="pacientes.html"><i class="fas fa-user-injured"></i> Pacientes</a></li>
     <li class="navbar-item"><a href="finanzas.html" style="background: var(--violeta-acento);"><i class="fas fa-chart-line"></i> Finanzas</a></li>
+    <li class="navbar-item"><a href="nuevo-gasto.html"><i class="fas fa-receipt"></i> Gastos</a></li>
+    <li class="navbar-item"><a href="obras-sociales.html"><i class="fas fa-hospital"></i> Obras Sociales</a></li>
+    <li class="navbar-item"><a href="registrar-pago.html"><i class="fas fa-money-bill-wave"></i> Pagos</a></li>
+    <li class="navbar-item"><a href="reportes.html"><i class="fas fa-chart-bar"></i> Reportes</a></li>
+    <li class="navbar-item"><a href="aranceles.html"><i class="fas fa-dollar-sign"></i> Aranceles</a></li>
+    <li class="navbar-item"><a href="nueva-factura.html"><i class="fas fa-file-invoice"></i> Facturación</a></li>
     <li class="navbar-item"><a href="configuracion.html"><i class="fas fa-cog"></i> Configuración</a></li>
     <li class="navbar-item"><a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Cerrar Sesión</a></li>
-  </ul>
+</ul>
 </nav>
 
 <!-- Contenido principal -->
@@ -695,17 +701,15 @@ async function obtenerMontoFactura(facturaId) {
 }
 
 function nuevaFactura() {
-    alert('📄 Funcionalidad de nueva factura - Próximamente!');
-    // window.location.href = 'nueva-factura.html';
+    window.location.href = 'nueva-factura.html';
+
 }
 
 function nuevoGasto() {
-    alert('🛒 Funcionalidad de nuevo gasto - Próximamente!');
-    // window.location.href = 'nuevo-gasto.html';
+    window.location.href = 'nuevo-gasto.html';
 }
-
-function verReportes() {
-    alert('📊 Módulo de reportes detallados - Próximamente!');
+function Reportes() {
+    window.location.href = 'reportes.html';
 }
 
 function exportarDatos() {
