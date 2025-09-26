@@ -831,6 +831,8 @@ async function guardarFactura() {
         if (error) throw error;
 
         alert('✅ Factura guardada correctamente!');
+      if (window.sincronizarFinanzas) {
+    window.sincronizarFinanzas.notificarFacturaGuardada();
         limpiarFormulario();
 
     } catch (error) {
